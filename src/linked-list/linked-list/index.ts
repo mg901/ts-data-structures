@@ -1,3 +1,1 @@
-const LinkedList = require('./linked-list');
-
-
+export * from './linked-list';

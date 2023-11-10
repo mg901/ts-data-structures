@@ -1,7 +1,7 @@
-import { Comparator } from "../../utils/comparator";
-import type { CompareFunction } from "../../utils/comparator";
-import { LinkedListNode } from "../linked-list-node";
-import type { Callback } from "../linked-list-node";
+import { Comparator } from '../../utils/comparator';
+import type { CompareFunction } from '../../utils/comparator';
+import { LinkedListNode } from '../linked-list-node';
+import type { Callback } from '../linked-list-node';
 
 interface FindOptions<T = any> {
   data?: T;
@@ -10,8 +10,11 @@ interface FindOptions<T = any> {
 
 export class LinkedList<T = any> {
   head: LinkedListNode<T> | null;
+
   tail: LinkedListNode<T> | null;
+
   length: number;
+
   #compare;
 
   constructor(compareFunction: CompareFunction<T>) {
@@ -34,10 +37,9 @@ export class LinkedList<T = any> {
       this.tail = newNode;
 
       return this;
-    } else {
-      this.tail!.next = newNode;
-      this.tail = newNode;
     }
+    this.tail!.next = newNode;
+    this.tail = newNode;
 
     return this;
   }
@@ -45,7 +47,7 @@ export class LinkedList<T = any> {
   toArray() {
     if (!this.head) return [];
 
-    let nodes = [] as LinkedListNode<T>[];
+    const nodes = [] as LinkedListNode<T>[];
     let currentNode = this.head as LinkedListNode<T> | null;
 
     while (currentNode) {
@@ -106,7 +108,7 @@ export class LinkedList<T = any> {
     let prevNode = null;
 
     while (currentNode) {
-      let nextNode = currentNode.next;
+      const nextNode = currentNode.next;
       currentNode.next = prevNode;
 
       prevNode = currentNode;
@@ -204,7 +206,7 @@ export class LinkedList<T = any> {
   deleteHead() {
     if (!this.head) return null;
 
-    let deletedHead = this.head;
+    const deletedHead = this.head;
 
     if (deletedHead.next) {
       this.head = deletedHead.next;

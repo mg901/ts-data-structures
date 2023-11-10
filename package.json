@@ -5,6 +5,7 @@
   "scripts": {
     "start": "bun run src/index.ts",
     "commit": "cz",
+    "lint": "eslint . --fix --ext .ts",
     "test": "bun test",
     "test:watch": "bun test --watch",
     "prepare": "husky install"
@@ -19,5 +20,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0"
   }
 }

@@ -1,27 +1,27 @@
-import { describe, it, expect } from "bun:test";
-import { LinkedListNode } from "./linked-list-node";
+import { describe, it, expect } from 'bun:test';
+import { LinkedListNode } from './linked-list-node';
 
-describe("LinkedListNode", () => {
-  it("should create list node with value", () => {
+describe('LinkedListNode', () => {
+  it('should create list node with value', () => {
     const node = new LinkedListNode(1);
 
     expect(node.data).toEqual(1);
     expect(node.next).toBeNull();
   });
 
-  it("should create list node with object as a value", () => {
+  it('should create list node with object as a value', () => {
     const nodeValue = {
       value: 1,
-      key: "test",
+      key: 'test',
     };
     const node = new LinkedListNode(nodeValue);
 
     expect(node.data.value).toEqual(1);
-    expect(node.data.key).toEqual("test");
+    expect(node.data.key).toEqual('test');
     expect(node.next).toBeNull();
   });
 
-  it("should link nodes together", () => {
+  it('should link nodes together', () => {
     const node2 = new LinkedListNode(1);
     const node1 = new LinkedListNode(2, node2);
 
@@ -31,11 +31,11 @@ describe("LinkedListNode", () => {
     expect(node1.next.data).toEqual(1);
   });
 
-  it("should convert node to string", () => {
+  it('should convert node to string', () => {
     const node = new LinkedListNode(1);
-    expect(node.toString()).toEqual("1");
+    expect(node.toString()).toEqual('1');
 
-    node.data = "new value";
-    expect(node.toString()).toEqual("new value");
+    node.data = 'new value';
+    expect(node.toString()).toEqual('new value');
   });
 });
