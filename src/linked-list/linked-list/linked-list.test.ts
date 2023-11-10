@@ -1,8 +1,11 @@
 import { describe, beforeEach, it, expect } from 'bun:test';
+
 import { LinkedList } from './linked-list';
+import { LinkedListNode } from '../linked-list-node';
 
 describe('LinkedList', () => {
-  let list = null;
+  // @ts-ignore
+  let list: LinkedList<number> = null;
 
   // Arrange
   beforeEach(() => {
@@ -10,6 +13,7 @@ describe('LinkedList', () => {
   });
 
   describe('append method', () => {
+    const list = new LinkedList<number>();
     it('should append node correctly to the empty list', () => {
       // Assert
       expect(list.isEmpty()).toBeTruthy();
@@ -20,8 +24,8 @@ describe('LinkedList', () => {
       list.append(1);
 
       // Assert
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('1');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('1');
       expect(list.length).toBe(1);
     });
 
@@ -31,10 +35,10 @@ describe('LinkedList', () => {
 
       // Assert
       expect(list.length).toBe(2);
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('2');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('2');
       expect(list.toString()).toBe('1,2');
-      expect(list.tail.next).toBeNull();
+      expect(list.tail!.next).toBeNull();
     });
   });
 
@@ -69,7 +73,8 @@ describe('LinkedList', () => {
   });
 
   describe('indexOf method', () => {
-    let linkedList = null;
+    // @ts-ignore
+    let linkedList: LinkedList = null;
 
     // Arrange
     beforeEach(() => {
@@ -81,12 +86,12 @@ describe('LinkedList', () => {
 
     it('should return the index of the given element if it exists in the list', () => {
       // Act and Assert
-      expect(linkedList.indexOf(2)).toBe(1);
+      expect(linkedList!.indexOf(2)).toBe(1);
     });
 
     it("should return `-1` if the given element doesn't exist in the list", () => {
       // Act and Assert
-      expect(linkedList.indexOf(4)).toBe(-1);
+      expect(linkedList!.indexOf(4)).toBe(-1);
     });
 
     it('should return the index of the first occurrence of the given element', () => {
@@ -158,9 +163,9 @@ describe('LinkedList', () => {
 
       // Act and Assert
       expect(list.toString()).toBe('1');
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('1');
-      expect(list.tail.next).toBeNull();
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('1');
+      expect(list.tail!.next).toBeNull();
       expect(list.length).toBe(1);
     });
 
@@ -170,15 +175,15 @@ describe('LinkedList', () => {
 
       // Act and Assert
       expect(list.toString()).toBe('1,2,3');
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('3');
-      expect(list.tail.next).toBeNull();
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('3');
+      expect(list.tail!.next).toBeNull();
       expect(list.length).toBe(3);
     });
 
     it('should prepend node to the lined list', () => {
       // Arrange
-      const list = new LinkedList();
+      const list: LinkedList = new LinkedList();
 
       // Assert
       expect(list.isEmpty()).toBeTruthy();
@@ -190,9 +195,9 @@ describe('LinkedList', () => {
 
       // Assert
       expect(list.length).toBe(2);
-      expect(list.head.toString()).toBe('2');
-      expect(list.tail.toString()).toBe('1');
-      expect(list.tail.next).toBeNull();
+      expect(list.head!.toString()).toBe('2');
+      expect(list.tail!.toString()).toBe('1');
+      expect(list.tail!.next).toBeNull();
     });
   });
 
@@ -210,8 +215,8 @@ describe('LinkedList', () => {
       list.append(1).reverse();
 
       // Act and Assert
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('1');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('1');
       expect(list.toString()).toBe('1');
     });
 
@@ -220,8 +225,8 @@ describe('LinkedList', () => {
       list.append(1).append(2).append(3).reverse();
 
       // Act and Assert
-      expect(list.head.toString()).toBe('3');
-      expect(list.tail.toString()).toBe('1');
+      expect(list.head!.toString()).toBe('3');
+      expect(list.tail!.toString()).toBe('1');
       expect(list.toString()).toEqual('3,2,1');
     });
   });
@@ -259,8 +264,8 @@ describe('LinkedList', () => {
       list.insertAt(0, 0);
 
       // Act and Assert
-      expect(list.head.toString()).toBe('0');
-      expect(list.tail.toString()).toBe('1');
+      expect(list.head!.toString()).toBe('0');
+      expect(list.tail!.toString()).toBe('1');
       expect(list.toString()).toBe('0,1');
       expect(list.length).toBe(2);
     });
@@ -271,8 +276,8 @@ describe('LinkedList', () => {
       expect(list.length).toBe(1);
 
       list.insertAt(2, 1);
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('2');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('2');
       expect(list.toString()).toBe('1,2');
       expect(list.length).toBe(2);
     });
@@ -283,8 +288,8 @@ describe('LinkedList', () => {
       expect(list.length).toBe(3);
 
       list.insertAt(0, 0);
-      expect(list.head.toString()).toBe('0');
-      expect(list.tail.toString()).toBe('3');
+      expect(list.head!.toString()).toBe('0');
+      expect(list.tail!.toString()).toBe('3');
       expect(list.toString()).toBe('0,1,2,3');
       expect(list.length).toBe(4);
     });
@@ -295,8 +300,8 @@ describe('LinkedList', () => {
       expect(list.length).toBe(3);
 
       list.insertAt(4, 3);
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('4');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('4');
       expect(list.toString()).toBe('1,2,3,4');
       expect(list.length).toBe(4);
     });
@@ -307,8 +312,8 @@ describe('LinkedList', () => {
       expect(list.length).toBe(3);
 
       list.insertAt(3, 2);
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('4');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('4');
       expect(list.toString()).toBe('1,2,3,4');
       expect(list.length).toBe(4);
     });
@@ -330,12 +335,12 @@ describe('LinkedList', () => {
       expect(list.length).toBe(3);
 
       // Arrange and Act
-      const deletedNode = list.delete(1);
+      const deletedNode = list.delete(1) as LinkedListNode<number>;
 
       // Assert
       expect(deletedNode.toString()).toBe('1');
-      expect(list.head.toString()).toBe('2');
-      expect(list.tail.toString()).toBe('3');
+      expect(list.head!.toString()).toBe('2');
+      expect(list.tail!.toString()).toBe('3');
       expect(list.toString()).toEqual('2,3');
       expect(list.length).toBe(2);
     });
@@ -345,12 +350,12 @@ describe('LinkedList', () => {
       list.append(1).append(2).append(3);
 
       // Arrange and Act
-      const deletedElement = list.delete(3);
+      const deletedElement = list.delete(3) as LinkedListNode<number>;
 
       // Act and Assert
       expect(deletedElement.toString()).toBe('3');
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('2');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('2');
       expect(list.toString()).toBe('1,2');
       expect(list.length).toBe(2);
     });
@@ -360,12 +365,12 @@ describe('LinkedList', () => {
       list.append(1).append(2).append(3).append(4);
 
       // Arrange and Act
-      const deletedElement = list.delete(2);
+      const deletedElement = list.delete(2) as LinkedListNode<number>;
 
       // Act and Assert
       expect(deletedElement.toString()).toBe('2');
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('4');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('4');
       expect(list.toString()).toBe('1,3,4');
       expect(list.length).toBe(3);
     });
@@ -375,7 +380,7 @@ describe('LinkedList', () => {
       list.append(1);
 
       // Arrange and Act
-      const deletedElement = list.delete(1);
+      const deletedElement = list.delete(1) as LinkedListNode<number>;
 
       // Act and Assert
       expect(deletedElement.toString()).toBe('1');
@@ -391,8 +396,8 @@ describe('LinkedList', () => {
 
       // Act and Assert
       expect(deletedElement).toBeNull();
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('2');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('2');
       expect(list.toString()).toBe('1,2');
       expect(list.length).toBe(2);
     });
@@ -414,7 +419,7 @@ describe('LinkedList', () => {
 
     it('should find node by value', () => {
       // Arrange
-      const node = list.find({ data: 2 });
+      const node = list.find({ data: 2 }) as LinkedListNode<number>;
 
       // Act and Assert
       expect(node.toString()).toBe('2');
@@ -427,23 +432,23 @@ describe('LinkedList', () => {
       });
 
       // Act and Assert
-      expect(foundedNode.toString()).toBe('2');
+      expect(foundedNode!.toString()).toBe('2');
     });
 
     it('should return null if node not found by value or callback', () => {
       // Act and Arrange
-      expect(list.find({ value: 3 })).toBeNull();
+      expect(list.find({ data: 3 })).toBeNull();
     });
 
     it('should should prioritize callback over value', () => {
       // Arrange
       const node = list.find({
-        value: 1,
+        data: 1,
         callback: (data) => data > 1,
       });
 
       // Act and Assert
-      expect(node.toString()).toBe('2');
+      expect(node!.toString()).toBe('2');
     });
   });
 
@@ -456,9 +461,9 @@ describe('LinkedList', () => {
       const deletedHead = list.deleteHead();
 
       // Act and Assert
-      expect(deletedHead.toString()).toBe('1');
-      expect(list.head.toString()).toBe('2');
-      expect(list.tail.toString()).toBe('3');
+      expect(deletedHead!.toString()).toBe('1');
+      expect(list.head!.toString()).toBe('2');
+      expect(list.tail!.toString()).toBe('3');
     });
 
     it('should delete head of list with one node', () => {
@@ -466,7 +471,7 @@ describe('LinkedList', () => {
       list.append(1);
 
       // Act and Assert
-      expect(list.deleteHead().toString()).toBe('1');
+      expect(list.deleteHead()!.toString()).toBe('1');
       expect(list.head).toBeNull();
       expect(list.tail).toBeNull();
       expect(list.length).toBe(0);
@@ -487,7 +492,7 @@ describe('LinkedList', () => {
   describe('deleteTail method', () => {
     it('should return null if the list is empty', () => {
       // Arrange
-      const emptyList = new LinkedList();
+      const emptyList = new LinkedList<number>();
 
       // Act and Assert
       expect(emptyList.deleteTail()).toBeNull();
@@ -498,9 +503,9 @@ describe('LinkedList', () => {
       list.append(1);
 
       // Act and Assert
-      expect(list.head.toString()).toBe('1');
-      expect(list.tail.toString()).toBe('1');
-      expect(list.deleteTail().toString()).toBe('1');
+      expect(list.head!.toString()).toBe('1');
+      expect(list.tail!.toString()).toBe('1');
+      expect(list.deleteTail()!.toString()).toBe('1');
       expect(list.head).toBeNull();
       expect(list.tail).toBeNull();
       expect(list.isEmpty());
@@ -511,15 +516,15 @@ describe('LinkedList', () => {
       list.append(1).append(2).append(3);
 
       // Act and Assert
-      expect(list.tail.toString()).toBe('3');
+      expect(list.tail!.toString()).toBe('3');
       expect(list.length).toBe(3);
 
-      expect(list.deleteTail().toString()).toBe('3');
-      expect(list.tail.toString()).toBe('2');
+      expect(list.deleteTail()!.toString()).toBe('3');
+      expect(list.tail!.toString()).toBe('2');
       expect(list.length).toBe(2);
 
-      expect(list.deleteTail().toString()).toBe('2');
-      expect(list.tail.toString()).toBe('1');
+      expect(list.deleteTail()!.toString()).toBe('2');
+      expect(list.tail!.toString()).toBe('1');
       expect(list.length).toBe(1);
     });
   });
