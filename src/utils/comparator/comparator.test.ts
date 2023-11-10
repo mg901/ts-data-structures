@@ -39,5 +39,14 @@ describe('Comparator', () => {
     expect(comparator.greaterThanOrEqual('a', 'aa')).toBeFalsy();
     expect(comparator.greaterThanOrEqual('aa', 'a')).toBeTruthy();
     expect(comparator.greaterThanOrEqual('a', 'a')).toBeTruthy();
+
+    comparator.reverse();
+
+    expect(comparator.equal('a', 'b')).toBeTruthy();
+    expect(comparator.equal('a', '')).toBeFalsy();
+    expect(comparator.lessThan('b', 'aa')).toBeFalsy();
+    expect(comparator.greaterThanOrEqual('a', 'aa')).toBeTruthy();
+    expect(comparator.greaterThanOrEqual('aa', 'a')).toBeFalsy();
+    expect(comparator.greaterThanOrEqual('a', 'a')).toBeTruthy();
   });
 });

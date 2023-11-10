@@ -5,7 +5,7 @@ import type { Callback } from '../linked-list-node';
 
 interface FindOptions<T = any> {
   data?: T;
-  callback?: Callback<T>;
+  callback?: (data: T) => boolean;
 }
 
 export class LinkedList<T = any> {
@@ -17,7 +17,7 @@ export class LinkedList<T = any> {
 
   #compare;
 
-  constructor(compareFunction: CompareFunction<T>) {
+  constructor(compareFunction?: CompareFunction<T>) {
     this.head = null;
     this.tail = null;
     this.length = 0;
@@ -58,7 +58,7 @@ export class LinkedList<T = any> {
     return nodes;
   }
 
-  toString(callback: Callback<T>) {
+  toString(callback?: Callback<T>) {
     return this.toArray()
       .map((node) => node.toString(callback))
       .toString();
