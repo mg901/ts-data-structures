@@ -34,7 +34,7 @@ export class Comparator<T = any> {
   }
 
   reverse(): void {
-    const originalCompare = this.compare;
-    this.compare = (a: T, b: T) => originalCompare(a, b);
+    const compareOriginal = this.compare;
+    this.compare = (a, b) => compareOriginal(b, a);
   }
 }
