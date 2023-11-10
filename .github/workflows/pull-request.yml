@@ -1,0 +1,14 @@
+name: check branch
+
+on: pull_request
+
+jobs:
+  check-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install
+      - run: bun lint
+      - run: bun test
