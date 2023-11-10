@@ -14,6 +14,4 @@ jobs:
       - run: bun test
 
       - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        uses: coverallsapp/github-action@v2.2.3
