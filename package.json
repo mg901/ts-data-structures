@@ -1,0 +1,22 @@
+{
+  "name": "js-data-structures-implementation",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.0",
+    "@commitlint/config-conventional": "^18.4.0",
+    "bun-types": "^1.0.11",
+    "commitizen": "^4.3.0",
+    "git-cz": "^4.9.0",
+    "husky": "^8.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
