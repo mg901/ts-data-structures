@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun run src/index.ts",
+    "commit": "cz",
     "test": "bun test",
     "test:watch": "bun test --watch",
     "prepare": "husky install"
