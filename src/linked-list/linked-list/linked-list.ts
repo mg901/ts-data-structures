@@ -8,7 +8,7 @@ interface FindMethodOptions<T = any> {
   predicate?: (value: T) => boolean;
 }
 
-interface insertMethodOptions<T = any> {
+interface InsertMethodOptions<T = any> {
   data: T;
   index: number;
 }
@@ -139,7 +139,7 @@ export class LinkedList<T = any> {
     return node;
   }
 
-  insertAt({ data, index }: insertMethodOptions) {
+  insertAt({ data, index }: InsertMethodOptions) {
     if (index < 0 || index > this.length) {
       throw new Error(
         'Index should be greater than or equal to 0 and less than or equal to the list length.',
