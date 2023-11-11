@@ -3,9 +3,14 @@ import type { CompareFunction } from '../../utils/comparator';
 import { LinkedListNode } from '../linked-list-node';
 import type { Callback } from '../linked-list-node';
 
-interface FindOptions<T = any> {
+interface FindMethodOptions<T = any> {
   data?: T;
-  callback?: (data: T) => boolean;
+  predicate?: (value: T) => boolean;
+}
+
+interface InsertMethodOptions<T = any> {
+  data: T;
+  index: number;
 }
 
 export class LinkedList<T = any> {
@@ -24,28 +29,8 @@ export class LinkedList<T = any> {
     this.#compare = new Comparator(compareFunction);
   }
 
-  isEmpty(): boolean {
-    return this.length === 0;
-  }
-
-  append(data: T) {
-    const newNode = new LinkedListNode(data);
-    this.length += 1;
-
-    if (this.head === null) {
-      this.head = newNode;
-      this.tail = newNode;
-
-      return this;
-    }
-    this.tail!.next = newNode;
-    this.tail = newNode;
-
-    return this;
-  }
-
   toArray() {
-    if (!this.head) return [];
+    if (this.isEmpty) return [];
 
     const nodes = [] as LinkedListNode<T>[];
     let currentNode = this.head as LinkedListNode<T> | null;
@@ -64,26 +49,18 @@ export class LinkedList<T = any> {
       .toString();
   }
 
-  indexOf(data: T) {
-    let count = 0;
-    let currentNode = this.head;
+  append(data: T) {
+    const newNode = new LinkedListNode(data);
+    this.length += 1;
 
-    while (currentNode) {
-      if (this.#compare.equal(currentNode.data, data)) {
-        return count;
-      }
+    if (this.isEmpty) {
+      this.head = newNode;
+      this.tail = newNode;
 
-      currentNode = currentNode.next;
-      count += 1;
+      return this;
     }
-
-    return -1;
-  }
-
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
+    this.tail!.next = newNode;
+    this.tail = newNode;
 
     return this;
   }
@@ -121,40 +98,8 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  #findNode(index: number) {
-    let node = this.head;
-
-    for (let i = 0; i < index; i += 1) {
-      node = node!.next;
-    }
-
-    return node;
-  }
-
-  insertAt(data: T, index: number) {
-    if (index < 0 || index > this.length) {
-      throw new Error(`Index \`${index}\` out of range.`);
-    }
-
-    if (index === 0) {
-      this.prepend(data);
-    } else if (index === this.length) {
-      this.append(data);
-    } else {
-      const prevNode = this.#findNode(index - 1);
-      const newNode = new LinkedListNode(data);
-
-      newNode.next = prevNode!.next;
-      prevNode!.next = newNode;
-
-      this.length += 1;
-    }
-
-    return this;
-  }
-
   delete(data: T) {
-    if (!this.head) return null;
+    if (this.isEmpty) return null;
     let deletedNode = null;
 
     while (this.head && this.#compare.equal(data, this.head.data)) {
@@ -184,23 +129,38 @@ export class LinkedList<T = any> {
     return deletedNode;
   }
 
-  find({ data = undefined, callback = undefined }: FindOptions<T>) {
-    if (!this.head) return null;
+  #findNode(index: number) {
+    let node = this.head;
 
-    let currentNode = this.head as LinkedListNode<T> | null;
-
-    while (currentNode) {
-      if (callback && callback(currentNode.data)) {
-        return currentNode;
-      }
-
-      if (data !== undefined && this.#compare.equal(currentNode.data, data)) {
-        return currentNode;
-      }
-      currentNode = currentNode.next;
+    for (let i = 0; i < index; i += 1) {
+      node = node!.next;
     }
 
-    return null;
+    return node;
+  }
+
+  insertAt({ data, index }: InsertMethodOptions) {
+    if (index < 0 || index > this.length) {
+      throw new Error(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    }
+
+    if (index === 0) {
+      this.prepend(data);
+    } else if (index === this.length) {
+      this.append(data);
+    } else {
+      const prevNode = this.#findNode(index - 1)!;
+      const newNode = new LinkedListNode<T>(data);
+
+      newNode.next = prevNode.next;
+      prevNode.next = newNode;
+
+      this.length += 1;
+    }
+
+    return this;
   }
 
   deleteHead() {
@@ -247,5 +207,53 @@ export class LinkedList<T = any> {
     this.length -= 1;
 
     return deletedTail;
+  }
+
+  indexOf(data: T) {
+    let count = 0;
+    let currentNode = this.head;
+
+    while (currentNode) {
+      if (this.#compare.equal(currentNode.data, data)) {
+        return count;
+      }
+
+      currentNode = currentNode.next;
+      count += 1;
+    }
+
+    return -1;
+  }
+
+  fromArray(array: T[]) {
+    array.forEach((value) => {
+      this.append(value);
+    });
+
+    return this;
+  }
+
+  find({ data = undefined, predicate = undefined }: FindMethodOptions<T>) {
+    if (this.isEmpty) return null;
+
+    let currentNode = this.head as LinkedListNode<T> | null;
+
+    while (currentNode) {
+      if (predicate && predicate(currentNode.data)) {
+        return currentNode;
+      }
+
+      if (data !== undefined && this.#compare.equal(currentNode.data, data)) {
+        return currentNode;
+      }
+
+      currentNode = currentNode.next;
+    }
+
+    return null;
+  }
+
+  get isEmpty(): boolean {
+    return this.head === null;
   }
 }
