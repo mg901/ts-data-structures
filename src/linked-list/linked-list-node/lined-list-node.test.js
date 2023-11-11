@@ -1,15 +1,15 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, test, expect } from 'bun:test';
 import { LinkedListNode } from './linked-list-node';
 
 describe('LinkedListNode', () => {
-  it('should create list node with value', () => {
+  test('creates list node with value', () => {
     const node = new LinkedListNode(1);
 
     expect(node.data).toEqual(1);
     expect(node.next).toBeNull();
   });
 
-  it('should create list node with object as a value', () => {
+  test('creates list node with object as a value', () => {
     const nodeValue = {
       value: 1,
       key: 'test',
@@ -21,7 +21,7 @@ describe('LinkedListNode', () => {
     expect(node.next).toBeNull();
   });
 
-  it('should link nodes together', () => {
+  test('links nodes together', () => {
     const node2 = new LinkedListNode(1);
     const node1 = new LinkedListNode(2, node2);
 
@@ -31,7 +31,7 @@ describe('LinkedListNode', () => {
     expect(node1.next.data).toEqual(1);
   });
 
-  it('should convert node to string', () => {
+  test('converts node to string', () => {
     const node = new LinkedListNode(1);
     expect(node.toString()).toEqual('1');
 
