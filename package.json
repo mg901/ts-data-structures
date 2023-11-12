@@ -1,7 +1,6 @@
 {
   "name": "js-data-structures-implementation",
   "module": "src/index.ts",
-  "type": "module",
   "scripts": {
     "start": "bun run src/index.ts",
     "commit": "cz",
@@ -11,6 +10,9 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
     "@commitlint/cli": "^18.4.0",
     "@commitlint/config-conventional": "^18.4.0",
     "bun-types": "^1.0.11",
@@ -22,10 +24,5 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint-config-airbnb-typescript": "^17.1.0"
   }
 }
