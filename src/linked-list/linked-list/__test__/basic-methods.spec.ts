@@ -103,9 +103,6 @@ describe('LinkedList', () => {
       });
 
       test('prepends node to the lined list', () => {
-        // Arrange
-        const list: LinkedList = new LinkedList();
-
         // Assert
         expect(list.isEmpty).toBeTruthy();
         expect(list.head).toBeNull();
