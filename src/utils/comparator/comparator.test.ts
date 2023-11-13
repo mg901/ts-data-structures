@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, test as it } from 'bun:test';
 import { Comparator } from './comparator';
 
 describe('Comparator', () => {
-  it('should compare with default comparator function', () => {
+  it('compares with default comparator function', () => {
     // Arrange
     const comparator = new Comparator();
 
@@ -24,7 +24,7 @@ describe('Comparator', () => {
     expect(comparator.greaterThanOrEqual(0, 10)).toBeFalsy();
   });
 
-  it('should compare with custom comparator function', () => {
+  it('compares with custom comparator function', () => {
     // Arrange
     const comparator = new Comparator((a: string, b: string) => {
       if (a.length === b.length) return 0;

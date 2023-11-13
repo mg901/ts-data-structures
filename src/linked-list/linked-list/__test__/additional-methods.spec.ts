@@ -1,4 +1,4 @@
-import { describe, beforeEach, test, expect } from 'bun:test';
+import { describe, beforeEach, it, expect } from 'bun:test';
 import { LinkedList } from '../linked-list';
 
 describe('LinkedList', () => {
@@ -18,22 +18,22 @@ describe('LinkedList', () => {
         list.append(1).append(2).append(3);
       });
 
-      test('returns 0 if the index is at the head of the list', () => {
+      it('returns 0 if the index is at the head of the list', () => {
         // Act and Assert
         expect(list.indexOf(1)).toBe(0);
       });
 
-      test('returns the index of the given element if it exists in the list', () => {
+      it('returns the index of the given element if it exists in the list', () => {
         // Act and Assert
         expect(list.indexOf(2)).toBe(1);
       });
 
-      test("returns `-1` if the given element doesn't exist in the list", () => {
+      it("returns `-1` if the given element doesn't exist in the list", () => {
         // Act and Assert
         expect(list.indexOf(4)).toBe(-1);
       });
 
-      test('returns the index of the first occurrence of the given element', () => {
+      it('returns the index of the first occurrence of the given element', () => {
         // Arrange
         list.append(2);
 
@@ -41,18 +41,18 @@ describe('LinkedList', () => {
         expect(list.indexOf(2)).toBe(1);
       });
 
-      test('returns `0` if the index is at the head of the list', () => {
+      it('returns `0` if the index is at the head of the list', () => {
         // Act and Assert
         expect(list.indexOf(1)).toBe(0);
       });
 
-      test('returns the index of the last element if the element is at the tail of the list', () => {
+      it('returns the index of the last element if the element is at the tail of the list', () => {
         // Act and Assert
         expect(list.indexOf(3)).toBe(2);
       });
 
       describe('on an empty list', () => {
-        test('returns `-1` for any element', () => {
+        it('returns `-1` for any element', () => {
           // Arrange
           const emptyList = new LinkedList<number>();
 
@@ -65,7 +65,7 @@ describe('LinkedList', () => {
     });
 
     describe('fromArray', () => {
-      test('creates an empty list when an empty array is passed', () => {
+      it('creates an empty list when an empty array is passed', () => {
         // Act
         list.fromArray([]);
 
@@ -73,7 +73,7 @@ describe('LinkedList', () => {
         expect(list.isEmpty).toBeTruthy();
       });
 
-      test('creates a list with the same nodes as the input array', () => {
+      it('creates a list with the same nodes as the input array', () => {
         // Act
         list.fromArray([1, 2, 3, 4]);
 
@@ -83,12 +83,12 @@ describe('LinkedList', () => {
     });
 
     describe('find', () => {
-      test('returns null for an empty list', () => {
+      it('returns null for an empty list', () => {
         // Act and Assert
         expect(list.find({ data: 1 })).toBeNull();
       });
 
-      test('finds a node by value', () => {
+      it('finds a node by value', () => {
         // Arrange
         list.append(1).append(2);
         const foundedNode = list.find({ data: 2 });
@@ -97,7 +97,7 @@ describe('LinkedList', () => {
         expect(foundedNode?.toString()).toBe('2');
       });
 
-      test('finds a node by predicate', () => {
+      it('finds a node by predicate', () => {
         // Arrange
         list.append(1).append(2).append(3);
 
@@ -109,12 +109,12 @@ describe('LinkedList', () => {
         expect(foundedNode?.toString()).toBe('3');
       });
 
-      test('returns null if a node is not found by value or predicate', () => {
+      it('returns null if a node is not found by value or predicate', () => {
         // Act and Assert
         expect(list.find({ data: 3 })).toBeNull();
       });
 
-      test('prioritizes predicate over value', () => {
+      it('prioritizes predicate over value', () => {
         // Arrange
         list.append(1).append(2);
 
@@ -126,7 +126,7 @@ describe('LinkedList', () => {
         expect(foundedNode?.toString()).toBe('2');
       });
 
-      test('returns the first node if multiple nodes match the predicate', () => {
+      it('returns the first node if multiple nodes match the predicate', () => {
         // Arrange
         list.append(1).append(2).append(3).append(4);
 
