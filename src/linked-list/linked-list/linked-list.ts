@@ -3,14 +3,14 @@ import type { CompareFunction } from '../../utils/comparator';
 import { LinkedListNode } from '../linked-list-node';
 // import type { Callback } from '../linked-list-node';
 
+interface InsertMethodOptions<T = any> {
+  value: T;
+  index: number;
+}
+
 // interface FindMethodOptions<T = any> {
 //   value?: T;
 //   predicate?: (value: T) => boolean;
-// }
-
-// interface InsertMethodOptions<T = any> {
-//   value: T;
-//   index: number;
 // }
 
 type NullableLinkedList<T> = LinkedListNode<T> | null;
@@ -44,7 +44,7 @@ export class LinkedList<T = any> {
   }
 
   get isEmpty(): boolean {
-    return this.head === null;
+    return this.#head === null;
   }
 
   toArray(): T[] {
@@ -96,11 +96,8 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  reverse(): void {
-    if (!this.#head || !this.#head.next) {
-      // eslint-disable-next-line no-useless-return
-      return;
-    }
+  reverse(): this {
+    if (!this.#head || !this.#head.next) return this;
 
     let currentNode = this.#head as LinkedListNode<T> | null;
     let prevNode = null;
@@ -114,13 +111,16 @@ export class LinkedList<T = any> {
 
     this.#tail = this.#head;
     this.#head = prevNode;
+
+    return this;
   }
 
-  delete(value: T) {
+  delete(value: T): NullableLinkedList<T> {
     if (this.isEmpty) return null;
 
     let deletedNode = null;
 
+    // at the beginning
     if (this.#head && this.#compare.equal(this.#head.value, value)) {
       deletedNode = this.#head;
       this.#head = this.#head.next;
@@ -132,6 +132,7 @@ export class LinkedList<T = any> {
     // do we have anything after the head removal?
     if (currentNode !== null) {
       while (currentNode.next) {
+        // in the middle
         if (this.#compare.equal(value, currentNode.next.value)) {
           deletedNode = currentNode.next;
           this.#length -= 1;
@@ -142,10 +143,48 @@ export class LinkedList<T = any> {
       }
     }
 
+    // at the end
     if (this.#compare.equal(this.#tail!.value, value)) {
       this.#tail = currentNode;
     }
 
     return deletedNode;
+  }
+
+  #findNodeByIndex(index: number): LinkedListNode<T> {
+    let node = this.#head!;
+
+    for (let i = 0; i < index; i += 1) {
+      node = node.next!;
+    }
+
+    return node;
+  }
+
+  insertAt({ value, index }: InsertMethodOptions<T>): this {
+    if (index < 0 || index > this.#length) {
+      throw new Error(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    }
+
+    // at the beginning
+    if (index === 0) {
+      this.prepend(value);
+      // at the end
+    } else if (index === this.#length) {
+      this.append(value);
+    } else {
+      // in the middle
+      const prevNode = this.#findNodeByIndex(index - 1);
+      const newNode = new LinkedListNode(value);
+
+      newNode.next = prevNode.next;
+      prevNode.next = newNode;
+
+      this.#length += 1;
+    }
+
+    return this;
   }
 }
