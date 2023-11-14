@@ -11,12 +11,4 @@ module.exports = {
   rules: {
     'import/prefer-default-export': 0,
   },
-  overrides: [
-    {
-      files: ['*.test.ts'],
-      rules: {
-        '@typescript-eslint/no-shadow': 0,
-      },
-    },
-  ],
 };

@@ -1,6 +1,6 @@
 import { describe, beforeEach, it, expect } from 'bun:test';
 import { LinkedList } from './linked-list';
-import { LinkedListNode } from '../linked-list-node';
+// import { LinkedListNode } from '../linked-list-node';
 
 describe('LinkedList', () => {
   // @ts-expect-error
