@@ -1,259 +1,150 @@
 import { Comparator } from '../../utils/comparator';
 import type { CompareFunction } from '../../utils/comparator';
 import { LinkedListNode } from '../linked-list-node';
-import type { Callback } from '../linked-list-node';
+// import type { Callback } from '../linked-list-node';
 
-interface FindMethodOptions<T = any> {
-  data?: T;
-  predicate?: (value: T) => boolean;
-}
+// interface FindMethodOptions<T = any> {
+//   value?: T;
+//   predicate?: (value: T) => boolean;
+// }
 
-interface InsertMethodOptions<T = any> {
-  data: T;
-  index: number;
-}
+// interface InsertMethodOptions<T = any> {
+//   value: T;
+//   index: number;
+// }
+
+type NullableLinkedList<T> = LinkedListNode<T> | null;
 
 export class LinkedList<T = any> {
-  head: LinkedListNode<T> | null;
+  #head: NullableLinkedList<T>;
 
-  tail: LinkedListNode<T> | null;
+  #tail: NullableLinkedList<T>;
 
-  length: number;
+  #length: number;
 
   #compare;
 
   constructor(compareFunction?: CompareFunction<T>) {
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
+    this.#head = null;
+    this.#tail = null;
+    this.#length = 0;
     this.#compare = new Comparator(compareFunction);
   }
 
-  toArray() {
-    if (this.isEmpty) return [];
+  get head(): NullableLinkedList<T> {
+    return this.#head;
+  }
 
-    const nodes = [] as LinkedListNode<T>[];
-    let currentNode = this.head as LinkedListNode<T> | null;
+  get tail(): NullableLinkedList<T> {
+    return this.#tail;
+  }
+
+  get length(): number {
+    return this.#length;
+  }
+
+  get isEmpty(): boolean {
+    return this.head === null;
+  }
+
+  toArray(): T[] {
+    const array = [];
+    let currentNode = this.#head;
 
     while (currentNode) {
-      nodes.push(currentNode);
+      array.push(currentNode?.value);
+
       currentNode = currentNode.next;
     }
 
-    return nodes;
+    return array;
   }
 
-  toString(callback?: Callback<T>) {
-    return this.toArray()
-      .map((node) => node.toString(callback))
-      .toString();
+  toString(): string {
+    return this.toArray().toString();
   }
 
-  append(data: T) {
-    const newNode = new LinkedListNode(data);
-    this.length += 1;
+  append(value: T): this {
+    const newNode = new LinkedListNode<T>(value);
 
     if (this.isEmpty) {
-      this.head = newNode;
-      this.tail = newNode;
-
-      return this;
+      this.#head = newNode;
+      this.#tail = newNode;
+    } else {
+      this.#tail!.next = newNode;
+      this.#tail = newNode;
     }
-    this.tail!.next = newNode;
-    this.tail = newNode;
+
+    this.#length += 1;
 
     return this;
   }
 
-  prepend(data: T) {
-    const newNode = new LinkedListNode(data, this.head);
-    this.head = newNode;
+  prepend(value: T): this {
+    const newNode = new LinkedListNode<T>(value);
 
-    if (!this.tail) {
-      this.tail = newNode;
+    if (this.isEmpty) {
+      this.#head = newNode;
+      this.#tail = newNode;
+    } else {
+      newNode.next = this.#head;
+      this.#head = newNode;
     }
 
-    this.length += 1;
+    this.#length += 1;
 
     return this;
   }
 
-  reverse() {
-    if (!this.head || !this.head.next) return this.head;
+  reverse(): void {
+    if (!this.#head || !this.#head.next) {
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
 
-    let currentNode = this.head as LinkedListNode<T> | null;
+    let currentNode = this.#head as LinkedListNode<T> | null;
     let prevNode = null;
 
     while (currentNode) {
       const nextNode = currentNode.next;
-      currentNode.next = prevNode;
+      [currentNode.next, prevNode] = [prevNode, currentNode];
 
-      prevNode = currentNode;
       currentNode = nextNode;
     }
 
-    this.tail = this.head;
-    this.head = prevNode;
-
-    return this;
+    this.#tail = this.#head;
+    this.#head = prevNode;
   }
 
-  delete(data: T) {
+  delete(value: T) {
     if (this.isEmpty) return null;
+
     let deletedNode = null;
 
-    while (this.head && this.#compare.equal(data, this.head.data)) {
-      deletedNode = this.head;
-      this.head = deletedNode.next;
-      this.length -= 1;
+    if (this.#head && this.#compare.equal(this.#head.value, value)) {
+      deletedNode = this.#head;
+      this.#head = this.#head.next;
+      this.#length -= 1;
     }
 
     let currentNode = this.head;
 
+    // do we have anything after the head removal?
     if (currentNode !== null) {
       while (currentNode.next) {
-        if (this.#compare.equal(currentNode.next.data, data)) {
+        if (this.#compare.equal(value, currentNode.next.value)) {
           deletedNode = currentNode.next;
           currentNode.next = currentNode.next.next;
-          this.length -= 1;
         } else {
           currentNode = currentNode.next;
         }
       }
     }
 
-    if (this.#compare.equal(this.tail!.data, data)) {
-      this.tail = currentNode;
+    if (this.#compare.equal(this.#tail!.value, value)) {
+      this.#tail = currentNode;
     }
 
     return deletedNode;
-  }
-
-  #findNode(index: number) {
-    let node = this.head;
-
-    for (let i = 0; i < index; i += 1) {
-      node = node!.next;
-    }
-
-    return node;
-  }
-
-  insertAt({ data, index }: InsertMethodOptions) {
-    if (index < 0 || index > this.length) {
-      throw new Error(
-        'Index should be greater than or equal to 0 and less than or equal to the list length.',
-      );
-    }
-
-    if (index === 0) {
-      this.prepend(data);
-    } else if (index === this.length) {
-      this.append(data);
-    } else {
-      const prevNode = this.#findNode(index - 1)!;
-      const newNode = new LinkedListNode<T>(data);
-
-      newNode.next = prevNode.next;
-      prevNode.next = newNode;
-
-      this.length += 1;
-    }
-
-    return this;
-  }
-
-  deleteHead() {
-    if (!this.head) return null;
-
-    const deletedHead = this.head;
-
-    if (deletedHead.next) {
-      this.head = deletedHead.next;
-    } else {
-      this.head = null;
-      this.tail = null;
-    }
-
-    this.length -= 1;
-
-    return deletedHead;
-  }
-
-  deleteTail() {
-    if (!this.head) return null;
-
-    const deletedTail = this.tail;
-
-    if (this.head === deletedTail) {
-      this.head = null;
-      this.tail = null;
-      this.length -= 1;
-
-      return deletedTail;
-    }
-
-    let currentNode = this.head;
-
-    while (currentNode.next) {
-      if (!currentNode.next.next) {
-        currentNode.next = null;
-      } else {
-        currentNode = currentNode.next;
-      }
-    }
-
-    this.tail = currentNode;
-    this.length -= 1;
-
-    return deletedTail;
-  }
-
-  indexOf(data: T) {
-    let count = 0;
-    let currentNode = this.head;
-
-    while (currentNode) {
-      if (this.#compare.equal(currentNode.data, data)) {
-        return count;
-      }
-
-      currentNode = currentNode.next;
-      count += 1;
-    }
-
-    return -1;
-  }
-
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
-
-    return this;
-  }
-
-  find({ data = undefined, predicate = undefined }: FindMethodOptions<T>) {
-    if (this.isEmpty) return null;
-
-    let currentNode = this.head as LinkedListNode<T> | null;
-
-    while (currentNode) {
-      if (predicate && predicate(currentNode.data)) {
-        return currentNode;
-      }
-
-      if (data !== undefined && this.#compare.equal(currentNode.data, data)) {
-        return currentNode;
-      }
-
-      currentNode = currentNode.next;
-    }
-
-    return null;
-  }
-
-  get isEmpty(): boolean {
-    return this.head === null;
   }
 }
