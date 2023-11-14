@@ -134,6 +134,7 @@ export class LinkedList<T = any> {
       while (currentNode.next) {
         if (this.#compare.equal(value, currentNode.next.value)) {
           deletedNode = currentNode.next;
+          this.#length -= 1;
           currentNode.next = currentNode.next.next;
         } else {
           currentNode = currentNode.next;
