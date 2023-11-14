@@ -379,8 +379,8 @@ describe('LinkedList', () => {
       it('can be used in a call chain', () => {
         // Arrange
         expect(list.length).toBe(0);
-        expect(list.head?.toString()).toBeNull();
-        expect(list.tail?.toString()).toBeNull();
+        expect(list.head).toBeNull();
+        expect(list.tail).toBeNull();
 
         // Act
         list

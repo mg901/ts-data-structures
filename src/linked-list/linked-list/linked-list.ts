@@ -171,19 +171,25 @@ export class LinkedList<T = any> {
     // at the beginning
     if (index === 0) {
       this.prepend(value);
-      // at the end
-    } else if (index === this.#length) {
-      this.append(value);
-    } else {
-      // in the middle
-      const prevNode = this.#findNodeByIndex(index - 1);
-      const newNode = new LinkedListNode(value);
 
-      newNode.next = prevNode.next;
-      prevNode.next = newNode;
-
-      this.#length += 1;
+      return this;
     }
+
+    // at the end
+    if (index === this.#length) {
+      this.append(value);
+
+      return this;
+    }
+
+    // in the middle
+    const prevNode = this.#findNodeByIndex(index - 1);
+    const newNode = new LinkedListNode(value);
+
+    newNode.next = prevNode.next;
+    prevNode.next = newNode;
+
+    this.#length += 1;
 
     return this;
   }
