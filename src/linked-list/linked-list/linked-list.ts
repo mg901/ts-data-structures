@@ -3,17 +3,12 @@ import type { CompareFunction } from '../../utils/comparator';
 import { LinkedListNode } from '../linked-list-node';
 // import type { Callback } from '../linked-list-node';
 
-type NullableLinkedList<T> = LinkedListNode<T> | null;
+type NullableLinkedListNode<T> = LinkedListNode<T> | null;
 
 type InsertAtOptions<T> = {
   value: T;
   index: number;
 };
-
-// type FindMethodOptions<T> = {
-//   value?: T;
-//   predicate?: (value: T) => boolean;
-// };
 
 interface BasicMethods<T> {
   toArray(): T[];
@@ -21,22 +16,22 @@ interface BasicMethods<T> {
   append(value: T): this;
   prepend(value: T): this;
   reverse(): this;
-  delete(value: T): NullableLinkedList<T>;
+  delete(value: T): NullableLinkedListNode<T>;
   insertAt(options: InsertAtOptions<T>): this;
-  deleteHead(): NullableLinkedList<T>;
+  deleteHead(): NullableLinkedListNode<T>;
+  deleteTail(): NullableLinkedListNode<T>;
 }
 
 export interface ILinkedListType<T> extends BasicMethods<T> {
-  readonly head: NullableLinkedList<T>;
-  readonly tail: NullableLinkedList<T>;
+  readonly head: NullableLinkedListNode<T>;
+  readonly tail: NullableLinkedListNode<T>;
   readonly length: number;
-  readonly isEmpty: boolean;
 }
 
 export class LinkedList<T = any> implements ILinkedListType<T> {
-  #head: NullableLinkedList<T>;
+  #head: NullableLinkedListNode<T>;
 
-  #tail: NullableLinkedList<T>;
+  #tail: NullableLinkedListNode<T>;
 
   #length: number;
 
@@ -59,10 +54,6 @@ export class LinkedList<T = any> implements ILinkedListType<T> {
 
   get length(): number {
     return this.#length;
-  }
-
-  get isEmpty() {
-    return this.#head === null;
   }
 
   toArray() {
@@ -115,7 +106,9 @@ export class LinkedList<T = any> implements ILinkedListType<T> {
   }
 
   reverse() {
-    if (!this.#head || !this.#head.next) return this;
+    if (this.#head === null || this.#head.next === null) {
+      return this;
+    }
 
     let currentNode = this.#head as LinkedListNode<T> | null;
     let prevNode = null;
@@ -213,8 +206,50 @@ export class LinkedList<T = any> implements ILinkedListType<T> {
   }
 
   deleteHead() {
-    if (!this.#head) return null;
+    if (this.#head === null) return null;
 
-    return this.#head;
+    const deletedNode = this.#head;
+
+    if (this.#head.next) {
+      this.#head = this.#head.next;
+    } else {
+      this.#head = null;
+      this.#tail = null;
+    }
+
+    this.#length -= 1;
+
+    return deletedNode;
+  }
+
+  deleteTail() {
+    if (this.#tail === null) return null;
+
+    const deletedTail = this.#tail;
+
+    // where is a single node
+    if (this.#head === this.#tail) {
+      this.#head = null;
+      this.#tail = null;
+
+      this.#length -= 1;
+
+      return deletedTail;
+    }
+
+    // where are multiple nodes
+    let currentNode = this.#head as NullableLinkedListNode<T>;
+
+    while (currentNode?.next) {
+      if (currentNode.next.next === null) {
+        currentNode.next = null;
+      } else {
+        currentNode = currentNode.next;
+      }
+    }
+
+    this.#tail = currentNode;
+
+    return deletedTail;
   }
 }
