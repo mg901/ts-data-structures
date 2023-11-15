@@ -26,7 +26,7 @@ interface BasicMethods<T> {
   deleteHead(): NullableLinkedList<T>;
 }
 
-export interface ILinkedListType<T = any> extends BasicMethods<T> {
+export interface ILinkedListType<T> extends BasicMethods<T> {
   readonly head: NullableLinkedList<T>;
   readonly tail: NullableLinkedList<T>;
   readonly length: number;
