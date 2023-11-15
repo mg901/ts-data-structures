@@ -11,13 +11,22 @@ describe('LinkedList', () => {
     list = new LinkedList();
   });
 
-  describe('Basic methods', () => {
-    describe('isEmpty', () => {
-      it('returns `false` for an empty list', () => {
-        expect(list).toBeTruthy();
-      });
+  describe('Initial state', () => {
+    it('has null had and tail', () => {
+      expect(list.head).toBeNull();
+      expect(list.tail).toBeNull();
     });
 
+    it('has length 0', () => {
+      expect(list.length).toBe(0);
+    });
+
+    it('is considered empty', () => {
+      expect(list.isEmpty).toBeTruthy();
+    });
+  });
+
+  describe('Basic methods', () => {
     describe('toArray', () => {
       it('returns an empty array for an empty list', () => {
         // Act and Assert
@@ -28,11 +37,8 @@ describe('LinkedList', () => {
         // Arrange
         list.append(1).append(2).append(3);
 
-        // Act
-        const receivedString = list.toArray().join(',');
-
         // Act and Assert
-        expect(receivedString).toBe('1,2,3');
+        expect(list.toArray()).toEqual([1, 2, 3]);
       });
     });
 
@@ -53,11 +59,6 @@ describe('LinkedList', () => {
 
     describe('append', () => {
       it('appends node to the empty list', () => {
-        // Arrange
-        expect(list.isEmpty).toBeTruthy();
-        expect(list.head).toBeNull();
-        expect(list.tail).toBeNull();
-
         // Arrange
         list.append(1);
 
@@ -91,9 +92,6 @@ describe('LinkedList', () => {
 
     describe('prepend', () => {
       it('prepends a new node to the beginning of an empty list', () => {
-        // Arrange
-        expect(list.isEmpty).toBeTruthy();
-
         // Act
         list.prepend(1);
 
@@ -120,12 +118,7 @@ describe('LinkedList', () => {
         expect(list.length).toBe(3);
       });
 
-      it('prepends nodes to the linked list', () => {
-        // Arrange
-        expect(list.isEmpty).toBeTruthy();
-        expect(list.head).toBeNull();
-        expect(list.tail).toBeNull();
-
+      it('can be used in a call chain', () => {
         // Act
         list.append(1).prepend(2);
 
@@ -188,10 +181,7 @@ describe('LinkedList', () => {
     });
 
     describe('delete', () => {
-      it('deletes node from an empty list correctly', () => {
-        // Arrange
-        expect(list.isEmpty).toBeTruthy();
-
+      it('deletes node from an empty list', () => {
         // Act
         expect(list.delete(5)).toBeNull();
 
@@ -199,7 +189,7 @@ describe('LinkedList', () => {
         expect(list.isEmpty).toBeTruthy();
       });
 
-      it('deletes the first element correctly', () => {
+      it('deletes the first element', () => {
         // Arrange
         list.append(1).append(2).append(3);
         expect(list.length).toBe(3);
@@ -215,7 +205,7 @@ describe('LinkedList', () => {
         expect(list.length).toBe(2);
       });
 
-      it('deletes an element in the middle correctly', () => {
+      it('deletes an element in the middle', () => {
         // Arrange
         list.append(1).append(2).append(3).append(4);
 
@@ -230,7 +220,7 @@ describe('LinkedList', () => {
         expect(list.length).toBe(3);
       });
 
-      it('deletes the last element correctly', () => {
+      it('deletes the last element', () => {
         // Arrange
         list.append(1).append(2).append(3);
 
@@ -245,7 +235,7 @@ describe('LinkedList', () => {
         expect(list.length).toBe(2);
       });
 
-      it('deletes the only element correctly', () => {
+      it('deletes the only element', () => {
         // Arrange
         list.append(1);
 
@@ -257,7 +247,7 @@ describe('LinkedList', () => {
         expect(list.isEmpty).toBeTruthy();
       });
 
-      it('deletes the element not in the list correctly', () => {
+      it('deletes the element not in the list', () => {
         // Arrange
         list.append(1).append(2);
 
@@ -399,6 +389,15 @@ describe('LinkedList', () => {
         expect(list.head?.toString()).toBe('1');
         expect(list.tail?.toString()).toBe('2');
       });
+    });
+
+    describe('deleteHead', () => {
+      it('returns null for empty the list', () => {
+        // Act and Assert
+        expect(list.deleteHead()).toBeNull();
+      });
+
+      it('deletes head of the list with one node', () => {});
     });
   });
 });

@@ -3,19 +3,37 @@ import type { CompareFunction } from '../../utils/comparator';
 import { LinkedListNode } from '../linked-list-node';
 // import type { Callback } from '../linked-list-node';
 
-interface InsertMethodOptions<T = any> {
-  value: T;
-  index: number;
-}
-
-// interface FindMethodOptions<T = any> {
-//   value?: T;
-//   predicate?: (value: T) => boolean;
-// }
-
 type NullableLinkedList<T> = LinkedListNode<T> | null;
 
-export class LinkedList<T = any> {
+type InsertAtOptions<T> = {
+  value: T;
+  index: number;
+};
+
+// type FindMethodOptions<T> = {
+//   value?: T;
+//   predicate?: (value: T) => boolean;
+// };
+
+interface BasicMethods<T> {
+  toArray(): T[];
+  toString(): string;
+  append(value: T): this;
+  prepend(value: T): this;
+  reverse(): this;
+  delete(value: T): NullableLinkedList<T>;
+  insertAt(options: InsertAtOptions<T>): this;
+  deleteHead(): NullableLinkedList<T>;
+}
+
+export interface ILinkedListType<T = any> extends BasicMethods<T> {
+  readonly head: NullableLinkedList<T>;
+  readonly tail: NullableLinkedList<T>;
+  readonly length: number;
+  readonly isEmpty: boolean;
+}
+
+export class LinkedList<T = any> implements ILinkedListType<T> {
   #head: NullableLinkedList<T>;
 
   #tail: NullableLinkedList<T>;
@@ -31,11 +49,11 @@ export class LinkedList<T = any> {
     this.#compare = new Comparator(compareFunction);
   }
 
-  get head(): NullableLinkedList<T> {
+  get head() {
     return this.#head;
   }
 
-  get tail(): NullableLinkedList<T> {
+  get tail() {
     return this.#tail;
   }
 
@@ -43,11 +61,11 @@ export class LinkedList<T = any> {
     return this.#length;
   }
 
-  get isEmpty(): boolean {
+  get isEmpty() {
     return this.#head === null;
   }
 
-  toArray(): T[] {
+  toArray() {
     const array = [];
     let currentNode = this.#head;
 
@@ -60,14 +78,14 @@ export class LinkedList<T = any> {
     return array;
   }
 
-  toString(): string {
+  toString() {
     return this.toArray().toString();
   }
 
-  append(value: T): this {
+  append(value: T) {
     const newNode = new LinkedListNode<T>(value);
 
-    if (this.isEmpty) {
+    if (this.#head === null) {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
@@ -80,10 +98,10 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  prepend(value: T): this {
+  prepend(value: T) {
     const newNode = new LinkedListNode<T>(value);
 
-    if (this.isEmpty) {
+    if (this.head === null) {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
@@ -96,7 +114,7 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  reverse(): this {
+  reverse() {
     if (!this.#head || !this.#head.next) return this;
 
     let currentNode = this.#head as LinkedListNode<T> | null;
@@ -115,8 +133,8 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  delete(value: T): NullableLinkedList<T> {
-    if (this.isEmpty) return null;
+  delete(value: T) {
+    if (this.head === null) return null;
 
     let deletedNode = null;
 
@@ -127,7 +145,7 @@ export class LinkedList<T = any> {
       this.#length -= 1;
     }
 
-    let currentNode = this.head;
+    let currentNode = this.#head;
 
     // do we have anything after the head removal?
     if (currentNode !== null) {
@@ -161,7 +179,7 @@ export class LinkedList<T = any> {
     return node;
   }
 
-  insertAt({ value, index }: InsertMethodOptions<T>): this {
+  insertAt({ value, index }: InsertAtOptions<T>): this {
     if (index < 0 || index > this.#length) {
       throw new Error(
         'Index should be greater than or equal to 0 and less than or equal to the list length.',
@@ -192,5 +210,11 @@ export class LinkedList<T = any> {
     this.#length += 1;
 
     return this;
+  }
+
+  deleteHead() {
+    if (!this.#head) return null;
+
+    return this.#head;
   }
 }
