@@ -27,6 +27,19 @@ describe('LinkedList', () => {
     expect(linkedList.length).toBe(0);
   });
 
+  describe('isEmpty', () => {
+    it('returns true for the empty list', () => {
+      // Assert
+      expect(linkedList.isEmpty).toBeTruthy();
+    });
+
+    it('return false for the non-empty list', () => {
+      linkedList.append(1);
+
+      expect(linkedList.isEmpty).toBeFalsy();
+    });
+  });
+
   describe('Basic methods', () => {
     describe('toArray', () => {
       it('returns an empty array for the empty list', () => {

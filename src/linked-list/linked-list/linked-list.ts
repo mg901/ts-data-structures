@@ -22,13 +22,14 @@ interface BasicMethods<T> {
   deleteTail(): NullableLinkedListNode<T>;
 }
 
-export interface ILinkedListType<T> extends BasicMethods<T> {
+export interface LinkedListType<T> extends BasicMethods<T> {
   readonly head: NullableLinkedListNode<T>;
   readonly tail: NullableLinkedListNode<T>;
   readonly length: number;
+  readonly isEmpty: boolean;
 }
 
-export class LinkedList<T = any> implements ILinkedListType<T> {
+export class LinkedList<T = any> implements LinkedListType<T> {
   #head: NullableLinkedListNode<T>;
 
   #tail: NullableLinkedListNode<T>;
@@ -42,6 +43,10 @@ export class LinkedList<T = any> implements ILinkedListType<T> {
     this.#tail = null;
     this.#length = 0;
     this.#compare = new Comparator(compareFunction);
+  }
+
+  get isEmpty() {
+    return this.#head === null;
   }
 
   get head() {
