@@ -183,284 +183,284 @@ describe('LinkedList', () => {
         expect(linkedList.length).toBe(2);
       });
 
-      // it('deletes an element in the middle', () => {
-      //   // Arrange
-      //   linkedList.append(1).append(2).append(3).append(4);
+      it('deletes an element in the middle', () => {
+        // Arrange
+        linkedList.append(1).append(2).append(3).append(4);
 
-      //   // Act
-      //   const deletedElement = linkedList.delete(2)!;
+        // Act
+        const deletedElement = linkedList.delete(2)!;
 
-      //   // Assert
-      //   expect(deletedElement.toString()).toBe('2');
-      //   expect(linkedList.head?.toString()).toBe('1');
-      //   expect(linkedList.tail?.toString()).toBe('4');
-      //   expect(linkedList.toString()).toBe('1,3,4');
-      //   expect(linkedList.length).toBe(3);
-      // });
+        // Assert
+        expect(deletedElement.toString()).toBe('2');
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('4');
+        expect(linkedList.toString()).toBe('1,3,4');
+        expect(linkedList.length).toBe(3);
+      });
 
-      // it('deletes the last element', () => {
-      //   // Arrange
-      //   linkedList.append(1).append(2).append(3);
+      it('deletes the last element', () => {
+        // Arrange
+        linkedList.append(1).append(2).append(3);
 
-      //   // Act
-      //   const deletedElement = linkedList.delete(3)!;
+        // Act
+        const deletedElement = linkedList.delete(3)!;
 
-      //   // Assert
-      //   expect(deletedElement.toString()).toBe('3');
-      //   expect(linkedList.head?.toString()).toBe('1');
-      //   expect(linkedList.tail?.toString()).toBe('2');
-      //   expect(linkedList.toString()).toBe('1,2');
-      //   expect(linkedList.length).toBe(2);
-      // });
+        // Assert
+        expect(deletedElement.toString()).toBe('3');
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('2');
+        expect(linkedList.toString()).toBe('1,2');
+        expect(linkedList.length).toBe(2);
+      });
 
-      // it('deletes the element outside the list', () => {
-      //   // Arrange
-      //   linkedList.append(1).append(2);
+      it('deletes the element outside the list', () => {
+        // Arrange
+        linkedList.append(1).append(2);
 
-      //   // Act
-      //   const deletedElement = linkedList.delete(3);
+        // Act
+        const deletedElement = linkedList.delete(3);
 
-      //   // Assert
-      //   expect(deletedElement).toBeNull();
-      //   expect(linkedList.head?.toString()).toBe('1');
-      //   expect(linkedList.tail?.toString()).toBe('2');
-      //   expect(linkedList.toString()).toBe('1,2');
-      //   expect(linkedList.length).toBe(2);
-      // });
+        // Assert
+        expect(deletedElement).toBeNull();
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('2');
+        expect(linkedList.toString()).toBe('1,2');
+        expect(linkedList.length).toBe(2);
+      });
     });
 
-    // describe('reverse', () => {
-    //   it('reverses the empty list', () => {
-    //     // Act
-    //     linkedList.reverse();
+    describe('reverse', () => {
+      it('reverses the empty list', () => {
+        // Act
+        linkedList.reverse();
 
-    //     // Assert
-    //     expect(linkedList.toString()).toBe('');
-    //     expect(linkedList.head).toBeNull();
-    //     expect(linkedList.tail).toBeNull();
-    //     expect(linkedList.toString()).toBe('');
-    //     expect(linkedList.length).toBe(0);
-    //   });
+        // Assert
+        expect(linkedList.toString()).toBe('');
+        expect(linkedList.head).toBeNull();
+        expect(linkedList.tail).toBeNull();
+        expect(linkedList.toString()).toBe('');
+        expect(linkedList.length).toBe(0);
+      });
 
-    //   it('it reverses the head of the singular node list', () => {
-    //     // Arrange
-    //     linkedList.append(1);
+      it('it reverses the head of the singular node list', () => {
+        // Arrange
+        linkedList.append(1);
 
-    //     // Act
-    //     linkedList.reverse();
+        // Act
+        linkedList.reverse();
 
-    //     // Assert
-    //     expect(linkedList.head?.toString()).toBe('1');
-    //     expect(linkedList.tail?.toString()).toBe('1');
-    //     expect(linkedList.toString()).toBe('1');
-    //   });
+        // Assert
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('1');
+        expect(linkedList.toString()).toBe('1');
+      });
 
-    //   it('reverses the list', () => {
-    //     // Arrange
-    //     linkedList.append(1).append(2).append(3);
+      it('reverses the list', () => {
+        // Arrange
+        linkedList.append(1).append(2).append(3);
 
-    //     // Act
-    //     linkedList.reverse();
+        // Act
+        linkedList.reverse();
 
-    //     // Assert
-    //     expect(linkedList.head?.toString()).toBe('3');
-    //     expect(linkedList.tail?.toString()).toBe('1');
-    //     expect(linkedList.toString()).toEqual('3,2,1');
-    //     expect(linkedList.length).toBe(3);
-    //   });
+        // Assert
+        expect(linkedList.head?.toString()).toBe('3');
+        expect(linkedList.tail?.toString()).toBe('1');
+        expect(linkedList.toString()).toEqual('3,2,1');
+        expect(linkedList.length).toBe(3);
+      });
 
-    //   it('can be used in a call chain', () => {
-    //     // Arrange
-    //     linkedList.append(1).append(2).append(3);
+      it('can be used in a call chain', () => {
+        // Arrange
+        linkedList.append(1).append(2).append(3);
 
-    //     // Act
-    //     linkedList.reverse().append(4);
+        // Act
+        linkedList.reverse().append(4);
 
-    //     // Assert
-    //     expect(linkedList.head?.toString()).toBe('3');
-    //     expect(linkedList.tail?.toString()).toBe('4');
-    //     expect(linkedList.toString()).toBe('3,2,1,4');
-    //     expect(linkedList.length).toBe(4);
-    //   });
-    // });
+        // Assert
+        expect(linkedList.head?.toString()).toBe('3');
+        expect(linkedList.tail?.toString()).toBe('4');
+        expect(linkedList.toString()).toBe('3,2,1,4');
+        expect(linkedList.length).toBe(4);
+      });
+    });
 
-    // describe('insertAt', () => {
-    //   it('throws exception if index less than list length', () => {
-    //     // Act
-    //     const result = () =>
-    //       linkedList.insertAt({
-    //         value: 1,
-    //         index: -1,
-    //       });
+    describe('insertAt', () => {
+      it('throws exception if index less than list length', () => {
+        // Act
+        const result = () =>
+          linkedList.insertAt({
+            value: 1,
+            index: -1,
+          });
 
-    //     // Assert
-    //     expect(result).toThrow(
-    //       'Index should be greater than or equal to 0 and less than or equal to the list length.',
-    //     );
-    //   });
+        // Assert
+        expect(result).toThrow(
+          'Index should be greater than or equal to 0 and less than or equal to the list length.',
+        );
+      });
 
-    //   it('throws exception if index greater than list length', () => {
-    //     // Act
-    //     const result = () =>
-    //       linkedList.insertAt({
-    //         value: 1,
-    //         index: 10,
-    //       });
+      it('throws exception if index greater than list length', () => {
+        // Act
+        const result = () =>
+          linkedList.insertAt({
+            value: 1,
+            index: 10,
+          });
 
-    //     // Assert
-    //     expect(result).toThrow(
-    //       'Index should be greater than or equal to 0 and less than or equal to the list length.',
-    //     );
-    //   });
+        // Assert
+        expect(result).toThrow(
+          'Index should be greater than or equal to 0 and less than or equal to the list length.',
+        );
+      });
 
-    //   it('inserts at the beginning of the list', () => {
-    //     // Arrange
-    //     expect(linkedList.length).toBe(0);
-    //     expect(linkedList.toString()).toBe('');
+      it('inserts at the beginning of the list', () => {
+        // Arrange
+        expect(linkedList.length).toBe(0);
+        expect(linkedList.toString()).toBe('');
 
-    //     // Act
-    //     linkedList.append(1);
+        // Act
+        linkedList.append(1);
 
-    //     // Assert
-    //     expect(linkedList.toString()).toBe('1');
-    //     expect(linkedList.length).toBe(1);
+        // Assert
+        expect(linkedList.toString()).toBe('1');
+        expect(linkedList.length).toBe(1);
 
-    //     // Act
-    //     linkedList.insertAt({
-    //       value: 0,
-    //       index: 0,
-    //     });
+        // Act
+        linkedList.insertAt({
+          value: 0,
+          index: 0,
+        });
 
-    //     // Assert
-    //     expect(linkedList.head?.toString()).toBe('0');
-    //     expect(linkedList.tail?.toString()).toBe('1');
-    //     expect(linkedList.toString()).toBe('0,1');
-    //     expect(linkedList.length).toBe(2);
-    //   });
+        // Assert
+        expect(linkedList.head?.toString()).toBe('0');
+        expect(linkedList.tail?.toString()).toBe('1');
+        expect(linkedList.toString()).toBe('0,1');
+        expect(linkedList.length).toBe(2);
+      });
 
-    //   it('inserts in the middle of the list', () => {
-    //     // Arrange
-    //     linkedList.append(1).append(2);
+      it('inserts in the middle of the list', () => {
+        // Arrange
+        linkedList.append(1).append(2);
 
-    //     // Act
-    //     linkedList.append(4);
+        // Act
+        linkedList.append(4);
 
-    //     // Assert
-    //     expect(linkedList.toString()).toBe('1,2,4');
-    //     expect(linkedList.length).toBe(3);
+        // Assert
+        expect(linkedList.toString()).toBe('1,2,4');
+        expect(linkedList.length).toBe(3);
 
-    //     // Act
-    //     linkedList.insertAt({
-    //       index: 2,
-    //       value: 3,
-    //     });
+        // Act
+        linkedList.insertAt({
+          index: 2,
+          value: 3,
+        });
 
-    //     // Assert
-    //     expect(linkedList.head?.toString()).toBe('1');
-    //     expect(linkedList.tail?.toString()).toBe('4');
-    //     expect(linkedList.toString()).toBe('1,2,3,4');
-    //     expect(linkedList.length).toBe(4);
-    //   });
+        // Assert
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('4');
+        expect(linkedList.toString()).toBe('1,2,3,4');
+        expect(linkedList.length).toBe(4);
+      });
 
-    //   it('inserts at the end of the list', () => {
-    //     // Arrange
-    //     expect(linkedList.length).toBe(0);
-    //     expect(linkedList.toString()).toBe('');
+      it('inserts at the end of the list', () => {
+        // Arrange
+        expect(linkedList.length).toBe(0);
+        expect(linkedList.toString()).toBe('');
 
-    //     // Act
-    //     linkedList.append(1);
+        // Act
+        linkedList.append(1);
 
-    //     // Assert
-    //     expect(linkedList.toString()).toBe('1');
-    //     expect(linkedList.length).toBe(1);
+        // Assert
+        expect(linkedList.toString()).toBe('1');
+        expect(linkedList.length).toBe(1);
 
-    //     // Act
-    //     linkedList.insertAt({
-    //       value: 2,
-    //       index: 1,
-    //     });
+        // Act
+        linkedList.insertAt({
+          value: 2,
+          index: 1,
+        });
 
-    //     // Assert
-    //     expect(linkedList.head?.toString()).toBe('1');
-    //     expect(linkedList.tail?.toString()).toBe('2');
-    //     expect(linkedList.toString()).toBe('1,2');
-    //     expect(linkedList.length).toBe(2);
-    //   });
+        // Assert
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('2');
+        expect(linkedList.toString()).toBe('1,2');
+        expect(linkedList.length).toBe(2);
+      });
 
-    //   it('can be used in a call chain', () => {
-    //     // Arrange
-    //     expect(linkedList.length).toBe(0);
-    //     expect(linkedList.head).toBeNull();
-    //     expect(linkedList.tail).toBeNull();
+      it('can be used in a call chain', () => {
+        // Arrange
+        expect(linkedList.length).toBe(0);
+        expect(linkedList.head).toBeNull();
+        expect(linkedList.tail).toBeNull();
 
-    //     // Act
-    //     linkedList
-    //       .insertAt({
-    //         index: 0,
-    //         value: 1,
-    //       })
-    //       .insertAt({
-    //         index: 1,
-    //         value: 2,
-    //       });
+        // Act
+        linkedList
+          .insertAt({
+            index: 0,
+            value: 1,
+          })
+          .insertAt({
+            index: 1,
+            value: 2,
+          });
 
-    //     // Assert
-    //     expect(linkedList.length).toBe(2);
-    //     expect(linkedList.toString()).toBe('1,2');
-    //     expect(linkedList.head?.toString()).toBe('1');
-    //     expect(linkedList.tail?.toString()).toBe('2');
-    //   });
-    // });
+        // Assert
+        expect(linkedList.length).toBe(2);
+        expect(linkedList.toString()).toBe('1,2');
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('2');
+      });
+    });
 
-    // describe('deleteHead', () => {
-    //   it('deletes the head from an empty list', () => {
-    //     // Act and Assert
-    //     expect(linkedList.deleteHead()).toBeNull();
-    //     assertEmptyLinkedList(linkedList);
-    //   });
+    describe('deleteHead', () => {
+      it('deletes the head from an empty list', () => {
+        // Act and Assert
+        expect(linkedList.deleteHead()).toBeNull();
+        assertEmptyLinkedList(linkedList);
+      });
 
-    //   it('deletes the head from the list with multiple nodes', () => {
-    //     // Arrange
-    //     linkedList.append(1).append(2).append(3);
+      it('deletes the head from the list with multiple nodes', () => {
+        // Arrange
+        linkedList.append(1).append(2).append(3);
 
-    //     // Act
-    //     const deletedHead = linkedList.deleteHead();
+        // Act
+        const deletedHead = linkedList.deleteHead();
 
-    //     expect(deletedHead?.toString()).toBe('1');
-    //     expect(linkedList.head?.toString()).toBe('2');
-    //     expect(linkedList.tail?.toString()).toBe('3');
-    //     expect(linkedList.length).toBe(2);
-    //   });
-    // });
+        expect(deletedHead?.toString()).toBe('1');
+        expect(linkedList.head?.toString()).toBe('2');
+        expect(linkedList.tail?.toString()).toBe('3');
+        expect(linkedList.length).toBe(2);
+      });
+    });
 
-    // describe('deleteTail', () => {
-    //   it('deletes the tail from an empty list', () => {
-    //     // Act and Assert
-    //     expect(linkedList.deleteTail()).toBeNull();
-    //     assertEmptyLinkedList(linkedList);
-    //   });
+    describe('deleteTail', () => {
+      it('deletes the tail from an empty list', () => {
+        // Act and Assert
+        expect(linkedList.deleteTail()).toBeNull();
+        assertEmptyLinkedList(linkedList);
+      });
 
-    //   it('deletes the tail form the list with a single node', () => {
-    //     linkedList.append(1);
+      it('deletes the tail form the list with a single node', () => {
+        linkedList.append(1);
 
-    //     const deletedTail = linkedList.deleteTail();
+        const deletedTail = linkedList.deleteTail();
 
-    //     expect(deletedTail?.toString()).toBe('1');
-    //     assertEmptyLinkedList(linkedList);
-    //   });
+        expect(deletedTail?.toString()).toBe('1');
+        assertEmptyLinkedList(linkedList);
+      });
 
-    //   it('deletes the tail from the list with multiple nodes', () => {
-    //     // Arrange
-    //     linkedList.append(1).append(2).append(3);
+      it('deletes the tail from the list with multiple nodes', () => {
+        // Arrange
+        linkedList.append(1).append(2).append(3);
 
-    //     // Act
-    //     const deletedTail = linkedList.deleteTail();
+        // Act
+        const deletedTail = linkedList.deleteTail();
 
-    //     // Assert
-    //     expect(deletedTail?.toString()).toBe('3');
-    //     expect(linkedList.head?.toString()).toBe('1');
-    //     expect(linkedList.tail?.toString()).toBe('2');
-    //   });
-    // });
+        // Assert
+        expect(deletedTail?.toString()).toBe('3');
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('2');
+      });
+    });
   });
 });
