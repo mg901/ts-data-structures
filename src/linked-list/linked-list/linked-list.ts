@@ -145,7 +145,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
 
     let currentNode = this.#head;
 
-    // do we have anything after the head removal?
+    // Do we have anything after the head removal?
     if (currentNode !== null) {
       while (currentNode.next) {
         // in the middle
@@ -160,7 +160,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     }
 
     // at the end
-    if (this.#compare.equal(this.#tail!.value, value)) {
+    if (this.#tail && this.#compare.equal(this.#tail.value, value)) {
       this.#tail = currentNode;
     }
 
