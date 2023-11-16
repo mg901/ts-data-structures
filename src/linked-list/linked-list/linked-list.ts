@@ -66,8 +66,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     let currentNode = this.#head;
 
     while (currentNode) {
-      array.push(currentNode?.value);
-
+      array.push(currentNode.value);
       currentNode = currentNode.next;
     }
 
@@ -79,7 +78,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   append(value: T) {
-    const newNode = new LinkedListNode<T>(value);
+    const newNode = new LinkedListNode(value);
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -95,9 +94,9 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   prepend(value: T) {
-    const newNode = new LinkedListNode<T>(value);
+    const newNode = new LinkedListNode(value);
 
-    if (this.head === null) {
+    if (this.#head === null) {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
@@ -110,48 +109,25 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     return this;
   }
 
-  reverse() {
-    if (this.#head === null || this.#head.next === null) {
-      return this;
-    }
-
-    let currentNode = this.#head as LinkedListNode<T> | null;
-    let prevNode = null;
-
-    while (currentNode) {
-      const nextNode = currentNode.next;
-      [currentNode.next, prevNode] = [prevNode, currentNode];
-
-      currentNode = nextNode;
-    }
-
-    this.#tail = this.#head;
-    this.#head = prevNode;
-
-    return this;
-  }
-
   delete(value: T) {
-    if (this.head === null) return null;
-
+    // if an empty list
+    if (this.#head === null) return null;
     let deletedNode = null;
 
     // at the beginning
-    if (this.#head && this.#compare.equal(this.#head.value, value)) {
+    if (this.#head && this.#compare.equal(value, this.#head.value)) {
       deletedNode = this.#head;
       this.#head = this.#head.next;
-      this.#length -= 1;
     }
 
     let currentNode = this.#head;
 
-    // Do we have anything after the head removal?
+    // // If the current node is't empty after the head removal.
     if (currentNode !== null) {
       while (currentNode.next) {
         // in the middle
         if (this.#compare.equal(value, currentNode.next.value)) {
           deletedNode = currentNode.next;
-          this.#length -= 1;
           currentNode.next = currentNode.next.next;
         } else {
           currentNode = currentNode.next;
@@ -160,66 +136,8 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     }
 
     // at the end
-    if (this.#tail && this.#compare.equal(this.#tail.value, value)) {
+    if (this.#tail && this.#compare.equal(value, this.#tail.value)) {
       this.#tail = currentNode;
-    }
-
-    return deletedNode;
-  }
-
-  #findNodeByIndex(index: number): LinkedListNode<T> {
-    let node = this.#head!;
-
-    for (let i = 0; i < index; i += 1) {
-      node = node.next!;
-    }
-
-    return node;
-  }
-
-  insertAt({ value, index }: InsertAtOptions<T>): this {
-    if (index < 0 || index > this.#length) {
-      throw new Error(
-        'Index should be greater than or equal to 0 and less than or equal to the list length.',
-      );
-    }
-
-    // at the beginning
-    if (index === 0) {
-      this.prepend(value);
-
-      return this;
-    }
-
-    // at the end
-    if (index === this.#length) {
-      this.append(value);
-
-      return this;
-    }
-
-    // in the middle
-    const prevNode = this.#findNodeByIndex(index - 1);
-    const newNode = new LinkedListNode(value);
-
-    newNode.next = prevNode.next;
-    prevNode.next = newNode;
-
-    this.#length += 1;
-
-    return this;
-  }
-
-  deleteHead() {
-    if (this.#head === null) return null;
-
-    const deletedNode = this.#head;
-
-    if (this.#head.next) {
-      this.#head = this.#head.next;
-    } else {
-      this.#head = null;
-      this.#tail = null;
     }
 
     this.#length -= 1;
@@ -227,34 +145,114 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     return deletedNode;
   }
 
-  deleteTail() {
-    if (this.#tail === null) return null;
+  // reverse() {
+  //   // if list empty or has a single node.
+  //   if (this.#head === null || this.#head.next === null) return this;
 
-    const deletedTail = this.#tail;
+  //   let currentNode = this.#head as NullableLinkedListNode<T>;
+  //   let prevNode = null;
 
-    // where is a single node
-    if (this.#head === this.#tail) {
-      this.#head = null;
-      this.#tail = null;
+  //   while (currentNode) {
+  //     const nextNode = currentNode.next;
+  //     currentNode.next = prevNode;
+  //     prevNode = currentNode;
+  //     currentNode = nextNode;
+  //   }
 
-      this.#length -= 1;
+  //   this.#tail = this.#head;
+  //   this.#head = prevNode;
 
-      return deletedTail;
-    }
+  //   return this;
+  // }
 
-    // where are multiple nodes
-    let currentNode = this.#head as NullableLinkedListNode<T>;
+  // #findNodeByIndex(index: number): LinkedListNode<T> {
+  //   let node = this.#head!;
 
-    while (currentNode?.next) {
-      if (currentNode.next.next === null) {
-        currentNode.next = null;
-      } else {
-        currentNode = currentNode.next;
-      }
-    }
+  //   for (let i = 0; i < index; i += 1) {
+  //     node = node.next!;
+  //   }
 
-    this.#tail = currentNode;
+  //   return node;
+  // }
 
-    return deletedTail;
-  }
+  // insertAt({ value, index }: InsertAtOptions<T>): this {
+  //   if (index < 0 || index > this.#length) {
+  //     throw new Error(
+  //       'Index should be greater than or equal to 0 and less than or equal to the list length.',
+  //     );
+  //   }
+
+  //   // at the beginning
+  //   if (index === 0) {
+  //     this.prepend(value);
+
+  //     return this;
+  //   }
+
+  //   // at the end
+  //   if (index === this.#length) {
+  //     this.append(value);
+
+  //     return this;
+  //   }
+
+  //   // in the middle
+  //   const prevNode = this.#findNodeByIndex(index - 1);
+  //   const newNode = new LinkedListNode(value);
+
+  //   newNode.next = prevNode.next;
+  //   prevNode.next = newNode;
+
+  //   this.#length += 1;
+
+  //   return this;
+  // }
+
+  // deleteHead() {
+  //   if (this.#head === null) return null;
+
+  //   const deletedNode = this.#head;
+
+  //   if (this.#head.next) {
+  //     this.#head = this.#head.next;
+  //   } else {
+  //     this.#head = null;
+  //     this.#tail = null;
+  //   }
+
+  //   this.#length -= 1;
+
+  //   return deletedNode;
+  // }
+
+  // deleteTail() {
+  //   if (this.#tail === null) return null;
+
+  //   const deletedTail = this.#tail;
+
+  //   // where is a single node
+  //   if (this.#head === this.#tail) {
+  //     this.#head = null;
+  //     this.#tail = null;
+
+  //     this.#length -= 1;
+
+  //     return deletedTail;
+  //   }
+
+  //   // where are multiple nodes
+  //   let currentNode = this.#head as NullableLinkedListNode<T>;
+
+  //   while (currentNode?.next) {
+  //     if (currentNode.next.next === null) {
+  //       currentNode.next = null;
+  //     } else {
+  //       currentNode = currentNode.next;
+  //     }
+  //   }
+
+  //   this.#tail = currentNode;
+
+  //   return deletedTail;
+  // }
 }

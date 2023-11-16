@@ -9,6 +9,7 @@ module.exports = {
     project: './tsconfig.eslint.json',
   },
   rules: {
+    'newline-before-return': 2,
     'import/prefer-default-export': 0,
   },
 };
