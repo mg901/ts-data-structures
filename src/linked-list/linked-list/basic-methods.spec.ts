@@ -270,11 +270,7 @@ describe('LinkedList', () => {
     describe('insertAt', () => {
       it('throws exception if index less than list length', () => {
         // Act
-        const result = () =>
-          linkedList.insertAt({
-            value: 1,
-            index: -1,
-          });
+        const result = () => linkedList.insertAt(-1, 1);
 
         // Assert
         expect(result).toThrow(
@@ -284,11 +280,7 @@ describe('LinkedList', () => {
 
       it('throws exception if index greater than list length', () => {
         // Act
-        const result = () =>
-          linkedList.insertAt({
-            value: 1,
-            index: 10,
-          });
+        const result = () => linkedList.insertAt(10, 1);
 
         // Assert
         expect(result).toThrow(
@@ -309,10 +301,7 @@ describe('LinkedList', () => {
         expect(linkedList.length).toBe(1);
 
         // Act
-        linkedList.insertAt({
-          value: 0,
-          index: 0,
-        });
+        linkedList.insertAt(0, 0);
 
         // Assert
         expect(linkedList.head?.toString()).toBe('0');
@@ -333,10 +322,7 @@ describe('LinkedList', () => {
         expect(linkedList.length).toBe(3);
 
         // Act
-        linkedList.insertAt({
-          index: 2,
-          value: 3,
-        });
+        linkedList.insertAt(2, 3);
 
         // Assert
         expect(linkedList.head?.toString()).toBe('1');
@@ -358,10 +344,7 @@ describe('LinkedList', () => {
         expect(linkedList.length).toBe(1);
 
         // Act
-        linkedList.insertAt({
-          value: 2,
-          index: 1,
-        });
+        linkedList.insertAt(1, 2);
 
         // Assert
         expect(linkedList.head?.toString()).toBe('1');
@@ -377,15 +360,7 @@ describe('LinkedList', () => {
         expect(linkedList.tail).toBeNull();
 
         // Act
-        linkedList
-          .insertAt({
-            index: 0,
-            value: 1,
-          })
-          .insertAt({
-            index: 1,
-            value: 2,
-          });
+        linkedList.insertAt(0, 1).insertAt(1, 2);
 
         // Assert
         expect(linkedList.length).toBe(2);
