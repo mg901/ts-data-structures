@@ -176,28 +176,20 @@ export class LinkedList<T = any> implements LinkedListType<T> {
       );
     }
 
-    // at the beginning
     if (index === 0) {
       this.prepend(value);
-
-      return this;
-    }
-
-    // at the end
-    if (index === this.#length) {
+    } else if (index === this.#length) {
       this.append(value);
+    } else {
+      // in the middle
+      const prevNode = this.#findNodeByIndex(index - 1);
+      const newNode = new LinkedListNode(value);
 
-      return this;
+      newNode.next = prevNode.next;
+      prevNode.next = newNode;
+
+      this.#length += 1;
     }
-
-    // in the middle
-    const prevNode = this.#findNodeByIndex(index - 1);
-    const newNode = new LinkedListNode(value);
-
-    newNode.next = prevNode.next;
-    prevNode.next = newNode;
-
-    this.#length += 1;
 
     return this;
   }

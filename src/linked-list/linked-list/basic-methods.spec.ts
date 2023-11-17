@@ -310,27 +310,6 @@ describe('LinkedList', () => {
         expect(linkedList.length).toBe(2);
       });
 
-      it('inserts in the middle of the list', () => {
-        // Arrange
-        linkedList.append(1).append(2);
-
-        // Act
-        linkedList.append(4);
-
-        // Assert
-        expect(linkedList.toString()).toBe('1,2,4');
-        expect(linkedList.length).toBe(3);
-
-        // Act
-        linkedList.insertAt(2, 3);
-
-        // Assert
-        expect(linkedList.head?.toString()).toBe('1');
-        expect(linkedList.tail?.toString()).toBe('4');
-        expect(linkedList.toString()).toBe('1,2,3,4');
-        expect(linkedList.length).toBe(4);
-      });
-
       it('inserts at the end of the list', () => {
         // Arrange
         expect(linkedList.length).toBe(0);
@@ -351,6 +330,27 @@ describe('LinkedList', () => {
         expect(linkedList.tail?.toString()).toBe('2');
         expect(linkedList.toString()).toBe('1,2');
         expect(linkedList.length).toBe(2);
+      });
+
+      it('inserts in the middle of the list', () => {
+        // Arrange
+        linkedList.append(1).append(2);
+
+        // Act
+        linkedList.append(4);
+
+        // Assert
+        expect(linkedList.toString()).toBe('1,2,4');
+        expect(linkedList.length).toBe(3);
+
+        // Act
+        linkedList.insertAt(2, 3);
+
+        // Assert
+        expect(linkedList.head?.toString()).toBe('1');
+        expect(linkedList.tail?.toString()).toBe('4');
+        expect(linkedList.toString()).toBe('1,2,3,4');
+        expect(linkedList.length).toBe(4);
       });
 
       it('can be used in a call chain', () => {
