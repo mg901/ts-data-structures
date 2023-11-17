@@ -5,11 +5,6 @@ import { LinkedListNode } from '../linked-list-node';
 
 type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 
-type InsertAtOptions<T> = {
-  value: T;
-  index: number;
-};
-
 interface BasicMethods<T> {
   toArray(): T[];
   toString(): string;
@@ -17,7 +12,7 @@ interface BasicMethods<T> {
   prepend(value: T): this;
   reverse(): this;
   delete(value: T): NullableLinkedListNode<T>;
-  insertAt(options: InsertAtOptions<T>): this;
+  insertAt(index: number, value: T): this;
   deleteHead(): NullableLinkedListNode<T>;
   deleteTail(): NullableLinkedListNode<T>;
 }
@@ -175,7 +170,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     return node;
   }
 
-  insertAt({ value, index }: InsertAtOptions<T>): this {
+  insertAt(index: number, value: T): this {
     if (index < 0 || index > this.#length) {
       throw new Error(
         'Index should be greater than or equal to 0 and less than or equal to the list length.',
