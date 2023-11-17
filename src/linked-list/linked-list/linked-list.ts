@@ -75,7 +75,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   append(value: T) {
     const newNode = new LinkedListNode(value);
 
-    if (this.#head === null) {
+    if (this.#length === 0) {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
@@ -91,7 +91,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   prepend(value: T) {
     const newNode = new LinkedListNode(value);
 
-    if (this.#head === null) {
+    if (this.#length === 0) {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
@@ -106,7 +106,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
 
   delete(target: T) {
     // If the list is empty.
-    if (this.#head === null) return null;
+    if (this.length === 0) return null;
 
     let deletedNode = null;
 
@@ -141,16 +141,15 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   reverse() {
-    // if list empty or has a single node.
-    if (this.#head === null || this.#head.next === null) return this;
+    if (this.#length === 0 || this.#length === 1) return this;
 
-    let currentNode = this.#head as NullableLinkedListNode<T>;
+    let currentNode = this.#head;
     let prevNode = null;
 
     while (currentNode) {
       const nextNode = currentNode.next;
-      currentNode.next = prevNode;
-      prevNode = currentNode;
+      [currentNode.next, prevNode] = [prevNode, currentNode];
+
       currentNode = nextNode;
     }
 
@@ -204,11 +203,11 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   deleteHead() {
-    if (this.#head === null) return null;
+    if (this.#length === 0) return null;
 
     const deletedNode = this.#head;
 
-    if (this.#head.next) {
+    if (this.#head?.next) {
       this.#head = this.#head.next;
     } else {
       this.#head = null;
@@ -221,7 +220,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   deleteTail() {
-    if (this.#tail === null) return null;
+    if (this.#length === 0) return null;
 
     const deletedTail = this.#tail;
 
@@ -236,7 +235,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     }
 
     // where are multiple nodes
-    let currentNode = this.#head as NullableLinkedListNode<T>;
+    let currentNode = this.#head;
 
     while (currentNode?.next) {
       if (currentNode.next.next === null) {
