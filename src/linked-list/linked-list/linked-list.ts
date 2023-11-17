@@ -3,7 +3,7 @@ import type { CompareFunction } from '../../utils/comparator';
 import { LinkedListNode } from '../linked-list-node';
 // import type { Callback } from '../linked-list-node';
 
-type NullableLinkedListNode<T> = LinkedListNode<T> | null;
+type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 
 type InsertAtOptions<T> = {
   value: T;
