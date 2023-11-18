@@ -146,48 +146,6 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     return deletedNode;
   }
 
-  // delete(target: T) {
-  //   if (this.#head === null) return null;
-
-  //   let deletedNode = null as NullableLinkedListNode;
-
-  //   // At beginning
-  //   if (this.#compare.equal(target, this.#head.value)) {
-  //     deletedNode = this.#head;
-  //     this.#head = deletedNode.next;
-
-  //     // If empty list
-  //     if (this.#head === null) {
-  //       this.#tail = null;
-  //     }
-  //   } else {
-  //     // At the middle
-  //     let currentNode = this.#head;
-  //     while (
-  //       currentNode.next &&
-  //       !this.#compare.equal(target, currentNode.next.value)
-  //     ) {
-  //       currentNode = currentNode.next;
-  //     }
-
-  //     if (currentNode.next !== null) {
-  //       deletedNode = currentNode.next;
-  //       currentNode.next = deletedNode.next;
-
-  //       // Delete last element
-  //       if (currentNode.next === null) {
-  //         this.#tail = currentNode;
-  //       }
-  //     }
-  //   }
-
-  //   if (deletedNode) {
-  //     this.#length -= 1;
-  //   }
-
-  //   return deletedNode;
-  // }
-
   reverse() {
     if (this.#head === null || this.#head.next === null) return this;
 
