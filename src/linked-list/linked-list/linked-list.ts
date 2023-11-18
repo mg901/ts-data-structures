@@ -104,46 +104,94 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     return this;
   }
 
-  delete(target: T) {
-    // If the list is empty.
-    if (this.length === 0) return null;
+  delete(value: T) {
+    if (this.#head === null) return null;
 
-    let deletedNode = null;
+    let deletedNode = null as NullableLinkedListNode;
 
-    // At the beginning.
-    if (this.#head && this.#compare.equal(target, this.#head.value)) {
+    // Deleting from the beginning of the list
+    if (this.#compare.equal(value, this.#head.value)) {
       deletedNode = this.#head;
-      this.#length -= 1;
-
       this.#head = deletedNode.next;
-    }
 
-    let currentNode = this.#head;
+      if (this.#head === null) {
+        this.#tail = null;
+      }
+    } else {
+      let currentNode = this.#head;
 
-    // At the middle.
-    while (currentNode?.next) {
-      if (this.#compare.equal(target, currentNode.next.value)) {
-        deletedNode = currentNode.next;
-        this.#length -= 1;
-
-        currentNode.next = deletedNode.next;
-      } else {
+      while (
+        currentNode.next &&
+        !this.#compare.equal(value, currentNode.next.value)
+      ) {
         currentNode = currentNode.next;
+      }
+
+      // Deleting the node from the middle
+      if (currentNode.next !== null) {
+        deletedNode = currentNode.next;
+        currentNode.next = deletedNode?.next;
+
+        // Deleting the last element
+        if (currentNode.next === null) {
+          this.#tail = currentNode;
+        }
       }
     }
 
-    // At the end.
-    if (this.#tail && this.#compare.equal(target, this.#tail.value)) {
-      this.#tail = currentNode;
+    if (deletedNode) {
+      this.#length -= 1;
     }
 
     return deletedNode;
   }
 
-  reverse() {
-    if (this.#length === 0 || this.#length === 1) return this;
+  // delete(target: T) {
+  //   if (this.#head === null) return null;
 
-    let currentNode = this.#head;
+  //   let deletedNode = null as NullableLinkedListNode;
+
+  //   // At beginning
+  //   if (this.#compare.equal(target, this.#head.value)) {
+  //     deletedNode = this.#head;
+  //     this.#head = deletedNode.next;
+
+  //     // If empty list
+  //     if (this.#head === null) {
+  //       this.#tail = null;
+  //     }
+  //   } else {
+  //     // At the middle
+  //     let currentNode = this.#head;
+  //     while (
+  //       currentNode.next &&
+  //       !this.#compare.equal(target, currentNode.next.value)
+  //     ) {
+  //       currentNode = currentNode.next;
+  //     }
+
+  //     if (currentNode.next !== null) {
+  //       deletedNode = currentNode.next;
+  //       currentNode.next = deletedNode.next;
+
+  //       // Delete last element
+  //       if (currentNode.next === null) {
+  //         this.#tail = currentNode;
+  //       }
+  //     }
+  //   }
+
+  //   if (deletedNode) {
+  //     this.#length -= 1;
+  //   }
+
+  //   return deletedNode;
+  // }
+
+  reverse() {
+    if (this.#head === null || this.#head.next === null) return this;
+
+    let currentNode = this.#head as NullableLinkedListNode;
     let prevNode = null;
 
     while (currentNode) {
@@ -160,13 +208,13 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   #findNodeByIndex(index: number): LinkedListNode<T> {
-    let node = this.#head!;
+    let currentNode = this.#head!;
 
     for (let i = 0; i < index; i += 1) {
-      node = node.next!;
+      currentNode = currentNode.next!;
     }
 
-    return node;
+    return currentNode;
   }
 
   insertAt(index: number, value: T): this {
@@ -195,7 +243,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   deleteHead() {
-    if (this.#length === 0) return null;
+    if (this.#head === null) return null;
 
     const deletedNode = this.#head;
 
@@ -212,7 +260,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   }
 
   deleteTail() {
-    if (this.#length === 0) return null;
+    if (this.#head === null) return null;
 
     const deletedTail = this.#tail;
 
