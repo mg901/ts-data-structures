@@ -109,17 +109,19 @@ export class LinkedList<T = any> implements LinkedListType<T> {
 
     let deletedNode = null as NullableLinkedListNode;
 
-    // Deleting from the beginning of the list
+    // Delete from the beginning of the list
     if (this.#compare.equal(value, this.#head.value)) {
       deletedNode = this.#head;
       this.#head = deletedNode.next;
 
+      // Update tail if the list becomes empty
       if (this.#head === null) {
         this.#tail = null;
       }
     } else {
       let currentNode = this.#head;
 
+      // Search for the node by value
       while (
         currentNode.next &&
         !this.#compare.equal(value, currentNode.next.value)
@@ -127,12 +129,12 @@ export class LinkedList<T = any> implements LinkedListType<T> {
         currentNode = currentNode.next;
       }
 
-      // Deleting the node from the middle
+      // Delete the node from the middle
       if (currentNode.next !== null) {
         deletedNode = currentNode.next;
         currentNode.next = deletedNode?.next;
 
-        // Deleting the last element
+        // Update tail if the last node is deleted
         if (currentNode.next === null) {
           this.#tail = currentNode;
         }
@@ -183,11 +185,13 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     }
 
     if (index === 0) {
+      // Insert at the beginning
       this.prepend(value);
     } else if (index === this.#length) {
+      // Insert end
       this.append(value);
     } else {
-      // in the middle
+      // Insert in the middle
       const prevNode = this.#findNodeByIndex(index - 1);
       const newNode = new LinkedListNode(value);
 
@@ -222,28 +226,23 @@ export class LinkedList<T = any> implements LinkedListType<T> {
 
     const deletedTail = this.#tail;
 
-    // where is a single node
+    // If there is only one node.
     if (this.#head === this.#tail) {
       this.#head = null;
       this.#tail = null;
+    } else {
+      // If multiple nodes.
+      let currentNode = this.#head;
 
-      this.#length -= 1;
-
-      return deletedTail;
-    }
-
-    // where are multiple nodes
-    let currentNode = this.#head;
-
-    while (currentNode?.next) {
-      if (currentNode.next.next === null) {
-        currentNode.next = null;
-      } else {
+      while (currentNode?.next?.next) {
         currentNode = currentNode.next;
       }
+
+      currentNode.next = null;
+      this.#tail = currentNode;
     }
 
-    this.#tail = currentNode;
+    this.#length -= 1;
 
     return deletedTail;
   }
