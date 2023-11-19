@@ -91,14 +91,13 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   prepend(value: T) {
     const newNode = new LinkedListNode(value);
 
-    if (this.#length === 0) {
+    if (this.#head === null) {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
-      newNode.next = this.#head;
       this.#head = newNode;
+      newNode.next = this.#head;
     }
-
     this.#length += 1;
 
     return this;
