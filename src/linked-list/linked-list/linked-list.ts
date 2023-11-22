@@ -75,7 +75,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   append(value: T) {
     const newNode = new LinkedListNode(value);
 
-    if (this.#length === 0) {
+    if (this.#head === null) {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
@@ -109,7 +109,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     let deletedNode = null as NullableLinkedListNode;
 
     // Delete from the beginning of the list
-    if (this.#compare.equal(value, this.#head.value)) {
+    if (value === this.#head.value) {
       deletedNode = this.#head;
       this.#head = deletedNode.next;
 
@@ -121,10 +121,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
       let currentNode = this.#head;
 
       // Search for the node by value
-      while (
-        currentNode.next &&
-        !this.#compare.equal(value, currentNode.next.value)
-      ) {
+      while (currentNode.next && value !== currentNode.next.value) {
         currentNode = currentNode.next;
       }
 
