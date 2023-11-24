@@ -4,7 +4,15 @@ import type { CompareFunction } from '../utils/comparator';
 
 type NullableDoublyLinkedListNode<T> = DoublyLinkedListNode<T> | null;
 
-export class DoublyLinkedList<T = any> {
+export interface IDoublyLinkedList<T = any> {
+  readonly head: NullableDoublyLinkedListNode<T>;
+  readonly tail: NullableDoublyLinkedListNode<T>;
+  readonly length: number;
+  toArray(): T[];
+  toString(): string;
+}
+
+export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   #head: NullableDoublyLinkedListNode<T> = null;
 
   #tail: NullableDoublyLinkedListNode<T> = null;
@@ -39,5 +47,9 @@ export class DoublyLinkedList<T = any> {
     }
 
     return nodes;
+  }
+
+  toString() {
+    return this.toArray().toString();
   }
 }

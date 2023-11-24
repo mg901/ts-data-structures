@@ -25,4 +25,10 @@ describe('DoublyLinkedList', () => {
       expect(doublyLinkedList.length).toBe(0);
     });
   });
+
+  describe('toString', () => {
+    it('returns an empty string for the empty list', () => {
+      expect(doublyLinkedList.toString()).toBe('');
+    });
+  });
 });
