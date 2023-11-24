@@ -1,5 +1,3 @@
-import { Comparator } from '../utils/comparator';
-import type { CompareFunction } from '../utils/comparator';
 import { LinkedListNode } from './linked-list-node';
 
 type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
@@ -34,12 +32,6 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   #tail: NullableLinkedListNode<T> = null;
 
   #length: number = 0;
-
-  #compare: Comparator<T>;
-
-  constructor(compareFunction?: CompareFunction<T>) {
-    this.#compare = new Comparator(compareFunction);
-  }
 
   get isEmpty() {
     return this.#head === null;
