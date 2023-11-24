@@ -1,4 +1,4 @@
-import { describe, expect, test as it } from 'bun:test';
+import { describe, expect, test as it } from 'vitest';
 import { Comparator } from './comparator';
 import type { CompareFunction } from './comparator';
 
