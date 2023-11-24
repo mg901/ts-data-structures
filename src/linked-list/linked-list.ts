@@ -6,7 +6,7 @@ type FindMethodOptions<T = any> = {
   predicate?: (value: T) => boolean;
 };
 
-export interface LinkedListType<T> {
+export interface ILinkedList<T = any> {
   readonly head: NullableLinkedListNode<T>;
   readonly tail: NullableLinkedListNode<T>;
   readonly length: number;
@@ -26,7 +26,7 @@ export interface LinkedListType<T> {
   find(options: FindMethodOptions<T>): NullableLinkedListNode<T>;
 }
 
-export class LinkedList<T = any> implements LinkedListType<T> {
+export class LinkedList<T = any> implements ILinkedList<T> {
   #head: NullableLinkedListNode<T> = null;
 
   #tail: NullableLinkedListNode<T> = null;
