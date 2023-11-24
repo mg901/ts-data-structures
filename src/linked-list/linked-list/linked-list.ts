@@ -9,7 +9,12 @@ type FindMethodOptions<T = any> = {
   predicate?: (value: T) => boolean;
 };
 
-interface BasicMethods<T> {
+export interface LinkedListType<T> {
+  readonly head: NullableLinkedListNode<T>;
+  readonly tail: NullableLinkedListNode<T>;
+  readonly length: number;
+  readonly isEmpty: boolean;
+
   toArray(): T[];
   toString(): string;
   append(value: T): this;
@@ -19,13 +24,9 @@ interface BasicMethods<T> {
   insertAt(index: number, value: T): this;
   deleteHead(): NullableLinkedListNode<T>;
   deleteTail(): NullableLinkedListNode<T>;
-}
-
-export interface LinkedListType<T> extends BasicMethods<T> {
-  readonly head: NullableLinkedListNode<T>;
-  readonly tail: NullableLinkedListNode<T>;
-  readonly length: number;
-  readonly isEmpty: boolean;
+  indexOf(value: T): number;
+  fromArray(array: T[]): this;
+  find(options: FindMethodOptions<T>): NullableLinkedListNode<T>;
 }
 
 export class LinkedList<T = any> implements LinkedListType<T> {
@@ -270,8 +271,8 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     return this;
   }
 
-  find({ value = undefined, predicate = undefined }: FindMethodOptions<T>) {
-    if (this.isEmpty) return null;
+  find({ value, predicate }: FindMethodOptions<T>) {
+    if (this.#head === null) return null;
 
     let currentNode = this.head as LinkedListNode<T> | null;
 
