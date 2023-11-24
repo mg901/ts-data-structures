@@ -45,9 +45,9 @@ describe('LinkedListNode', () => {
     expect(node.toString()).toEqual('1');
 
     // Act
-    node.value = 'new value';
+    node.value = 2;
 
     // Assert
-    expect(node.toString()).toEqual('new value');
+    expect(node.toString()).toEqual('2');
   });
 });
