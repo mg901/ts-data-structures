@@ -1,7 +1,6 @@
 import { Comparator } from '../../utils/comparator';
 import type { CompareFunction } from '../../utils/comparator';
 import { LinkedListNode } from './linked-list-node';
-// import type { Callback } from '../linked-list-node';
 
 type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 type FindMethodOptions<T = any> = {
@@ -274,7 +273,7 @@ export class LinkedList<T = any> implements LinkedListType<T> {
   find({ value, predicate }: FindMethodOptions<T>) {
     if (this.#head === null) return null;
 
-    let currentNode = this.head as LinkedListNode<T> | null;
+    let currentNode = this.head as NullableLinkedListNode;
 
     while (currentNode) {
       if (predicate && predicate(currentNode.value)) {
