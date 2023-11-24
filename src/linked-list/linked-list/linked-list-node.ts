@@ -1,12 +1,20 @@
 export type Callback<T> = (data: T) => string;
 
-export class LinkedListNode<T = any> {
+type NullableLinkedListNode<T> = LinkedListNode<T> | null;
+
+export interface ILinkedListNode<T = any> {
+  value: T;
+  next: NullableLinkedListNode<T>;
+  toString(callback?: Callback<T>): string;
+}
+
+export class LinkedListNode<T = any> implements ILinkedListNode<T> {
   value: T;
 
   next: LinkedListNode<T> | null;
 
-  constructor(data: any, next: LinkedListNode<T> | null = null) {
-    this.value = data;
+  constructor(value: T, next: NullableLinkedListNode<T>) {
+    this.value = value;
     this.next = next;
   }
 
