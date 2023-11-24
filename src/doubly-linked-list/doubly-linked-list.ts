@@ -11,11 +11,17 @@ export interface IDoublyLinkedList<T = any> {
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
-  #head: NullableDoublyLinkedListNode<T> = null;
+  #head: NullableDoublyLinkedListNode<T>;
 
-  #tail: NullableDoublyLinkedListNode<T> = null;
+  #tail: NullableDoublyLinkedListNode<T>;
 
-  #length: number = 0;
+  #length: number;
+
+  constructor() {
+    this.#head = null;
+    this.#tail = null;
+    this.#length = 0;
+  }
 
   get head() {
     return this.#head;
