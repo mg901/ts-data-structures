@@ -1,9 +1,13 @@
 import { Comparator } from '../../utils/comparator';
 import type { CompareFunction } from '../../utils/comparator';
-import { LinkedListNode } from '../linked-list-node';
+import { LinkedListNode } from './linked-list-node';
 // import type { Callback } from '../linked-list-node';
 
 type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
+type FindMethodOptions<T = any> = {
+  value?: T;
+  predicate?: (value: T) => boolean;
+};
 
 interface BasicMethods<T> {
   toArray(): T[];
@@ -95,9 +99,10 @@ export class LinkedList<T = any> implements LinkedListType<T> {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
-      this.#head = newNode;
       newNode.next = this.#head;
+      this.#head = newNode;
     }
+
     this.#length += 1;
 
     return this;
@@ -241,5 +246,47 @@ export class LinkedList<T = any> implements LinkedListType<T> {
     this.#length -= 1;
 
     return deletedTail;
+  }
+
+  indexOf(value: T) {
+    let count = 0;
+    let currentNode = this.head;
+
+    while (currentNode) {
+      if (value === currentNode.value) return count;
+
+      currentNode = currentNode.next;
+      count += 1;
+    }
+
+    return -1;
+  }
+
+  fromArray(array: T[]) {
+    array.forEach((value) => {
+      this.append(value);
+    });
+
+    return this;
+  }
+
+  find({ value = undefined, predicate = undefined }: FindMethodOptions<T>) {
+    if (this.isEmpty) return null;
+
+    let currentNode = this.head as LinkedListNode<T> | null;
+
+    while (currentNode) {
+      if (predicate && predicate(currentNode.value)) {
+        return currentNode;
+      }
+
+      if (value !== undefined && value === currentNode.value) {
+        return currentNode;
+      }
+
+      currentNode = currentNode.next;
+    }
+
+    return null;
   }
 }

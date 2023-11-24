@@ -5,8 +5,8 @@
     "start": "bun run src/index.ts",
     "commit": "cz",
     "lint": "eslint . --fix --ext .ts",
-    "test": "bun test",
-    "test:watch": "bun test --watch",
+    "test": "bun vitest",
+    "test:watch": "bun vitest --watch",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -22,7 +22,8 @@
     "eslint-plugin-jest": "^27.6.0",
     "eslint-plugin-prettier": "^5.0.1",
     "git-cz": "^4.9.0",
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "vitest": "^0.34.6"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
