@@ -36,15 +36,15 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   }
 
   toArray() {
-    let nodes = [];
+    let array = [];
     let currentNode = this.#head;
 
     while (currentNode !== null) {
-      nodes.push(currentNode.value);
+      array.push(currentNode.value);
       currentNode = currentNode.next;
     }
 
-    return nodes;
+    return array;
   }
 
   toString() {
