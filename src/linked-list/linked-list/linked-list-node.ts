@@ -4,16 +4,15 @@ type NullableLinkedListNode<T> = LinkedListNode<T> | null;
 
 export interface ILinkedListNode<T = any> {
   value: T;
-  next: NullableLinkedListNode<T>;
+  next?: NullableLinkedListNode<T>;
   toString(callback?: Callback<T>): string;
 }
 
 export class LinkedListNode<T = any> implements ILinkedListNode<T> {
-  value: T;
-
-  next: LinkedListNode<T> | null;
-
-  constructor(value: T, next: NullableLinkedListNode<T>) {
+  constructor(
+    public value: T,
+    public next: NullableLinkedListNode<T> = null,
+  ) {
     this.value = value;
     this.next = next;
   }
