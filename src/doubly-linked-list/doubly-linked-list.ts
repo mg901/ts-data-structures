@@ -1,4 +1,6 @@
 import { DoublyLinkedListNode } from './doubly-linked-list-node';
+import { Comparator } from '../utils/comparator';
+import type { CompareFunction } from '../utils/comparator';
 
 type NullableDoublyLinkedListNode<T> = DoublyLinkedListNode<T> | null;
 
@@ -16,6 +18,12 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   #tail: NullableDoublyLinkedListNode<T> = null;
 
   #length: number = 0;
+
+  #compare: Comparator<T>;
+
+  constructor(compareFunction?: CompareFunction<T>) {
+    this.#compare = new Comparator(compareFunction);
+  }
 
   get head() {
     return this.#head;
