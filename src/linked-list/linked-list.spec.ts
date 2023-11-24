@@ -2,8 +2,8 @@ import { describe, beforeEach, it, expect } from 'vitest';
 import { LinkedList } from './linked-list';
 
 describe('LinkedList', () => {
-  // @ts-expect-error
-  let linkedList: LinkedList<number> = null;
+  // @ts-ignore
+  let linkedList = null as LinkedList<number>;
 
   // Arrange
   beforeEach(() => {
