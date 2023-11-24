@@ -1,16 +1,16 @@
 export type Callback<T> = (data: T) => string;
 
 export class LinkedListNode<T = any> {
-  data: T;
+  value: T;
 
   next: LinkedListNode<T> | null;
 
   constructor(data: any, next: LinkedListNode<T> | null = null) {
-    this.data = data;
+    this.value = data;
     this.next = next;
   }
 
   toString(callback?: Callback<T>) {
-    return callback ? callback(this.data) : `${this.data}`;
+    return callback ? callback(this.value) : `${this.value}`;
   }
 }

@@ -9,14 +9,9 @@ module.exports = {
     project: './tsconfig.eslint.json',
   },
   rules: {
+    'newline-before-return': 2,
+    'prefer-const': 0,
     'import/prefer-default-export': 0,
+    'import/no-extraneous-dependencies': 0,
   },
-  overrides: [
-    {
-      files: ['*.test.ts'],
-      rules: {
-        '@typescript-eslint/no-shadow': 0,
-      },
-    },
-  ],
 };
