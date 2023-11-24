@@ -62,7 +62,7 @@ describe('LinkedList', () => {
     });
 
     it('appends nodes to the non-empty list', () => {
-      // Act
+      // Arrange
       linkedList.append(1);
       linkedList.append(2);
 
@@ -75,9 +75,10 @@ describe('LinkedList', () => {
     });
 
     it('can be used in a call chain', () => {
-      // Act
+      // Arrange
       linkedList.append(1).append(2).append(3);
 
+      // Assert
       expect(linkedList.toString()).toBe('1,2,3');
       expect(linkedList.length).toBe(3);
     });
@@ -85,7 +86,7 @@ describe('LinkedList', () => {
 
   describe('prepend', () => {
     it('prepends a new node to the beginning of the empty list', () => {
-      // Act
+      // Assert
       linkedList.prepend(1);
 
       // Assert
