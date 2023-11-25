@@ -23,8 +23,8 @@ describe('DoublyLinkedList', () => {
       list.append(1);
 
       // Act and Assert
-      expect(list.head?.toString()).toBe('1');
-      expect(list.tail?.toString()).toBe('1');
+      expect(list.head?.value).toBe(1);
+      expect(list.tail?.value).toBe(1);
       expect(list.length).toBe(1);
     });
 
@@ -34,8 +34,12 @@ describe('DoublyLinkedList', () => {
       list.append(2);
 
       // Act and Assert
-      expect(list.head?.toString()).toBe('1');
-      expect(list.tail?.toString()).toBe('2');
+      expect(list.head?.value).toBe(1);
+      expect(list.head?.next?.value).toBe(2);
+      expect(list.head?.next?.prev?.value).toBe(1);
+
+      expect(list.tail?.value).toBe(2);
+      expect(list.tail?.next).toBeNull();
       expect(list.length).toBe(2);
     });
 
@@ -44,8 +48,7 @@ describe('DoublyLinkedList', () => {
       list.append(1).append(2).append(3);
 
       // Act and Assert
-      expect(list.head?.toString()).toBe('1');
-      expect(list.tail?.toString()).toBe('3');
+      expect(list.toString).toBe('1,2,3');
       expect(list.length).toBe(3);
     });
   });

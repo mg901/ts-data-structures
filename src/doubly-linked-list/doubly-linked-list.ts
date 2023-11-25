@@ -77,8 +77,8 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
       this.#tail = newNode;
     } else {
       newNode.next = this.#head;
+      this.#head.prev = newNode;
       this.#head = newNode;
-      this.#tail!.prev = newNode;
     }
 
     this.#length += 1;
