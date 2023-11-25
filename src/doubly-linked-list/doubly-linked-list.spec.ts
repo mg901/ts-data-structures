@@ -3,69 +3,111 @@ import { DoublyLinkedList } from './doubly-linked-list';
 
 describe('DoublyLinkedList', () => {
   // @ts-ignore
-  let doublyLinkedList = null as DoublyLinkedList<number>;
+  let list = null as DoublyLinkedList<number>;
 
   // Arrange
   beforeEach(() => {
-    doublyLinkedList = new DoublyLinkedList<number>();
+    list = new DoublyLinkedList<number>();
   });
 
   it('returns the initial state correctly', () => {
     // Act and Assert
-    expect(doublyLinkedList.head).toBeNull();
-    expect(doublyLinkedList.tail).toBeNull();
-    expect(doublyLinkedList.length).toBe(0);
+    expect(list.head).toBeNull();
+    expect(list.tail).toBeNull();
+    expect(list.length).toBe(0);
+  });
+
+  describe('append', () => {
+    it('appends node to the empty list', () => {
+      // Arrange
+      list.append(1);
+
+      // Act and Assert
+      expect(list.head?.toString()).toBe('1');
+      expect(list.tail?.toString()).toBe('1');
+      expect(list.length).toBe(1);
+    });
+
+    it('appends nodes to the non-empty list', () => {
+      // Arrange
+      list.append(1);
+      list.append(2);
+
+      // Act and Assert
+      expect(list.head?.toString()).toBe('1');
+      expect(list.tail?.toString()).toBe('2');
+      expect(list.length).toBe(2);
+    });
+
+    it('can be used in call chain', () => {
+      // Arrange
+      list.append(1).append(2).append(3);
+
+      // Act and Assert
+      expect(list.head?.toString()).toBe('1');
+      expect(list.tail?.toString()).toBe('3');
+      expect(list.length).toBe(3);
+    });
   });
 
   describe('toArray', () => {
     it('returns an empty array for the empty list', () => {
       // Act and Assert
-      expect(doublyLinkedList.toArray()).toEqual([]);
-      expect(doublyLinkedList.head).toBeNull();
-      expect(doublyLinkedList.tail).toBeNull();
-      expect(doublyLinkedList.length).toBe(0);
+      expect(list.toArray()).toEqual([]);
+      expect(list.head).toBeNull();
+      expect(list.tail).toBeNull();
+      expect(list.length).toBe(0);
     });
   });
 
   describe('toString', () => {
     it('returns an empty string for the empty list', () => {
       // Act and Assert
-      expect(doublyLinkedList.toString()).toBe('');
+      expect(list.toString()).toBe('');
     });
   });
 
-  describe('append', () => {
-    it('appends node to the empty list', () => {
+  describe('prepend', () => {
+    it('prepends a new node to the beginning of the empty list', () => {
       // Arrange
-      doublyLinkedList.append(1);
+      list.prepend(1);
 
       // Act and Assert
-      expect(doublyLinkedList.head?.toString()).toBe('1');
-      expect(doublyLinkedList.tail?.toString()).toBe('1');
-      expect(doublyLinkedList.length).toBe(1);
+      expect(list.head?.value).toBe(1);
+      expect(list.head?.next).toBeNull();
+      expect(list.head?.prev).toBeNull();
+
+      expect(list.tail?.value).toBe(1);
+      expect(list.tail?.next).toBeNull();
+      expect(list.head?.prev).toBeNull();
+
+      expect(list.length).toBe(1);
     });
 
-    it('appends nodes to the non-empty list', () => {
+    it('prepends a new node to the beginning of the non-empty list', () => {
       // Arrange
-      doublyLinkedList.append(1);
-      doublyLinkedList.append(2);
+      list.append(2);
+      list.prepend(1);
 
       // Act and Assert
-      expect(doublyLinkedList.head?.toString()).toBe('1');
-      expect(doublyLinkedList.tail?.toString()).toBe('2');
-      expect(doublyLinkedList.length).toBe(2);
-      expect(doublyLinkedList.toString()).toBe('1,2');
+      expect(list.head?.value).toBe(1);
+      expect(list.head?.next?.value).toBe(2);
+      expect(list.head?.prev).toBeNull();
+
+      expect(list.tail?.value).toBe(2);
+      expect(list.tail?.next).toBeNull();
+      expect(list.tail?.prev?.value).toBe(1);
+
+      expect(list.length).toBe(2);
     });
 
-    it('can be used in call chain', () => {
+    it('can be used in call chain ', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2).append(3);
+      list.prepend(3).prepend(2).prepend(1);
 
       // Act and Assert
-      expect(doublyLinkedList.head?.toString()).toBe('1');
-      expect(doublyLinkedList.tail?.toString()).toBe('3');
-      expect(doublyLinkedList.toString()).toBe('1,2,3');
-      expect(doublyLinkedList.length).toBe(3);
+      expect(list.toString()).toBe('1,2,3');
+      expect(list.length).toBe(3);
     });
   });
 });

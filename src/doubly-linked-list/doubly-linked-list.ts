@@ -68,4 +68,21 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   toString() {
     return this.toArray().toString();
   }
+
+  prepend(value: T) {
+    const newNode = new DoublyLinkedListNode(value);
+
+    if (this.#head === null) {
+      this.#head = newNode;
+      this.#tail = newNode;
+    } else {
+      newNode.next = this.#head;
+      this.#head = newNode;
+      this.#tail!.prev = newNode;
+    }
+
+    this.#length += 1;
+
+    return this;
+  }
 }

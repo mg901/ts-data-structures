@@ -56,8 +56,12 @@ describe('LinkedList', () => {
       linkedList.append(1);
 
       // Act and Assert
-      expect(linkedList.head?.toString()).toBe('1');
-      expect(linkedList.tail?.toString()).toBe('1');
+      expect(linkedList.head?.value).toBe(1);
+      expect(linkedList.head?.next).toBeNull();
+
+      expect(linkedList.tail?.value).toBe(1);
+      expect(linkedList.tail?.next).toBeNull();
+
       expect(linkedList.length).toBe(1);
     });
 
@@ -66,19 +70,20 @@ describe('LinkedList', () => {
       linkedList.append(1);
       linkedList.append(2);
 
-      // Assert
-      expect(linkedList.head?.toString()).toBe('1');
-      expect(linkedList.tail?.toString()).toBe('2');
-      expect(linkedList.length).toBe(2);
-      expect(linkedList.toString()).toBe('1,2');
+      // Act and Assert
+      expect(linkedList.head?.value).toBe(1);
+      expect(linkedList.head?.next?.value).toBe(2);
+
+      expect(linkedList.tail?.value).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
+      expect(linkedList.length).toBe(2);
     });
 
     it('can be used in a call chain', () => {
       // Arrange
       linkedList.append(1).append(2).append(3);
 
-      // Assert
+      // Act and Assert
       expect(linkedList.toString()).toBe('1,2,3');
       expect(linkedList.length).toBe(3);
     });
@@ -86,41 +91,41 @@ describe('LinkedList', () => {
 
   describe('prepend', () => {
     it('prepends a new node to the beginning of the empty list', () => {
-      // Assert
+      // Arrange
       linkedList.prepend(1);
 
-      // Assert
-      expect(linkedList.toString()).toBe('1');
-      expect(linkedList.head?.toString()).toBe('1');
-      expect(linkedList.tail?.toString()).toBe('1');
+      // Act and Assert
+      expect(linkedList.head?.value).toBe(1);
+      expect(linkedList.head?.next).toBeNull();
+
+      expect(linkedList.tail?.value).toBe(1);
       expect(linkedList.tail?.next).toBeNull();
       expect(linkedList.length).toBe(1);
     });
 
     it('prepends a new node to the beginning of a non-empty list', () => {
-      // Arrange
-      linkedList.append(2).append(3);
-
-      // Act
+      // Act and Assert
+      linkedList.append(2);
       linkedList.prepend(1);
 
-      // Assert
-      expect(linkedList.toString()).toBe('1,2,3');
-      expect(linkedList.head?.toString()).toBe('1');
-      expect(linkedList.tail?.toString()).toBe('3');
+      // Act and Assert
+      expect(linkedList.head?.value).toBe(1);
+      expect(linkedList.head?.next?.value).toBe(2);
+
+      expect(linkedList.tail?.value).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
-      expect(linkedList.length).toBe(3);
+
+      expect(linkedList.length).toBe(2);
     });
 
     it('can be used in a call chain', () => {
-      // Act
-      linkedList.append(1).prepend(2);
+      // Arrange
+      linkedList.prepend(3).prepend(2).prepend(1);
 
-      // Assert
-      expect(linkedList.length).toBe(2);
-      expect(linkedList.head?.value).toBe(2);
-      expect(linkedList.tail?.value).toBe(1);
-      expect(linkedList.tail?.next).toBeNull();
+      // Act and Assert
+
+      expect(linkedList.toString()).toBe('1,2,3');
+      expect(linkedList.length).toBe(3);
     });
   });
 
