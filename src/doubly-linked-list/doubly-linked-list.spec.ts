@@ -48,7 +48,7 @@ describe('DoublyLinkedList', () => {
       list.append(1).append(2).append(3);
 
       // Act and Assert
-      expect(list.toString).toBe('1,2,3');
+      expect(list.toString()).toBe('1,2,3');
       expect(list.length).toBe(3);
     });
   });
