@@ -6,6 +6,7 @@ export interface IDoublyLinkedList<T = any> {
   readonly head: NullableDoublyLinkedListNode<T>;
   readonly tail: NullableDoublyLinkedListNode<T>;
   readonly length: number;
+  append(value: T): this;
   toArray(): T[];
   toString(): string;
 }
@@ -35,16 +36,33 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return this.#length;
   }
 
+  append(value: T) {
+    const newNode = new DoublyLinkedListNode(value);
+
+    if (this.#head === null) {
+      this.#head = newNode;
+      this.#tail = newNode;
+    } else {
+      this.#tail!.next = newNode;
+      newNode.prev = this.#tail;
+      this.#tail = newNode;
+    }
+
+    this.#length += 1;
+
+    return this;
+  }
+
   toArray() {
-    let nodes = [];
+    let array = [];
     let currentNode = this.#head;
 
     while (currentNode !== null) {
-      nodes.push(currentNode.value);
+      array.push(currentNode.value);
       currentNode = currentNode.next;
     }
 
-    return nodes;
+    return array;
   }
 
   toString() {
