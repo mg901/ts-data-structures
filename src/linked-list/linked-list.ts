@@ -102,29 +102,29 @@ export class LinkedList<T = any> implements ILinkedList<T> {
 
     let deletedNode = null as NullableLinkedListNode;
 
-    // Delete from the beginning of the list
+    // Delete from the beginning of the list.
     if (value === this.#head.value) {
       deletedNode = this.#head;
       this.#head = deletedNode.next;
 
-      // Update tail if the list becomes empty
+      // Update tail if the list becomes empty.
       if (this.#head === null) {
         this.#tail = null;
       }
     } else {
       let currentNode = this.#head;
 
-      // Search for the node by value
+      // Search for the node by value.
       while (currentNode.next && value !== currentNode.next.value) {
         currentNode = currentNode.next;
       }
 
-      // Delete the node from the middle
+      // Delete the node from the middle.
       if (currentNode.next !== null) {
         deletedNode = currentNode.next;
         currentNode.next = deletedNode?.next;
 
-        // Update tail if the last node is deleted
+        // Update tail if the last node is deleted.
         if (currentNode.next === null) {
           this.#tail = currentNode;
         }

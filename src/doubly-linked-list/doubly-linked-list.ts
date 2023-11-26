@@ -1,6 +1,6 @@
 import { DoublyLinkedListNode } from './doubly-linked-list-node';
 
-type NullableDoublyLinkedListNode<T> = DoublyLinkedListNode<T> | null;
+type NullableDoublyLinkedListNode<T = any> = DoublyLinkedListNode<T> | null;
 
 export interface IDoublyLinkedList<T = any> {
   readonly head: NullableDoublyLinkedListNode<T>;
@@ -43,8 +43,8 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
       this.#head = newNode;
       this.#tail = newNode;
     } else {
-      this.#tail!.next = newNode;
       newNode.prev = this.#tail;
+      this.#tail!.next = newNode;
       this.#tail = newNode;
     }
 
@@ -84,5 +84,49 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     this.#length += 1;
 
     return this;
+  }
+
+  delete(value: T) {
+    if (this.#head === null) return null;
+
+    let deletedNode = null as NullableDoublyLinkedListNode;
+
+    // Delete from the beginning of the list.
+    if (value === this.#head.value) {
+      deletedNode = this.#head;
+      this.#head = deletedNode.next;
+
+      // Update tail if the list becomes empty.
+      if (this.#head === null) {
+        this.#tail = null;
+      } else {
+        this.#head.prev = null;
+      }
+    } else {
+      let currentNode = this.#head;
+
+      // Search for the node by value.
+      while (currentNode.next && value !== currentNode.next.value) {
+        currentNode = currentNode.next;
+      }
+
+      // Delete the node from the middle.
+      if (currentNode.next !== null) {
+        deletedNode = currentNode.next;
+        currentNode.next = deletedNode.next;
+
+        if (currentNode.next === null) {
+          this.#tail = currentNode;
+        } else {
+          currentNode.next.prev = currentNode;
+        }
+      }
+    }
+
+    if (deletedNode) {
+      this.#length -= 1;
+    }
+
+    return deletedNode;
   }
 }
