@@ -413,10 +413,13 @@ describe('LinkedList', () => {
     });
 
     it('deletes the tail form the list with a single node', () => {
+      // Arrange
       linkedList.append(1);
 
+      // Act
       const deletedTail = linkedList.deleteTail();
 
+      // Assert
       expect(deletedTail?.value).toBe(1);
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
@@ -432,11 +435,12 @@ describe('LinkedList', () => {
 
       // Assert
       expect(deletedTail?.value).toBe(3);
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.head?.next?.value).toBe(2);
-      expect(linkedList.tail?.toString()).toBe(2);
 
-      expect(linkedList.toString()).toBe('2,3');
+      expect(linkedList.head?.value).toBe(1);
+      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.tail?.next).toBeNull();
+
+      expect(linkedList.toString()).toBe('1,2');
     });
   });
 
