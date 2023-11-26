@@ -12,12 +12,12 @@ export interface ILinkedList<T = any> {
   readonly length: number;
   readonly isEmpty: boolean;
 
+  append(value: T): this;
   toArray(): T[];
   toString(): string;
-  append(value: T): this;
   prepend(value: T): this;
-  reverse(): this;
   delete(value: T): NullableLinkedListNode<T>;
+  reverse(): this;
   insertAt(index: number, value: T): this;
   deleteHead(): NullableLinkedListNode<T>;
   deleteTail(): NullableLinkedListNode<T>;
@@ -33,10 +33,6 @@ export class LinkedList<T = any> implements ILinkedList<T> {
 
   #length: number = 0;
 
-  get isEmpty() {
-    return this.#head === null;
-  }
-
   get head() {
     return this.#head;
   }
@@ -49,20 +45,8 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     return this.#length;
   }
 
-  toArray() {
-    const array = [];
-    let currentNode = this.#head;
-
-    while (currentNode) {
-      array.push(currentNode.value);
-      currentNode = currentNode.next;
-    }
-
-    return array;
-  }
-
-  toString() {
-    return this.toArray().toString();
+  get isEmpty() {
+    return this.#head === null;
   }
 
   append(value: T) {
@@ -79,6 +63,22 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     this.#length += 1;
 
     return this;
+  }
+
+  toArray() {
+    const array = [];
+    let currentNode = this.#head;
+
+    while (currentNode) {
+      array.push(currentNode.value);
+      currentNode = currentNode.next;
+    }
+
+    return array;
+  }
+
+  toString() {
+    return this.toArray().toString();
   }
 
   prepend(value: T) {

@@ -9,6 +9,7 @@ export interface IDoublyLinkedList<T = any> {
   append(value: T): this;
   toArray(): T[];
   toString(): string;
+  delete(value: T): NullableDoublyLinkedListNode<T>;
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {

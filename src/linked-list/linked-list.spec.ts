@@ -30,26 +30,6 @@ describe('LinkedList', () => {
     });
   });
 
-  describe('toArray', () => {
-    it('returns an empty array for the empty list', () => {
-      // Act and Assert
-      expect(linkedList.toArray()).toEqual([]);
-      expect(linkedList.head).toBeNull();
-      expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
-    });
-  });
-
-  describe('toString', () => {
-    it('returns an empty string for the empty list', () => {
-      // Act and Assert
-      expect(linkedList.toString()).toBe('');
-      expect(linkedList.head).toBeNull();
-      expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
-    });
-  });
-
   describe('append', () => {
     it('appends node to the empty list', () => {
       // Arrange
@@ -86,6 +66,26 @@ describe('LinkedList', () => {
       // Act and Assert
       expect(linkedList.toString()).toBe('1,2,3');
       expect(linkedList.length).toBe(3);
+    });
+  });
+
+  describe('toArray', () => {
+    it('returns an empty array for the empty list', () => {
+      // Act and Assert
+      expect(linkedList.toArray()).toEqual([]);
+      expect(linkedList.head).toBeNull();
+      expect(linkedList.tail).toBeNull();
+      expect(linkedList.length).toBe(0);
+    });
+  });
+
+  describe('toString', () => {
+    it('returns an empty string for the empty list', () => {
+      // Act and Assert
+      expect(linkedList.toString()).toBe('');
+      expect(linkedList.head).toBeNull();
+      expect(linkedList.tail).toBeNull();
+      expect(linkedList.length).toBe(0);
     });
   });
 
