@@ -19,35 +19,41 @@ describe('DoublyLinkedList', () => {
 
   describe('append', () => {
     it('appends node to the empty list', () => {
-      // Arrange
+      // Act
       doublyList.append(1);
 
-      // Act and Assert
+      // Assert
       expect(doublyList.head?.value).toBe(1);
+      expect(doublyList.head?.prev).toBeNull();
+
       expect(doublyList.tail?.value).toBe(1);
+      expect(doublyList.tail?.next).toBeNull();
+
       expect(doublyList.length).toBe(1);
     });
 
     it('appends nodes to the non-empty list', () => {
-      // Arrange
+      // Act
       doublyList.append(1);
       doublyList.append(2);
 
-      // Act and Assert
+      // Assert
       expect(doublyList.head?.value).toBe(1);
       expect(doublyList.head?.next?.value).toBe(2);
       expect(doublyList.head?.next?.prev?.value).toBe(1);
 
       expect(doublyList.tail?.value).toBe(2);
       expect(doublyList.tail?.next).toBeNull();
+
+      expect(doublyList.toString()).toBe('1,2');
       expect(doublyList.length).toBe(2);
     });
 
     it('can be used in call chain', () => {
-      // Arrange
+      // Act
       doublyList.append(1).append(2).append(3);
 
-      // Act and Assert
+      // Assert
       expect(doublyList.toString()).toBe('1,2,3');
       expect(doublyList.length).toBe(3);
     });
@@ -55,8 +61,11 @@ describe('DoublyLinkedList', () => {
 
   describe('toArray', () => {
     it('returns an empty array for the empty list', () => {
-      // Act and Assert
-      expect(doublyList.toArray()).toEqual([]);
+      // Act
+      const received = doublyList.toArray();
+
+      // Assert
+      expect(received).toEqual([]);
       expect(doublyList.head).toBeNull();
       expect(doublyList.tail).toBeNull();
       expect(doublyList.length).toBe(0);
@@ -106,10 +115,10 @@ describe('DoublyLinkedList', () => {
     });
 
     it('can be used in call chain ', () => {
-      // Arrange
+      // Act
       doublyList.prepend(3).prepend(2).prepend(1);
 
-      // Act and Assert
+      // Assert
       expect(doublyList.toString()).toBe('1,2,3');
       expect(doublyList.length).toBe(3);
     });
@@ -117,10 +126,14 @@ describe('DoublyLinkedList', () => {
 
   describe('delete', () => {
     it('returns null when deleting a non-existing node', () => {
-      // Act and Assert
-      expect(doublyList.delete(5)).toBeNull();
+      // Act
+      const deletedNode = doublyList.delete(5);
+
+      // Assert
+      expect(deletedNode).toBeNull();
       expect(doublyList.head).toBeNull();
       expect(doublyList.tail).toBeNull();
+
       expect(doublyList.length).toBe(0);
     });
 
@@ -128,9 +141,14 @@ describe('DoublyLinkedList', () => {
       // Arrange
       doublyList.append(1).append(2);
 
-      // Act and Assert
-      expect(doublyList.delete(3)).toBeNull();
+      // Act
+      const deletedNode = doublyList.delete(3);
+
+      // Assert
+      expect(deletedNode).toBeNull();
       expect(doublyList.head?.value).toBe(1);
+      expect(doublyList.head?.prev).toBeNull();
+
       expect(doublyList.tail?.value).toBe(2);
       expect(doublyList.tail?.next).toBeNull();
 
@@ -166,7 +184,9 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.head?.value).toBe(2);
       expect(doublyList.head?.next?.value).toBe(3);
       expect(doublyList.head?.prev).toBeNull();
+
       expect(doublyList.tail?.value).toBe(3);
+      expect(doublyList.tail?.next).toBeNull();
 
       expect(doublyList.length).toBe(2);
       expect(doublyList.toString()).toBe('2,3');
@@ -183,6 +203,8 @@ describe('DoublyLinkedList', () => {
       expect(deletedNode?.value).toBe(2);
       expect(doublyList.head?.next?.value).toBe(3);
       expect(doublyList.head?.next?.prev?.value).toBe(1);
+      expect(doublyList.tail?.next).toBeNull();
+
       expect(doublyList.toString()).toBe('1,3,4');
       expect(doublyList.length).toBe(3);
     });
@@ -226,7 +248,11 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(doublyList.head?.value).toBe(1);
+      expect(doublyList.head?.prev).toBeNull();
+
       expect(doublyList.tail?.value).toBe(1);
+      expect(doublyList.tail?.next).toBeNull();
+
       expect(doublyList.toString()).toBe('1');
     });
 
@@ -256,8 +282,104 @@ describe('DoublyLinkedList', () => {
       // Assert
       expect(doublyList.head?.value).toBe(3);
       expect(doublyList.tail?.value).toBe(4);
+
       expect(doublyList.toString()).toBe('3,2,1,4');
       expect(doublyList.length).toBe(4);
+    });
+  });
+
+  describe('insertAt', () => {
+    it('throws exception if index less than list length', () => {
+      // Act
+      const received = () => doublyList.insertAt(-1, 1);
+
+      // Assert
+      expect(received).toThrow(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    });
+
+    it('throws exception if index greater than list length', () => {
+      // Act
+      const received = () => doublyList.insertAt(10, 1);
+
+      // Assert
+      expect(received).toThrow(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    });
+
+    it('inserts at the beginning of the list', () => {
+      // Arrange
+      doublyList.append(1);
+
+      // Act
+      doublyList.insertAt(0, 0);
+
+      // Assert
+      expect(doublyList.head?.value).toBe(0);
+      expect(doublyList.head?.next?.value).toBe(1);
+      expect(doublyList.head?.prev).toBeNull();
+
+      expect(doublyList.tail?.value).toBe(1);
+      expect(doublyList.tail?.next).toBeNull();
+      expect(doublyList.tail?.prev?.value).toBe(0);
+
+      expect(doublyList.toString()).toBe('0,1');
+      expect(doublyList.length).toBe(2);
+    });
+
+    it('inserts at the end of the list', () => {
+      // Arrange
+      doublyList.append(1);
+
+      // Act
+      doublyList.insertAt(1, 2);
+
+      // Assert
+      expect(doublyList.head?.value).toBe(1);
+      expect(doublyList.head?.next?.value).toBe(2);
+      expect(doublyList.head?.prev).toBeNull();
+
+      expect(doublyList.tail?.value).toBe(2);
+      expect(doublyList.tail?.next).toBeNull();
+      expect(doublyList.tail?.prev?.value).toBe(1);
+
+      expect(doublyList.toString()).toBe('1,2');
+      expect(doublyList.length).toBe(2);
+    });
+
+    it('inserts in the middle of the list', () => {
+      // Arrange
+      doublyList.append(1).append(3).append(4);
+
+      // Act
+      doublyList.insertAt(1, 2);
+
+      // Assert
+      expect(doublyList.head?.value).toBe(1);
+
+      expect(doublyList.head?.next?.value).toBe(2);
+      expect(doublyList.head?.next?.next?.value).toBe(3);
+      expect(doublyList.head?.next?.prev?.value).toBe(1);
+
+      expect(doublyList.tail?.value).toBe(4);
+      expect(doublyList.tail?.next).toBeNull();
+
+      expect(doublyList.toString()).toBe('1,2,3,4');
+      expect(doublyList.length).toBe(4);
+    });
+
+    it('can be used in a call chain', () => {
+      // Act
+      doublyList.insertAt(0, 1).insertAt(1, 2);
+
+      // Assert
+      expect(doublyList.head?.value).toBe(1);
+      expect(doublyList.tail?.value).toBe(2);
+
+      expect(doublyList.toString()).toBe('1,2');
+      expect(doublyList.length).toBe(2);
     });
   });
 });

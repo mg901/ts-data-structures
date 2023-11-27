@@ -12,6 +12,7 @@ export interface IDoublyLinkedList<T = any> {
   prepend(value: T): this;
   delete(value: T): NullableDoublyLinkedListNode<T>;
   reverse(): this;
+  insertAt(index: number, value: T): this;
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
@@ -152,6 +153,45 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
 
     this.#tail = this.#head;
     this.#head = prevNode;
+
+    return this;
+  }
+
+  #findNodeByIndex(index: number) {
+    let currentNode = this.#head!;
+
+    for (let i = 0; i < index; i += 1) {
+      currentNode = currentNode.next!;
+    }
+
+    return currentNode;
+  }
+
+  insertAt(index: number, value: T) {
+    const isInvalidIndex = index < 0 || index > this.#length;
+
+    if (isInvalidIndex) {
+      throw new Error(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    }
+
+    if (index === 0) {
+      // Insert at the beginning.
+      this.prepend(value);
+      // Insert at the end.
+    } else if (index === this.#length) {
+      this.append(value);
+    } else {
+      // Insert in the middle.
+      let prevNode = this.#findNodeByIndex(index - 1);
+      let newNode = new DoublyLinkedListNode(value);
+      newNode.next = prevNode.next;
+      newNode.prev = prevNode;
+      prevNode.next = newNode;
+
+      this.#length += 1;
+    }
 
     return this;
   }

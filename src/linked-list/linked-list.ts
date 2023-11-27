@@ -171,20 +171,22 @@ export class LinkedList<T = any> implements ILinkedList<T> {
   }
 
   insertAt(index: number, value: T): this {
-    if (index < 0 || index > this.#length) {
+    const isInvalidIndex = index < 0 || index > this.#length;
+
+    if (isInvalidIndex) {
       throw new Error(
         'Index should be greater than or equal to 0 and less than or equal to the list length.',
       );
     }
 
     if (index === 0) {
-      // Insert at the beginning
+      // Insert at the beginning.
       this.prepend(value);
     } else if (index === this.#length) {
-      // Insert end
+      // Insert at the end.
       this.append(value);
     } else {
-      // Insert in the middle
+      // Insert in the middle.
       const prevNode = this.#findNodeByIndex(index - 1);
       const newNode = new LinkedListNode(value);
 
