@@ -228,15 +228,17 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.toString()).toBe('1');
     });
 
-    it.todo('reverses the list', () => {
+    it('reverses the list', () => {
       // Arrange
       doublyList.append(1).append(2).append(3);
+
+      // Act
       doublyList.reverse();
 
-      // Act and Assert
+      // Assert
       expect(doublyList.head?.value).toBe(3);
       expect(doublyList.head?.next?.value).toBe(2);
-      expect(doublyList.head?.prev?.value).toBeNull();
+      expect(doublyList.head?.prev).toBeNull();
 
       expect(doublyList.tail?.value).toBe(1);
       expect(doublyList.tail?.next).toBeNull();
@@ -245,12 +247,12 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.length).toBe(3);
     });
 
-    it.todo('can be used in a call chain', () => {
-      // Act
+    it('can be used in a call chain', () => {
+      // Arrange and Act
       doublyList.append(1).append(2).append(3).reverse().append(4);
 
       // Assert
-      expect(doublyList.head?.value).toBe(1);
+      expect(doublyList.head?.value).toBe(3);
       expect(doublyList.tail?.value).toBe(4);
       expect(doublyList.toString()).toBe('3,2,1,4');
       expect(doublyList.length).toBe(4);

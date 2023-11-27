@@ -134,15 +134,24 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   }
 
   reverse() {
-    if (this.#head === null || this.#head.next === null) return this;
+    if (this.#head === null || this.#head.next === null) {
+      return this;
+    }
 
     let prevNode = null;
-    let currentNode = this.#head;
+    let currentNode = this.#head as NullableDoublyLinkedListNode;
 
     while (currentNode !== null) {
       const nextNode = currentNode.next;
-      const prevNode = currentNode.prev;
+      currentNode.next = prevNode;
+      currentNode.prev = nextNode;
+      prevNode = currentNode;
+
+      currentNode = nextNode;
     }
+
+    this.#tail = this.#head;
+    this.#head = prevNode;
 
     return this;
   }

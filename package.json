@@ -5,8 +5,8 @@
     "start": "bun run src/index.ts",
     "commit": "cz",
     "lint": "eslint . --fix --ext .ts",
-    "test": "bun vitest",
-    "test:watch": "bun vitest --watch",
+    "test": "bun vitest run",
+    "test:watch": "bun vitest",
     "prepare": "husky install"
   },
   "devDependencies": {

@@ -139,14 +139,17 @@ export class LinkedList<T = any> implements ILinkedList<T> {
   }
 
   reverse() {
-    if (this.#head === null || this.#head.next === null) return this;
+    if (this.#head === null || this.#head.next === null) {
+      return this;
+    }
 
     let currentNode = this.#head as NullableLinkedListNode;
     let prevNode = null;
 
-    while (currentNode) {
+    while (currentNode !== null) {
       const nextNode = currentNode.next;
-      [currentNode.next, prevNode] = [prevNode, currentNode];
+      currentNode.next = prevNode;
+      prevNode = currentNode;
 
       currentNode = nextNode;
     }
