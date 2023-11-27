@@ -204,8 +204,8 @@ export class LinkedList<T = any> implements ILinkedList<T> {
 
     const deletedNode = this.#head;
 
-    if (this.#head?.next) {
-      this.#head = this.#head.next;
+    if (deletedNode?.next) {
+      this.#head = deletedNode.next;
     } else {
       this.#head = null;
       this.#tail = null;

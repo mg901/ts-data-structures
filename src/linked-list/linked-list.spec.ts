@@ -399,9 +399,12 @@ describe('LinkedList', () => {
 
       // Assert
       expect(deletedHead?.value).toBe(1);
+
       expect(linkedList.head?.value).toBe(2);
       expect(linkedList.head?.next?.value).toBe(3);
+
       expect(linkedList.tail?.value).toBe(3);
+      expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('2,3');
       expect(linkedList.length).toBe(2);

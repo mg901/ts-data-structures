@@ -13,6 +13,7 @@ export interface IDoublyLinkedList<T = any> {
   delete(value: T): NullableDoublyLinkedListNode<T>;
   reverse(): this;
   insertAt(index: number, value: T): this;
+  deleteHead(): NullableDoublyLinkedListNode<T>;
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
@@ -194,5 +195,23 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     }
 
     return this;
+  }
+
+  deleteHead() {
+    if (this.#head === null) return null;
+
+    const deletedNode = this.#head;
+
+    if (deletedNode?.next) {
+      this.#head = deletedNode.next;
+      this.#head.prev = null;
+    } else {
+      this.#head = null;
+      this.#tail = null;
+    }
+
+    this.#length -= 1;
+
+    return deletedNode;
   }
 }
