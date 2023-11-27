@@ -220,6 +220,8 @@ describe('DoublyLinkedList', () => {
     it('reverses the head of the singular node list', () => {
       // Arrange
       doublyList.append(1);
+
+      // Act
       doublyList.reverse();
 
       // Assert
