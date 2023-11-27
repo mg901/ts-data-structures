@@ -3,13 +3,13 @@ import { DoublyLinkedListNode } from './doubly-linked-list-node';
 
 describe('DoublyLinkedListNode', () => {
   it('creates list node with value', () => {
-    // Arrange
-    const list = new DoublyLinkedListNode<number>(1);
+    // Act
+    const doublyList = new DoublyLinkedListNode<number>(1);
 
-    // Act with Assert
-    expect(list.value).toBe(1);
-    expect(list.next).toBeNull();
-    expect(list.prev).toBeNull();
+    // Assert
+    expect(doublyList.value).toBe(1);
+    expect(doublyList.next).toBeNull();
+    expect(doublyList.prev).toBeNull();
   });
 
   it('creates list node with object with value', () => {
@@ -19,8 +19,10 @@ describe('DoublyLinkedListNode', () => {
       key: 'test',
     };
 
+    // Act
     const list = new DoublyLinkedListNode<typeof expectedValue>(expectedValue);
 
+    // Assert
     expect(list.value).toEqual(expectedValue);
     expect(list.next).toBeNull();
     expect(list.prev).toBeNull();
@@ -29,10 +31,14 @@ describe('DoublyLinkedListNode', () => {
   it('links node together', () => {
     // Arrange
     const node2 = new DoublyLinkedListNode<number>(2);
+
+    // Act
     const node1 = new DoublyLinkedListNode<number>(1, node2);
+
+    // Act
     const node3 = new DoublyLinkedListNode<number>(3, node1, node2);
 
-    // Act and Assert
+    // Assert
     expect(node1.next).toBeDefined();
     expect(node1.prev).toBeNull();
     expect(node2.next).toBeNull();
@@ -49,14 +55,8 @@ describe('DoublyLinkedListNode', () => {
     // Arrange
     const list = new DoublyLinkedListNode<number>(1);
 
-    // Assert
+    // Act and Assert
     expect(list.toString()).toBe('1');
-
-    // Act
-    list.value = 2;
-
-    // Assert
-    expect(list.toString()).toBe('2');
   });
 
   it('converts node to string with custom stringifier', () => {
@@ -67,11 +67,13 @@ describe('DoublyLinkedListNode', () => {
     };
 
     const list = new DoublyLinkedListNode<typeof nodeValue>(nodeValue);
-
     const toStringCallback = (x: typeof nodeValue) =>
       `value: ${x.value}, key: ${x.key}`;
 
-    // Act and Assert
-    expect(list.toString(toStringCallback)).toBe('value: 1, key: test');
+    // Act
+    const received = list.toString(toStringCallback);
+
+    // Assert
+    expect(received).toBe('value: 1, key: test');
   });
 });

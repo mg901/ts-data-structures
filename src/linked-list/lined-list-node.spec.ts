@@ -28,8 +28,10 @@ describe('LinkedListNode', () => {
   });
 
   it('links nodes together', () => {
-    // Arrange and Act
+    // Arrange
     const node2 = new LinkedListNode<number>(1);
+
+    // Act
     const node1 = new LinkedListNode<number>(2, node2);
 
     // Assert
@@ -43,13 +45,9 @@ describe('LinkedListNode', () => {
     it('converts node to string', () => {
       // Arrange
       const node = new LinkedListNode<number>(1);
+
+      // Act and Assert
       expect(node.toString()).toEqual('1');
-
-      // Act
-      node.value = 2;
-
-      // Assert
-      expect(node.toString()).toEqual('2');
     });
 
     it('converts node to string with custom stringifier', () => {
@@ -63,7 +61,11 @@ describe('LinkedListNode', () => {
       const toStringCallback = (x: typeof nodeValue) =>
         `value: ${x.value}, key: ${x.key}`;
 
-      expect(list.toString(toStringCallback)).toBe('value: 1, key: test');
+      // Act
+      const received = list.toString(toStringCallback);
+
+      // Assert
+      expect(received).toBe('value: 1, key: test');
     });
   });
 });

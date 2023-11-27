@@ -9,7 +9,9 @@ export interface IDoublyLinkedList<T = any> {
   append(value: T): this;
   toArray(): T[];
   toString(): string;
+  prepend(value: T): this;
   delete(value: T): NullableDoublyLinkedListNode<T>;
+  reverse(): this;
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
@@ -129,5 +131,19 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     }
 
     return deletedNode;
+  }
+
+  reverse() {
+    if (this.#head === null || this.#head.next === null) return this;
+
+    let prevNode = null;
+    let currentNode = this.#head;
+
+    while (currentNode !== null) {
+      const nextNode = currentNode.next;
+      const prevNode = currentNode.prev;
+    }
+
+    return this;
   }
 }
