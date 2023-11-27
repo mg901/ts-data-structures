@@ -257,7 +257,7 @@ describe('LinkedList', () => {
       expect(linkedList.head?.value).toBe(1);
       expect(linkedList.tail?.value).toBe(1);
       expect(linkedList.toString()).toBe('1');
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.length).toBe(1);
     });
 
     it('reverses the list', () => {
