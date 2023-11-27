@@ -10,7 +10,7 @@ export interface ComparatorType<T> {
 }
 
 export class Comparator<T = any> implements ComparatorType<T> {
-  #compare: (a: any, b: any) => -1 | 0 | 1;
+  #compare: CompareFunction<T>;
 
   static defaultCompareFunction<T>(a: T, b: T) {
     if (a === b) return 0;
