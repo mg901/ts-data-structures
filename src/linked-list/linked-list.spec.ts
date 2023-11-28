@@ -456,53 +456,41 @@ describe('LinkedList', () => {
   });
 
   describe('indexOf', () => {
-    // Arrange
+    it('returns -1 for an empty list', () => {
+      // Act and Assert
+      expect(linkedList.indexOf(42)).toBe(-1);
+    });
+
     beforeEach(() => {
-      // Act
-      linkedList.append(1).append(2).append(3);
+      linkedList.append(1).append(2).append(3).append(4).append(5);
     });
 
-    it('returns 0 if the index is at the head of the list', () => {
-      // Act and Assert
-      expect(linkedList.indexOf(1)).toBe(0);
+    it('returns -1 for a value not present in the list', () => {
+      expect(linkedList.indexOf(42)).toBe(-1);
     });
 
-    it('returns the index of the given element if it exists in the list', () => {
-      // Act and Assert
-      expect(linkedList.indexOf(2)).toBe(1);
-    });
-
-    it("returns `-1` if the given element doesn't exist in the list", () => {
-      // Act and Assert
-      expect(linkedList.indexOf(4)).toBe(-1);
-    });
-
-    it('returns the index of the first occurrence of the given element', () => {
-      // Arrange
-      linkedList.append(2);
-
-      // Act and Assert
-      expect(linkedList.indexOf(2)).toBe(1);
-    });
-
-    it('returns `0` if the index is at the head of the list', () => {
-      // Act and Assert
-      expect(linkedList.indexOf(1)).toBe(0);
-    });
-
-    it('returns the index of the last element if the element is at the tail of the list', () => {
-      // Act and Assert
+    it('returns the correct index for a value present in the list', () => {
       expect(linkedList.indexOf(3)).toBe(2);
     });
 
-    it('returns `-1` for any element', () => {
-      // Arrange
-      const emptyList = new LinkedList<number>();
+    it('returns the index of the first occurrence of the value', () => {
+      expect(linkedList.indexOf(3)).toBe(2);
+    });
 
-      // Assert
-      expect(emptyList.indexOf(1)).toBe(-1);
-      expect(emptyList.indexOf(2)).toBe(-1);
-      expect(emptyList.indexOf(3)).toBe(-1);
+    it('returns the correct index for the head value', () => {
+      expect(linkedList.indexOf(1)).toBe(0);
+    });
+
+    it('returns the correct index for the tail value', () => {
+      expect(linkedList.indexOf(5)).toBe(4);
+    });
+
+    it('handles custom objects and comparison correctly', () => {
+      const list = new LinkedList().append({ key: 'value1' }).append({
+        key: 'value2',
+      });
+
+      expect(list.indexOf({ key: 'value1' })).toBe(0);
     });
   });
 

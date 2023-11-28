@@ -1,4 +1,6 @@
 import { LinkedListNode } from './linked-list-node';
+import { Comparator } from '../utils/comparator';
+import type { IComparator, CompareFunction } from '../utils/comparator';
 
 type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 type FindMethodOptions<T = any> = {
@@ -27,11 +29,20 @@ export interface ILinkedList<T = any> {
 }
 
 export class LinkedList<T = any> implements ILinkedList<T> {
-  #head: NullableLinkedListNode<T> = null;
+  #head: NullableLinkedListNode<T>;
 
-  #tail: NullableLinkedListNode<T> = null;
+  #tail: NullableLinkedListNode<T>;
 
-  #length: number = 0;
+  #length: number;
+
+  #compare: IComparator<T>;
+
+  constructor(compareFunction?: CompareFunction<T>) {
+    this.#head = null;
+    this.#tail = null;
+    this.#length = 0;
+    this.#compare = new Comparator(compareFunction);
+  }
 
   get head() {
     return this.#head;
@@ -103,7 +114,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     let deletedNode = null as NullableLinkedListNode;
 
     // Delete from the beginning of the list.
-    if (value === this.#head.value) {
+    if (this.#compare.equal(value, this.#head.value)) {
       deletedNode = this.#head;
       this.#head = deletedNode.next;
 
@@ -115,7 +126,10 @@ export class LinkedList<T = any> implements ILinkedList<T> {
       let currentNode = this.#head;
 
       // Search for the node by value.
-      while (currentNode.next && value !== currentNode.next.value) {
+      while (
+        currentNode.next &&
+        !this.#compare.equal(value, currentNode.next.value)
+      ) {
         currentNode = currentNode.next;
       }
 
@@ -244,10 +258,10 @@ export class LinkedList<T = any> implements ILinkedList<T> {
 
   indexOf(value: T) {
     let count = 0;
-    let currentNode = this.head;
+    let currentNode = this.#head;
 
-    while (currentNode) {
-      if (value === currentNode.value) return count;
+    while (currentNode !== null) {
+      if (this.#compare.equal(value, currentNode.value)) return count;
 
       currentNode = currentNode.next;
       count += 1;
@@ -267,14 +281,17 @@ export class LinkedList<T = any> implements ILinkedList<T> {
   find({ value, predicate }: FindMethodOptions<T>) {
     if (this.#head === null) return null;
 
-    let currentNode = this.head as NullableLinkedListNode;
+    let currentNode = this.#head as NullableLinkedListNode;
 
     while (currentNode) {
       if (predicate && predicate(currentNode.value)) {
         return currentNode;
       }
 
-      if (value !== undefined && value === currentNode.value) {
+      if (
+        value !== undefined &&
+        this.#compare.equal(value, currentNode.value)
+      ) {
         return currentNode;
       }
 

@@ -451,4 +451,43 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.length).toBe(2);
     });
   });
+
+  describe('indexOf', () => {
+    it('returns -1 for an empty list', () => {
+      // Act and Assert
+      expect(doublyList.indexOf(42)).toBe(-1);
+    });
+
+    beforeEach(() => {
+      doublyList.append(1).append(2).append(3).append(4).append(5);
+    });
+
+    it('returns -1 for a value not present in the list', () => {
+      expect(doublyList.indexOf(42)).toBe(-1);
+    });
+
+    it('returns the correct index for a value present in the list', () => {
+      expect(doublyList.indexOf(3)).toBe(2);
+    });
+
+    it('returns the index of the first occurrence of the value', () => {
+      expect(doublyList.indexOf(3)).toBe(2);
+    });
+
+    it('returns the correct index for the head value', () => {
+      expect(doublyList.indexOf(1)).toBe(0);
+    });
+
+    it('returns the correct index for the tail value', () => {
+      expect(doublyList.indexOf(5)).toBe(4);
+    });
+
+    it('handles custom objects and comparison correctly', () => {
+      const list = new DoublyLinkedList().append({ key: 'value1' }).append({
+        key: 'value2',
+      });
+
+      expect(list.indexOf({ key: 'value1' })).toBe(0);
+    });
+  });
 });

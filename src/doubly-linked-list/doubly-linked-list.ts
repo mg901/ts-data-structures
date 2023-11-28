@@ -1,4 +1,6 @@
 import { DoublyLinkedListNode } from './doubly-linked-list-node';
+import { Comparator } from '../utils/comparator';
+import type { IComparator, CompareFunction } from '../utils/comparator';
 
 type NullableDoublyLinkedListNode<T = any> = DoublyLinkedListNode<T> | null;
 
@@ -6,6 +8,7 @@ export interface IDoublyLinkedList<T = any> {
   readonly head: NullableDoublyLinkedListNode<T>;
   readonly tail: NullableDoublyLinkedListNode<T>;
   readonly length: number;
+
   append(value: T): this;
   toArray(): T[];
   toString(): string;
@@ -15,6 +18,7 @@ export interface IDoublyLinkedList<T = any> {
   insertAt(index: number, value: T): this;
   deleteHead(): NullableDoublyLinkedListNode<T>;
   deleteTail(): NullableDoublyLinkedListNode<T>;
+  indexOf(value: T): number;
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
@@ -24,10 +28,13 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
 
   #length: number;
 
-  constructor() {
+  #compare: IComparator<T>;
+
+  constructor(compareFunction?: CompareFunction<T>) {
     this.#head = null;
     this.#tail = null;
     this.#length = 0;
+    this.#compare = new Comparator(compareFunction);
   }
 
   get head() {
@@ -98,7 +105,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     let deletedNode = null as NullableDoublyLinkedListNode;
 
     // Delete from the beginning of the list.
-    if (value === this.#head.value) {
+    if (this.#compare.equal(value, this.#head.value)) {
       deletedNode = this.#head;
       this.#head = deletedNode.next;
 
@@ -112,7 +119,10 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
       let currentNode = this.#head;
 
       // Search for the node by value.
-      while (currentNode.next && value !== currentNode.next.value) {
+      while (
+        currentNode.next &&
+        !this.#compare.equal(value, currentNode.next.value)
+      ) {
         currentNode = currentNode.next;
       }
 
@@ -240,5 +250,19 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     this.#length -= 1;
 
     return deletedNode;
+  }
+
+  indexOf(value: T) {
+    let count = 0;
+    let currentNode = this.#head;
+
+    while (currentNode !== null) {
+      if (this.#compare.equal(value, currentNode.value)) return count;
+
+      currentNode = currentNode.next;
+      count += 1;
+    }
+
+    return -1;
   }
 }
