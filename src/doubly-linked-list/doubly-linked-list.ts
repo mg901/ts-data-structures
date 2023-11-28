@@ -14,6 +14,7 @@ export interface IDoublyLinkedList<T = any> {
   reverse(): this;
   insertAt(index: number, value: T): this;
   deleteHead(): NullableDoublyLinkedListNode<T>;
+  deleteTail(): NullableDoublyLinkedListNode<T>;
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
@@ -208,6 +209,32 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     } else {
       this.#head = null;
       this.#tail = null;
+    }
+
+    this.#length -= 1;
+
+    return deletedNode;
+  }
+
+  deleteTail() {
+    if (this.#head === null) return null;
+
+    let deletedNode = this.#tail;
+
+    // If there is only one node.
+    if (this.#head === this.#tail) {
+      this.#head = null;
+      this.#tail = null;
+    } else {
+      // If multiple nodes.
+      let currentNode = this.#head;
+
+      while (currentNode.next?.next) {
+        currentNode = currentNode.next;
+      }
+
+      currentNode.next = null;
+      this.#tail = currentNode;
     }
 
     this.#length -= 1;

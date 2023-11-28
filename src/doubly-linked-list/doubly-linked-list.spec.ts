@@ -416,4 +416,39 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.length).toBe(2);
     });
   });
+
+  describe('deleteTail', () => {
+    it('deletes the tail from an empty list', () => {
+      // Act
+      const deletedTail = doublyList.deleteTail();
+
+      // Assert
+      expect(deletedTail).toBeNull();
+      expect(doublyList.head).toBeNull();
+      expect(doublyList.tail).toBeNull();
+      expect(doublyList.length).toBe(0);
+    });
+
+    it('deletes the tail from the list with multiple nodes', () => {
+      // Arrange
+      doublyList.append(1).append(2).append(3);
+
+      // Act
+      const deletedTail = doublyList.deleteTail();
+
+      // Assert
+      expect(deletedTail?.value).toBe(3);
+
+      expect(doublyList.head?.value).toBe(1);
+      expect(doublyList.head?.next?.value).toBe(2);
+      expect(doublyList.head?.prev).toBeNull();
+
+      expect(doublyList.tail?.value).toBe(2);
+      expect(doublyList.tail?.next).toBeNull();
+      expect(doublyList.tail?.prev?.value).toBe(1);
+
+      expect(doublyList.toString()).toBe('1,2');
+      expect(doublyList.length).toBe(2);
+    });
+  });
 });
