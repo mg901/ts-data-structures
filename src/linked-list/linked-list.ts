@@ -15,6 +15,7 @@ export interface ILinkedList<T = any> {
   readonly isEmpty: boolean;
 
   append(value: T): this;
+  fromArray(array: T[]): this;
   toArray(): T[];
   toString(): string;
   prepend(value: T): this;
@@ -24,7 +25,6 @@ export interface ILinkedList<T = any> {
   deleteHead(): NullableLinkedListNode<T>;
   deleteTail(): NullableLinkedListNode<T>;
   indexOf(value: T): number;
-  fromArray(array: T[]): this;
   find(options: FindMethodOptions<T>): NullableLinkedListNode<T>;
 }
 
@@ -52,7 +52,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     return this.#tail;
   }
 
-  get length(): number {
+  get length() {
     return this.#length;
   }
 
@@ -72,6 +72,14 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     }
 
     this.#length += 1;
+
+    return this;
+  }
+
+  fromArray(array: T[]) {
+    array.forEach((value) => {
+      this.append(value);
+    });
 
     return this;
   }
@@ -268,14 +276,6 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     }
 
     return -1;
-  }
-
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
-
-    return this;
   }
 
   find({ value, predicate }: FindMethodOptions<T>) {

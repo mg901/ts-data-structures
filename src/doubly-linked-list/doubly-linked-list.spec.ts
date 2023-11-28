@@ -17,6 +17,21 @@ describe('DoublyLinkedList', () => {
     expect(doublyList.length).toBe(0);
   });
 
+  describe('isEmpty', () => {
+    it('returns true for the empty list', () => {
+      // Act and Assert
+      expect(doublyList.isEmpty).toBeTruthy();
+    });
+
+    it('return false for the non-empty list', () => {
+      // Arrange
+      doublyList.append(1);
+
+      // Act and Assert
+      expect(doublyList.isEmpty).toBeFalsy();
+    });
+  });
+
   describe('append', () => {
     it('appends node to the empty list', () => {
       // Act
@@ -56,6 +71,24 @@ describe('DoublyLinkedList', () => {
       // Assert
       expect(doublyList.toString()).toBe('1,2,3');
       expect(doublyList.length).toBe(3);
+    });
+  });
+
+  describe('fromArray', () => {
+    it('creates an empty list when an empty array is passed', () => {
+      // Act
+      doublyList.fromArray([]);
+
+      // Assert
+      expect(doublyList.isEmpty).toBeTruthy();
+    });
+
+    it('creates a list with the same nodes as the input array', () => {
+      // Act
+      doublyList.fromArray([1, 2, 3, 4]);
+
+      // Assert
+      expect(doublyList.toString()).toBe('1,2,3,4');
     });
   });
 
@@ -459,34 +492,43 @@ describe('DoublyLinkedList', () => {
     });
 
     beforeEach(() => {
-      doublyList.append(1).append(2).append(3).append(4).append(5);
+      // Arrange
+      doublyList.fromArray([1, 2, 3, 4, 5]);
     });
 
     it('returns -1 for a value not present in the list', () => {
+      // Act and Assert
       expect(doublyList.indexOf(42)).toBe(-1);
     });
 
     it('returns the correct index for a value present in the list', () => {
+      // Act and Assert
       expect(doublyList.indexOf(3)).toBe(2);
     });
 
     it('returns the index of the first occurrence of the value', () => {
+      // Act and Assert
       expect(doublyList.indexOf(3)).toBe(2);
     });
 
     it('returns the correct index for the head value', () => {
+      // Act and Assert
       expect(doublyList.indexOf(1)).toBe(0);
     });
 
     it('returns the correct index for the tail value', () => {
+      // Act and Assert
       expect(doublyList.indexOf(5)).toBe(4);
     });
 
     it('handles custom objects and comparison correctly', () => {
-      const list = new DoublyLinkedList().append({ key: 'value1' }).append({
-        key: 'value2',
-      });
+      // Arrange
+      const list = new DoublyLinkedList().fromArray([
+        { key: 'value1' },
+        { key: 'value2' },
+      ]);
 
+      // Act and Assert
       expect(list.indexOf({ key: 'value1' })).toBe(0);
     });
   });

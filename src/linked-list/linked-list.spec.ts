@@ -75,6 +75,24 @@ describe('LinkedList', () => {
     });
   });
 
+  describe('fromArray', () => {
+    it('creates an empty list when an empty array is passed', () => {
+      // Act
+      linkedList.fromArray([]);
+
+      // Assert
+      expect(linkedList.isEmpty).toBeTruthy();
+    });
+
+    it('creates a list with the same nodes as the input array', () => {
+      // Act
+      linkedList.fromArray([1, 2, 3, 4]);
+
+      // Assert
+      expect(linkedList.toString()).toBe('1,2,3,4');
+    });
+  });
+
   describe('toArray', () => {
     it('returns an empty array for the empty list', () => {
       // Act and Assert
@@ -150,7 +168,7 @@ describe('LinkedList', () => {
 
     it('deletes the element outside the list', () => {
       // Arrange
-      linkedList.append(1).append(2);
+      linkedList.fromArray([1, 2]);
 
       // Act
       const deletedNode = linkedList.delete(3);
@@ -182,7 +200,7 @@ describe('LinkedList', () => {
 
     it('deletes the first node from the multi-node list', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3);
+      linkedList.fromArray([1, 2, 3]);
 
       // Act
       const deletedNode = linkedList.delete(1);
@@ -200,7 +218,7 @@ describe('LinkedList', () => {
 
     it('deletes an element in the middle', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3).append(4);
+      linkedList.fromArray([1, 2, 3, 4]);
 
       // Act
       const deletedElement = linkedList.delete(2);
@@ -218,7 +236,7 @@ describe('LinkedList', () => {
 
     it('deletes the last element', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3);
+      linkedList.fromArray([1, 2, 3]);
 
       // Act
       const deletedElement = linkedList.delete(3);
@@ -264,7 +282,7 @@ describe('LinkedList', () => {
 
     it('reverses the list', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3);
+      linkedList.fromArray([1, 2, 3]);
 
       // Act
       linkedList.reverse();
@@ -281,7 +299,7 @@ describe('LinkedList', () => {
 
     it('can be used in a call chain', () => {
       // Act
-      linkedList.append(1).append(2).append(3).reverse().append(4);
+      linkedList.fromArray([1, 2, 3]).reverse().append(4);
 
       // Assert
       expect(linkedList.head?.value).toBe(3);
@@ -392,7 +410,7 @@ describe('LinkedList', () => {
 
     it('deletes the head from the list with multiple nodes', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3);
+      linkedList.fromArray([1, 2, 3]);
 
       // Act
       const deletedHead = linkedList.deleteHead();
@@ -439,7 +457,7 @@ describe('LinkedList', () => {
 
     it('deletes the tail from the list with multiple nodes', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3);
+      linkedList.fromArray([1, 2, 3]);
 
       // Act
       const deletedTail = linkedList.deleteTail();
@@ -462,53 +480,44 @@ describe('LinkedList', () => {
     });
 
     beforeEach(() => {
-      linkedList.append(1).append(2).append(3).append(4).append(5);
+      // Arrange
+      linkedList.fromArray([1, 2, 3, 4, 5]);
     });
 
     it('returns -1 for a value not present in the list', () => {
+      // Act and Assert
       expect(linkedList.indexOf(42)).toBe(-1);
     });
 
     it('returns the correct index for a value present in the list', () => {
+      // Act and Assert
       expect(linkedList.indexOf(3)).toBe(2);
     });
 
     it('returns the index of the first occurrence of the value', () => {
+      // Act and Assert
       expect(linkedList.indexOf(3)).toBe(2);
     });
 
     it('returns the correct index for the head value', () => {
+      // Act and Assert
       expect(linkedList.indexOf(1)).toBe(0);
     });
 
     it('returns the correct index for the tail value', () => {
+      // Act and Assert
       expect(linkedList.indexOf(5)).toBe(4);
     });
 
     it('handles custom objects and comparison correctly', () => {
-      const list = new LinkedList().append({ key: 'value1' }).append({
-        key: 'value2',
-      });
+      // Arrange
+      const list = new LinkedList().fromArray([
+        { key: 'value1' },
+        { key: 'value2' },
+      ]);
 
+      // Act and Assert
       expect(list.indexOf({ key: 'value1' })).toBe(0);
-    });
-  });
-
-  describe('fromArray', () => {
-    it('creates an empty list when an empty array is passed', () => {
-      // Act
-      linkedList.fromArray([]);
-
-      // Assert
-      expect(linkedList.isEmpty).toBeTruthy();
-    });
-
-    it('creates a list with the same nodes as the input array', () => {
-      // Act
-      linkedList.fromArray([1, 2, 3, 4]);
-
-      // Assert
-      expect(linkedList.toString()).toBe('1,2,3,4');
     });
   });
 
@@ -520,7 +529,7 @@ describe('LinkedList', () => {
 
     it('finds a node by value', () => {
       // Arrange
-      linkedList.append(1).append(2);
+      linkedList.fromArray([1, 2]);
 
       // Act
       const foundedNode = linkedList.find({ value: 2 });
@@ -531,7 +540,7 @@ describe('LinkedList', () => {
 
     it('finds a node by predicate', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3);
+      linkedList.fromArray([1, 2, 3]);
 
       // Act
       const foundedNode = linkedList.find({
@@ -552,7 +561,7 @@ describe('LinkedList', () => {
 
     it('prioritizes predicate over value', () => {
       // Arrange
-      linkedList.append(1).append(2);
+      linkedList.fromArray([1, 2]);
 
       // Act
       const foundedNode = linkedList.find({
@@ -565,7 +574,7 @@ describe('LinkedList', () => {
 
     it('returns the first node if multiple nodes match the predicate', () => {
       // Arrange
-      linkedList.append(1).append(2).append(3).append(4);
+      linkedList.fromArray([1, 2, 3, 4]);
 
       // Act
       const foundedNode = linkedList.find({
