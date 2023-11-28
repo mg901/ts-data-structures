@@ -4,6 +4,11 @@ import type { IComparator, CompareFunction } from '../utils/comparator';
 
 type NullableDoublyLinkedListNode<T = any> = DoublyLinkedListNode<T> | null;
 
+type FindMethodOptions<T = any> = {
+  value?: T;
+  predicate?: (value: T) => boolean;
+};
+
 export interface IDoublyLinkedList<T = any> {
   readonly head: NullableDoublyLinkedListNode<T>;
   readonly tail: NullableDoublyLinkedListNode<T>;
@@ -21,6 +26,7 @@ export interface IDoublyLinkedList<T = any> {
   deleteHead(): NullableDoublyLinkedListNode<T>;
   deleteTail(): NullableDoublyLinkedListNode<T>;
   indexOf(value: T): number;
+  find(options: FindMethodOptions<T>): NullableDoublyLinkedListNode<T>;
 }
 
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
@@ -278,5 +284,25 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     }
 
     return -1;
+  }
+
+  find({ value, predicate }: FindMethodOptions<T>) {
+    if (this.#head === null) return null;
+
+    let currentNode = this.#head as NullableDoublyLinkedListNode;
+
+    while (currentNode) {
+      if (predicate && predicate(currentNode.value)) {
+        return currentNode;
+      }
+
+      if (value && this.#compare.equal(value, currentNode.value)) {
+        return currentNode;
+      }
+
+      currentNode = currentNode.next;
+    }
+
+    return null;
   }
 }

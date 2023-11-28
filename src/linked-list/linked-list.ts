@@ -288,10 +288,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
         return currentNode;
       }
 
-      if (
-        value !== undefined &&
-        this.#compare.equal(value, currentNode.value)
-      ) {
+      if (value && this.#compare.equal(value, currentNode.value)) {
         return currentNode;
       }
 
