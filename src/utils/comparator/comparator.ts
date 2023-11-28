@@ -1,6 +1,8 @@
+import isEqual from 'lodash.isequal';
+
 export type CompareFunction<T> = (a: T, b: T) => -1 | 0 | 1;
 
-export interface ComparatorType<T> {
+export interface IComparator<T> {
   equal(a: T, b: T): boolean;
   lessThan(a: T, b: T): boolean;
   greaterThan(a: T, b: T): boolean;
@@ -9,8 +11,10 @@ export interface ComparatorType<T> {
   reverse(): void;
 }
 
-export class Comparator<T = any> implements ComparatorType<T> {
-  #compare: (a: any, b: any) => -1 | 0 | 1;
+export class Comparator<T = any> implements IComparator<T> {
+  #compare: CompareFunction<T>;
+
+  #isEqualFn: typeof isEqual;
 
   static defaultCompareFunction<T>(a: T, b: T) {
     if (a === b) return 0;
@@ -18,12 +22,16 @@ export class Comparator<T = any> implements ComparatorType<T> {
     return a < b ? -1 : 1;
   }
 
-  constructor(compareFunction?: CompareFunction<T>) {
+  constructor(
+    compareFunction?: CompareFunction<T>,
+    isEqualFn: typeof isEqual = isEqual,
+  ) {
     this.#compare = compareFunction || Comparator.defaultCompareFunction;
+    this.#isEqualFn = isEqualFn;
   }
 
   equal(a: T, b: T) {
-    return this.#compare(a, b) === 0;
+    return this.#isEqualFn(a, b);
   }
 
   lessThan(a: T, b: T) {

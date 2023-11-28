@@ -7,7 +7,7 @@ describe('Comparator', () => {
     // Arrange
     const comparator = new Comparator<number>();
 
-    // Assert
+    // Act and Assert
     expect(comparator.lessThan(2, 5)).toBeTruthy();
     expect(comparator.greaterThan(5, 2)).toBeTruthy();
     expect(comparator.equal(2, 2)).toBeTruthy();
