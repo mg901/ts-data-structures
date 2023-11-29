@@ -1,8 +1,8 @@
 import { LinkedListNode } from './linked-list-node';
+import type { NullableLinkedListNode } from './linked-list-node';
 import { Comparator } from '../shared/comparator';
 import type { IComparator, CompareFunction } from '../shared/comparator';
 
-type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 type FindMethodOptions<T = any> = {
   value?: T;
   predicate?: (value: T) => boolean;
@@ -28,20 +28,28 @@ export interface ILinkedList<T = any> {
   find(options: FindMethodOptions<T>): NullableLinkedListNode<T>;
 }
 
+type Options<T> = {
+  compareFunction?: CompareFunction<T>;
+  nodeConstructor?: typeof LinkedListNode<T>;
+};
+
 export class LinkedList<T = any> implements ILinkedList<T> {
   #head: NullableLinkedListNode<T>;
 
   #tail: NullableLinkedListNode<T>;
 
+  #nodeConstructor: typeof LinkedListNode<T>;
+
   #length: number;
 
   #compare: IComparator<T>;
 
-  constructor(compareFunction?: CompareFunction<T>) {
+  constructor(options: Options<T>) {
     this.#head = null;
     this.#tail = null;
+    this.#nodeConstructor = options?.nodeConstructor ?? LinkedListNode;
     this.#length = 0;
-    this.#compare = new Comparator(compareFunction);
+    this.#compare = new Comparator(options?.compareFunction);
   }
 
   get head() {
@@ -61,7 +69,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
   }
 
   append(value: T) {
-    const newNode = new LinkedListNode(value);
+    const newNode = new this.#nodeConstructor(value);
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -101,7 +109,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
   }
 
   prepend(value: T) {
-    const newNode = new LinkedListNode(value);
+    const newNode = new this.#nodeConstructor(value);
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -212,7 +220,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     } else {
       // Insert in the middle.
       const prevNode = this.#findNodeByIndex(index - 1);
-      const newNode = new LinkedListNode(value);
+      const newNode = new this.#nodeConstructor(value);
 
       newNode.next = prevNode.next;
       prevNode.next = newNode;

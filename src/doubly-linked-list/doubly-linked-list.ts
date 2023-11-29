@@ -1,8 +1,7 @@
 import { DoublyLinkedListNode } from './doubly-linked-list-node';
+import type { NullableDoublyLinkedListNode } from './doubly-linked-list-node';
 import { Comparator } from '../shared/comparator';
 import type { IComparator, CompareFunction } from '../shared/comparator';
-
-type NullableDoublyLinkedListNode<T = any> = DoublyLinkedListNode<T> | null;
 
 type FindMethodOptions<T = any> = {
   value?: T;
@@ -29,6 +28,11 @@ export interface IDoublyLinkedList<T = any> {
   find(options: FindMethodOptions<T>): NullableDoublyLinkedListNode<T>;
 }
 
+type Options<T> = {
+  nodeConstructor?: typeof DoublyLinkedListNode<T>;
+  compareFunction?: CompareFunction<T>;
+};
+
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   #head: NullableDoublyLinkedListNode<T>;
 
@@ -40,15 +44,12 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
 
   #compare: IComparator<T>;
 
-  constructor(
-    nodeConstructor = DoublyLinkedListNode,
-    compareFunction?: CompareFunction<T>,
-  ) {
+  constructor(options: Options<T>) {
     this.#head = null;
     this.#tail = null;
-    this.#nodeConstructor = nodeConstructor;
+    this.#nodeConstructor = options?.nodeConstructor ?? DoublyLinkedListNode;
     this.#length = 0;
-    this.#compare = new Comparator(compareFunction);
+    this.#compare = new Comparator(options?.compareFunction);
   }
 
   get head() {

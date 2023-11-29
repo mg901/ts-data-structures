@@ -1,6 +1,6 @@
 export type Callback<T> = (data: T) => string;
 
-type NullableLinkedListNode<T> = LinkedListNode<T> | null;
+export type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 
 export class LinkedListNode<T = any> {
   constructor(
