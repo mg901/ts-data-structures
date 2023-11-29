@@ -384,7 +384,7 @@ describe('DoublyLinkedList', () => {
 
     it('inserts in the middle of the list', () => {
       // Arrange
-      doublyLinkedList.fromArray([1, 2, 3]);
+      doublyLinkedList.fromArray([1, 3, 4]);
 
       // Act
       doublyLinkedList.insertAt(1, 2);
