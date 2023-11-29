@@ -1,10 +1,13 @@
 export type Callback<T> = (value: T) => string;
 
+export type NullableDoublyLinkedListNode<T = any> =
+  DoublyLinkedListNode<T> | null;
+
 export class DoublyLinkedListNode<T = any> {
   constructor(
     public value: T,
-    public next: DoublyLinkedListNode<T> | null = null,
-    public prev: DoublyLinkedListNode<T> | null = null,
+    public next: NullableDoublyLinkedListNode<T> = null,
+    public prev: NullableDoublyLinkedListNode<T> = null,
   ) {}
 
   toString(callback?: Callback<T>): string {

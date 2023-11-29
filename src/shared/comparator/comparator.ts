@@ -14,7 +14,7 @@ export interface IComparator<T> {
 export class Comparator<T = any> implements IComparator<T> {
   #compare: CompareFunction<T>;
 
-  #isEqualFn: typeof isEqual;
+  #isEqual: typeof isEqual;
 
   static defaultCompareFunction<T>(a: T, b: T) {
     if (a === b) return 0;
@@ -22,16 +22,13 @@ export class Comparator<T = any> implements IComparator<T> {
     return a < b ? -1 : 1;
   }
 
-  constructor(
-    compareFunction?: CompareFunction<T>,
-    isEqualFn: typeof isEqual = isEqual,
-  ) {
-    this.#compare = compareFunction || Comparator.defaultCompareFunction;
-    this.#isEqualFn = isEqualFn;
+  constructor(compareFunction?: CompareFunction<T>) {
+    this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
+    this.#isEqual = isEqual;
   }
 
   equal(a: T, b: T) {
-    return this.#isEqualFn(a, b);
+    return this.#isEqual(a, b);
   }
 
   lessThan(a: T, b: T) {
