@@ -172,7 +172,7 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the element outside the list', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2);
+      doublyLinkedList.fromArray([1, 2]);
 
       // Act
       const deletedNode = doublyLinkedList.delete(3);
@@ -206,7 +206,7 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the first node from the multi-node list', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2).append(3);
+      doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
       const deletedNode = doublyLinkedList.delete(1);
@@ -227,7 +227,7 @@ describe('DoublyLinkedList', () => {
 
     it('deletes an element in the middle', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2).append(3).append(4);
+      doublyLinkedList.fromArray([1, 2, 3, 4]);
 
       // Act
       const deletedNode = doublyLinkedList.delete(2);
@@ -244,7 +244,7 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the last element', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2).append(3);
+      doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
       const deleteNode = doublyLinkedList.delete(3);
@@ -291,7 +291,7 @@ describe('DoublyLinkedList', () => {
 
     it('reverses the list', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2).append(3);
+      doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
       doublyLinkedList.reverse();
@@ -310,7 +310,7 @@ describe('DoublyLinkedList', () => {
 
     it('can be used in a call chain', () => {
       // Arrange and Act
-      doublyLinkedList.append(1).append(2).append(3).reverse().append(4);
+      doublyLinkedList.fromArray([1, 2, 3]).reverse().append(4);
 
       // Assert
       expect(doublyLinkedList.head?.value).toBe(3);
@@ -384,7 +384,7 @@ describe('DoublyLinkedList', () => {
 
     it('inserts in the middle of the list', () => {
       // Arrange
-      doublyLinkedList.append(1).append(3).append(4);
+      doublyLinkedList.fromArray([1, 3, 4]);
 
       // Act
       doublyLinkedList.insertAt(1, 2);
@@ -430,7 +430,7 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the head from the list with multiple nodes', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2).append(3);
+      doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
       const deletedHead = doublyLinkedList.deleteHead();
@@ -464,7 +464,7 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the tail from the list with multiple nodes', () => {
       // Arrange
-      doublyLinkedList.append(1).append(2).append(3);
+      doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
       const deletedTail = doublyLinkedList.deleteTail();

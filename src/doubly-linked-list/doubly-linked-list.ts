@@ -122,48 +122,40 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   delete(value: T) {
     if (this.#head === null) return null;
 
-    let deletedNode = null as NullableDoublyLinkedListNode;
+    let currentNode = this.#head as NullableDoublyLinkedListNode;
 
-    // Delete from the beginning of the list.
-    if (this.#compare.equal(value, this.#head.value)) {
-      deletedNode = this.#head;
-      this.#head = deletedNode.next;
+    // Search for the node by value.
+    while (
+      currentNode !== null &&
+      !this.#compare.equal(value, currentNode.value)
+    ) {
+      currentNode = currentNode.next;
+    }
 
-      // Update tail if the list becomes empty.
-      if (this.#head === null) {
-        this.#tail = null;
-      } else {
-        this.#head.prev = null;
-      }
+    if (currentNode === null) return null;
+
+    if (currentNode.prev !== null) {
+      currentNode.prev.next = currentNode.next;
     } else {
-      let currentNode = this.#head;
-
-      // Search for the node by value.
-      while (
-        currentNode.next &&
-        !this.#compare.equal(value, currentNode.next.value)
-      ) {
-        currentNode = currentNode.next;
-      }
-
-      // Delete the node from the middle.
-      if (currentNode.next !== null) {
-        deletedNode = currentNode.next;
-        currentNode.next = deletedNode.next;
-
-        if (currentNode.next === null) {
-          this.#tail = currentNode;
-        } else {
-          currentNode.next.prev = currentNode;
-        }
-      }
+      // Deleted node is the head;
+      this.#head = currentNode.next;
     }
 
-    if (deletedNode) {
-      this.#length -= 1;
+    // Delete the node from the middle.
+    if (currentNode.next !== null) {
+      currentNode.next.prev = currentNode.prev;
+    } else {
+      // Deleted node is the tail
+      this.#tail = currentNode.prev;
     }
 
-    return deletedNode;
+    // Clear the reference of the deleted node.
+    currentNode.prev = null;
+    currentNode.next = null;
+
+    this.#length -= 1;
+
+    return currentNode;
   }
 
   reverse() {
