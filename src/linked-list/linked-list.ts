@@ -1,6 +1,6 @@
 import { LinkedListNode } from './linked-list-node';
-import { Comparator } from '../utils/comparator';
-import type { IComparator, CompareFunction } from '../utils/comparator';
+import { Comparator } from '../shared/comparator';
+import type { IComparator, CompareFunction } from '../shared/comparator';
 
 type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 type FindMethodOptions<T = any> = {

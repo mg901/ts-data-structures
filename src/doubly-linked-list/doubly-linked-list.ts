@@ -1,6 +1,6 @@
 import { DoublyLinkedListNode } from './doubly-linked-list-node';
-import { Comparator } from '../utils/comparator';
-import type { IComparator, CompareFunction } from '../utils/comparator';
+import { Comparator } from '../shared/comparator';
+import type { IComparator, CompareFunction } from '../shared/comparator';
 
 type NullableDoublyLinkedListNode<T = any> = DoublyLinkedListNode<T> | null;
 
@@ -34,13 +34,19 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
 
   #tail: NullableDoublyLinkedListNode<T>;
 
+  #nodeConstructor: typeof DoublyLinkedListNode<T>;
+
   #length: number;
 
   #compare: IComparator<T>;
 
-  constructor(compareFunction?: CompareFunction<T>) {
+  constructor(
+    nodeConstructor = DoublyLinkedListNode,
+    compareFunction?: CompareFunction<T>,
+  ) {
     this.#head = null;
     this.#tail = null;
+    this.#nodeConstructor = nodeConstructor;
     this.#length = 0;
     this.#compare = new Comparator(compareFunction);
   }
@@ -62,7 +68,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   }
 
   append(value: T) {
-    const newNode = new DoublyLinkedListNode(value);
+    const newNode = new this.#nodeConstructor(value);
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -103,7 +109,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   }
 
   prepend(value: T) {
-    const newNode = new DoublyLinkedListNode(value);
+    const newNode = new this.#nodeConstructor(value);
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -209,7 +215,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     } else {
       // Insert in the middle.
       let prevNode = this.#findNodeByIndex(index - 1);
-      let newNode = new DoublyLinkedListNode(value);
+      let newNode = new this.#nodeConstructor(value);
       newNode.next = prevNode.next;
       newNode.prev = prevNode;
       prevNode.next = newNode;
