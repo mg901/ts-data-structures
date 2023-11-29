@@ -154,6 +154,8 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     }
 
     if (deletedNode) {
+      // Clear the reference of the deleted node.
+      deletedNode.next = null;
       this.#length -= 1;
     }
 
@@ -182,7 +184,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     return this;
   }
 
-  #findNodeByIndex(index: number): LinkedListNode<T> {
+  #findNodeByIndex(index: number) {
     let currentNode = this.#head!;
 
     for (let i = 0; i < index; i += 1) {
@@ -192,7 +194,7 @@ export class LinkedList<T = any> implements ILinkedList<T> {
     return currentNode;
   }
 
-  insertAt(index: number, value: T): this {
+  insertAt(index: number, value: T) {
     const isInvalidIndex = index < 0 || index > this.#length;
 
     if (isInvalidIndex) {
