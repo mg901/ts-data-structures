@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { LinkedListNode } from './linked-list-node';
+import { LinkedListNode } from '../linked-list-node';
 
 describe('LinkedListNode', () => {
   it('creates list node with value', () => {

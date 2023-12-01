@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DoublyLinkedListNode } from './doubly-linked-list-node';
+import { DoublyLinkedListNode } from '../doubly-linked-list-node';
 
 describe('DoublyLinkedListNode', () => {
   it('creates list node with value', () => {

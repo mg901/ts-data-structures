@@ -1,5 +1,5 @@
 import { describe, beforeEach, it, expect } from 'vitest';
-import { LinkedList } from './linked-list';
+import { LinkedList } from '..';
 
 describe('LinkedList', () => {
   // @ts-ignore
