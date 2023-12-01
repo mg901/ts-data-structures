@@ -28,28 +28,20 @@ export interface IDoublyLinkedList<T = any> {
   find(options: FindMethodOptions<T>): NullableDoublyLinkedListNode<T>;
 }
 
-type Options<T> = {
-  nodeConstructor?: typeof DoublyLinkedListNode<T>;
-  compareFunction?: CompareFunction<T>;
-};
-
 export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   #head: NullableDoublyLinkedListNode<T>;
 
   #tail: NullableDoublyLinkedListNode<T>;
 
-  #nodeConstructor: typeof DoublyLinkedListNode<T>;
-
   #length: number;
 
   #compare: IComparator<T>;
 
-  constructor(options: Options<T>) {
+  constructor(compareFunction?: CompareFunction<T>) {
     this.#head = null;
     this.#tail = null;
-    this.#nodeConstructor = options?.nodeConstructor ?? DoublyLinkedListNode;
     this.#length = 0;
-    this.#compare = new Comparator(options?.compareFunction);
+    this.#compare = new Comparator(compareFunction);
   }
 
   get head() {
@@ -69,7 +61,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   }
 
   append(value: T) {
-    const newNode = new this.#nodeConstructor(value);
+    const newNode = new DoublyLinkedListNode(value);
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -110,7 +102,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   }
 
   prepend(value: T) {
-    const newNode = new this.#nodeConstructor(value);
+    const newNode = new DoublyLinkedListNode(value);
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -129,7 +121,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   delete(value: T) {
     if (this.#head === null) return null;
 
-    let currentNode = this.#head as NullableDoublyLinkedListNode;
+    let currentNode: NullableDoublyLinkedListNode = this.#head;
 
     // Search for the node by value.
     while (
@@ -216,7 +208,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     } else {
       // Insert in the middle.
       let prevNode = this.#findNodeByIndex(index - 1);
-      let newNode = new this.#nodeConstructor(value);
+      let newNode = new DoublyLinkedListNode(value);
       newNode.next = prevNode.next;
       newNode.prev = prevNode;
       prevNode.next = newNode;
@@ -288,7 +280,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
   find({ value, predicate }: FindMethodOptions<T>) {
     if (this.#head === null) return null;
 
-    let currentNode = this.#head as NullableDoublyLinkedListNode;
+    let currentNode: NullableDoublyLinkedListNode = this.#head;
 
     while (currentNode) {
       if (predicate && predicate(currentNode.value)) {
