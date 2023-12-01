@@ -1,5 +1,5 @@
 import { describe, beforeEach, it, expect } from 'vitest';
-import { DoublyLinkedList } from './doubly-linked-list';
+import { DoublyLinkedList } from '..';
 
 describe('DoublyLinkedList', () => {
   // @ts-ignore

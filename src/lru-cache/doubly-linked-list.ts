@@ -2,14 +2,20 @@
 import { Node } from './node';
 import type { NullableNode } from './node';
 
-export class DoublyLinkedList<K = any, V = any> {
-  head: NullableNode<K, V> = null;
+export class DoublyLinkedList<Key = any, Value = any> {
+  head: NullableNode<Key, Value>;
 
-  tail: NullableNode<K, V> = null;
+  tail: NullableNode<Key, Value>;
 
-  length: number = 0;
+  length: number;
 
-  push(key: K, value: V): Node<K, V> {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+
+  push(key: Key, value: Value): Node<Key, Value> {
     const newNode = new Node(key, value);
 
     if (this.head === null) {
@@ -26,20 +32,16 @@ export class DoublyLinkedList<K = any, V = any> {
     return newNode;
   }
 
-  delete(node: Node<K, V>): void {
+  delete(node: Node<Key, Value>): void {
     if (this.head === this.tail) {
       this.head = null;
       this.tail = null;
     } else if (node === this.head) {
       this.head = this.head.next;
-      if (this.head) {
-        this.head.prev = null;
-      }
+      this.head!.prev = null;
     } else if (node === this.tail) {
       this.tail = this.tail.prev;
-      if (this.tail) {
-        this.tail.next = null;
-      }
+      this.tail!.next = null;
     } else {
       node.prev!.next = node.next;
       node.next!.prev = node.prev;

@@ -1,5 +1,5 @@
 import { describe, beforeEach, it, expect } from 'vitest';
-import { LRUCache } from './lru-cache';
+import { LRUCache } from '..';
 
 describe('LRUCache', () => {
   // @ts-ignore
