@@ -13,7 +13,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
   }
 
   get(key: Key) {
-    if (!this.#cache[key]) return -1;
+    if (!Object.hasOwn(this.#cache, key)) return -1;
 
     const node = this.#cache[key]!;
     this.#orderedList.delete(node);
@@ -23,7 +23,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
   }
 
   put(key: Key, value: Value): void {
-    if (this.#cache[key]) {
+    if (Object.hasOwn(this.#cache, key)) {
       const node = this.#cache[key];
       this.#orderedList.delete(node!);
     }
