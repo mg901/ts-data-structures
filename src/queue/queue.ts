@@ -1,7 +1,11 @@
 import { LinkedList } from '../linked-list';
 
 export class Queue<T = any> {
-  #linkedList = new LinkedList<T>();
+  #linkedList: LinkedList<T>;
+
+  constructor() {
+    this.#linkedList = new LinkedList<T>();
+  }
 
   get size(): number {
     return this.#linkedList.length;
