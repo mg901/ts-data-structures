@@ -585,4 +585,29 @@ describe('LinkedList', () => {
       expect(foundedNode?.value).toBe(2);
     });
   });
+
+  describe('clear', () => {
+    it('removes all nodes from the linked list', () => {
+      // Arrange
+      linkedList.fromArray([1, 2, 3, 4]);
+
+      // Act
+      linkedList.clear();
+
+      // Assert
+      expect(linkedList.head).toBeNull();
+      expect(linkedList.tail).toBeNull();
+      expect(linkedList.length).toBe(0);
+      expect(linkedList.isEmpty).toBeTruthy();
+    });
+
+    it('works correctly on an empty linked list', () => {
+      // Act
+      linkedList.clear();
+      expect(linkedList.head).toBeNull();
+      expect(linkedList.tail).toBeNull();
+      expect(linkedList.length).toBe(0);
+      expect(linkedList.isEmpty).toBeTruthy();
+    });
+  });
 });
