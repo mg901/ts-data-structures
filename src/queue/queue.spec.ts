@@ -2,8 +2,7 @@ import { describe, beforeEach, it, expect } from 'vitest';
 import { Queue } from './queue';
 
 describe('Queue', () => {
-  // @ts-ignore
-  let queue: Queue<number> = null;
+  let queue: Queue<number>;
 
   // Arrange
   beforeEach(() => {
@@ -24,6 +23,17 @@ describe('Queue', () => {
 
       // Assert
       expect(queue.size).toBe(1);
+    });
+
+    it('add multiple elements to the queue with ', () => {
+      // Act
+      queue.enqueue(10);
+      queue.enqueue(20);
+      queue.enqueue(30);
+
+      // Assert
+      expect(queue.toString()).toBe('10,20,30');
+      expect(queue.size).toBe(3);
     });
   });
 
@@ -59,13 +69,15 @@ describe('Queue', () => {
       // Arrange
       queue.enqueue(10);
       queue.enqueue(20);
+      queue.enqueue(30);
 
       // Act
       const removedElement = queue.dequeue();
 
       // Assert
       expect(removedElement).toBe(10);
-      expect(queue.size).toBe(1);
+      expect(queue.toString()).toBe('20,30');
+      expect(queue.size).toBe(2);
     });
 
     it('returns undefined when deleting an element on the empty queue', () => {
@@ -81,21 +93,23 @@ describe('Queue', () => {
   describe('peek', () => {
     it('returns the front element without removing it', () => {
       // Arrange
-      queue.enqueue(5);
+      queue.enqueue(10);
       queue.enqueue(15);
 
       // Act
-      const frontElement = queue.pick();
+      const frontElement = queue.peek();
 
       // Assert
-      expect(frontElement).toBe(5);
+      expect(frontElement).toBe(10);
+      expect(queue.toString()).toBe('10,15');
       expect(queue.size).toBe(2);
     });
 
     it('returns undefined for the empty list', () => {
       // Act
-      const frontElement = queue.pick();
+      const frontElement = queue.peek();
 
+      // Assert
       expect(frontElement).toBeUndefined();
     });
   });
@@ -111,6 +125,7 @@ describe('Queue', () => {
 
       // Assert
       expect(queue.isEmpty).toBeTruthy();
+      expect(queue.size).toBe(0);
     });
   });
 });

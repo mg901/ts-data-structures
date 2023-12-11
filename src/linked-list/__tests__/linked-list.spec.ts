@@ -1,9 +1,9 @@
+/* eslint-disable no-restricted-syntax */
 import { describe, beforeEach, it, expect } from 'vitest';
 import { LinkedList } from '..';
 
 describe('LinkedList', () => {
-  // @ts-ignore
-  let linkedList = null as LinkedList<number>;
+  let linkedList: LinkedList<number>;
 
   // Arrange
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('LinkedList', () => {
     // Assert
     expect(linkedList.head).toBeNull();
     expect(linkedList.tail).toBeNull();
-    expect(linkedList.length).toBe(0);
+    expect(linkedList.size).toBe(0);
   });
 
   describe('isEmpty', () => {
@@ -44,7 +44,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.value).toBe(1);
       expect(linkedList.tail?.next).toBeNull();
 
-      expect(linkedList.length).toBe(1);
+      expect(linkedList.size).toBe(1);
     });
 
     it('appends nodes to the non-empty list', () => {
@@ -62,7 +62,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
 
     it('can be used in a call chain', () => {
@@ -71,7 +71,7 @@ describe('LinkedList', () => {
 
       // Assert
       expect(linkedList.toString()).toBe('1,2,3');
-      expect(linkedList.length).toBe(3);
+      expect(linkedList.size).toBe(3);
     });
   });
 
@@ -93,13 +93,42 @@ describe('LinkedList', () => {
     });
   });
 
+  describe('Iterator', () => {
+    it('iterates through the elements of the list', () => {
+      // Arrange
+      linkedList.fromArray([1, 2, 3]);
+      let values: number[] = [];
+
+      // Act
+      for (const node of linkedList) {
+        values.push(node?.value);
+      }
+
+      // Assert
+      expect(values).toEqual([1, 2, 3]);
+    });
+
+    it('handles an empty list', () => {
+      // Arrange
+      let values: number[] = [];
+
+      // Act
+      for (const node of linkedList) {
+        values.push(node?.value);
+      }
+
+      // Assert
+      expect(values).toEqual([]);
+    });
+  });
+
   describe('toArray', () => {
     it('returns an empty array for the empty list', () => {
       // Act and Assert
       expect(linkedList.toArray()).toEqual([]);
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
   });
 
@@ -109,7 +138,7 @@ describe('LinkedList', () => {
       expect(linkedList.toString()).toBe('');
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
   });
 
@@ -124,7 +153,7 @@ describe('LinkedList', () => {
 
       expect(linkedList.tail?.value).toBe(1);
       expect(linkedList.tail?.next).toBeNull();
-      expect(linkedList.length).toBe(1);
+      expect(linkedList.size).toBe(1);
     });
 
     it('prepends a new node to the beginning of a non-empty list', () => {
@@ -141,7 +170,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.value).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
 
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
 
     it('can be used in a call chain', () => {
@@ -150,7 +179,7 @@ describe('LinkedList', () => {
 
       // Assert
       expect(linkedList.toString()).toBe('1,2,3');
-      expect(linkedList.length).toBe(3);
+      expect(linkedList.size).toBe(3);
     });
   });
 
@@ -163,7 +192,7 @@ describe('LinkedList', () => {
       expect(deletedNode).toBeNull();
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
 
     it('deletes the element outside the list', () => {
@@ -180,7 +209,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
 
     it('deletes the node from the singular node list', () => {
@@ -195,7 +224,7 @@ describe('LinkedList', () => {
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
 
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
 
     it('deletes the first node from the multi-node list', () => {
@@ -213,7 +242,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.value).toBe(3);
 
       expect(linkedList.toString()).toEqual('2,3');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
 
     it('deletes an element in the middle', () => {
@@ -231,7 +260,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.value).toBe(4);
 
       expect(linkedList.toString()).toBe('1,3,4');
-      expect(linkedList.length).toBe(3);
+      expect(linkedList.size).toBe(3);
     });
 
     it('deletes the last element', () => {
@@ -251,7 +280,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
   });
 
@@ -263,7 +292,7 @@ describe('LinkedList', () => {
       // Assert
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
 
     it('reverses the head of the singular node list', () => {
@@ -277,7 +306,7 @@ describe('LinkedList', () => {
       expect(linkedList.head?.value).toBe(1);
       expect(linkedList.tail?.value).toBe(1);
       expect(linkedList.toString()).toBe('1');
-      expect(linkedList.length).toBe(1);
+      expect(linkedList.size).toBe(1);
     });
 
     it('reverses the list', () => {
@@ -294,7 +323,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toEqual('3,2,1');
-      expect(linkedList.length).toBe(3);
+      expect(linkedList.size).toBe(3);
     });
 
     it('can be used in a call chain', () => {
@@ -307,7 +336,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('3,2,1,4');
-      expect(linkedList.length).toBe(4);
+      expect(linkedList.size).toBe(4);
     });
   });
 
@@ -346,7 +375,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('0,1');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
 
     it('inserts at the end of the list', () => {
@@ -363,7 +392,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
 
     it('inserts in the middle of the list', () => {
@@ -380,7 +409,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2,3,4');
-      expect(linkedList.length).toBe(4);
+      expect(linkedList.size).toBe(4);
     });
 
     it('can be used in a call chain', () => {
@@ -392,7 +421,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.value).toBe(2);
 
       expect(linkedList.toString()).toBe('1,2');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
   });
 
@@ -405,7 +434,7 @@ describe('LinkedList', () => {
       expect(deletedHead).toBeNull();
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
 
     it('deletes the head from the list with multiple nodes', () => {
@@ -425,7 +454,7 @@ describe('LinkedList', () => {
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('2,3');
-      expect(linkedList.length).toBe(2);
+      expect(linkedList.size).toBe(2);
     });
   });
 
@@ -438,7 +467,7 @@ describe('LinkedList', () => {
       expect(deletedTail).toBeNull();
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
 
     it('deletes the tail form the list with a single node', () => {
@@ -452,7 +481,7 @@ describe('LinkedList', () => {
       expect(deletedTail?.value).toBe(1);
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
     });
 
     it('deletes the tail from the list with multiple nodes', () => {
@@ -597,7 +626,7 @@ describe('LinkedList', () => {
       // Assert
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
       expect(linkedList.isEmpty).toBeTruthy();
     });
 
@@ -606,7 +635,7 @@ describe('LinkedList', () => {
       linkedList.clear();
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
-      expect(linkedList.length).toBe(0);
+      expect(linkedList.size).toBe(0);
       expect(linkedList.isEmpty).toBeTruthy();
     });
   });
