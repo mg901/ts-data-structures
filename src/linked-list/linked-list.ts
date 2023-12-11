@@ -1,7 +1,7 @@
 import { LinkedListNode } from './linked-list-node';
 import type { NullableLinkedListNode } from './linked-list-node';
 import { Comparator } from '../shared/comparator';
-import type { IComparator, CompareFunction } from '../shared/comparator';
+import type { CompareFunction } from '../shared/comparator';
 
 type FindMethodOptions<T = any> = {
   value?: T;
@@ -15,25 +15,25 @@ export class LinkedList<T = any> {
 
   #length: number = 0;
 
-  #compare: IComparator<T>;
+  #compare: Comparator<T>;
 
   constructor(compareFunction?: CompareFunction<T>) {
     this.#compare = new Comparator(compareFunction);
   }
 
-  get head() {
+  get head(): NullableLinkedListNode<T> {
     return this.#head;
   }
 
-  get tail() {
+  get tail(): NullableLinkedListNode<T> {
     return this.#tail;
   }
 
-  get length() {
+  get length(): number {
     return this.#length;
   }
 
-  get isEmpty() {
+  get isEmpty(): boolean {
     return this.#head === null;
   }
 
@@ -277,7 +277,7 @@ export class LinkedList<T = any> {
     return null;
   }
 
-  clear() {
+  clear(): void {
     this.#head = null;
     this.#tail = null;
     this.#length = 0;
