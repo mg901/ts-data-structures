@@ -9,15 +9,18 @@ type FindMethodOptions<T = any> = {
 };
 
 export class LinkedList<T = any> {
-  #head: NullableLinkedListNode<T> = null;
+  #head: NullableLinkedListNode<T>;
 
-  #tail: NullableLinkedListNode<T> = null;
+  #tail: NullableLinkedListNode<T>;
 
-  #length: number = 0;
+  #length: number;
 
   #compare: IComparator<T>;
 
   constructor(compareFunction?: CompareFunction<T>) {
+    this.#head = null;
+    this.#tail = null;
+    this.#length = 0;
     this.#compare = new Comparator(compareFunction);
   }
 
