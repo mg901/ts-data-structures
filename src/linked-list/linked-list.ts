@@ -1,7 +1,9 @@
-import { LinkedListNode } from './linked-list-node';
-import type { NullableLinkedListNode } from './linked-list-node';
-import { Comparator } from '../shared/comparator';
-import type { CompareFunction } from '../shared/comparator';
+import {
+  type NullableLinkedListNode,
+  type Callback,
+  LinkedListNode,
+} from './linked-list-node';
+import { type CompareFunction, Comparator } from '../shared/comparator';
 
 type FindMethodOptions<T = any> = {
   value?: T;
@@ -13,7 +15,7 @@ export class LinkedList<T = any> {
 
   #tail: NullableLinkedListNode<T> = null;
 
-  #length: number = 0;
+  #size: number = 0;
 
   #compare: Comparator<T>;
 
@@ -29,8 +31,8 @@ export class LinkedList<T = any> {
     return this.#tail;
   }
 
-  get length(): number {
-    return this.#length;
+  get size(): number {
+    return this.#size;
   }
 
   get isEmpty(): boolean {
@@ -48,7 +50,7 @@ export class LinkedList<T = any> {
       this.#tail = newNode;
     }
 
-    this.#length += 1;
+    this.#size += 1;
 
     return this;
   }
@@ -61,20 +63,49 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  toArray(): T[] {
-    const array = [];
+  [Symbol.iterator](): Iterator<LinkedListNode<T>> {
     let currentNode = this.#head;
 
-    while (currentNode) {
-      array.push(currentNode.value);
-      currentNode = currentNode.next;
-    }
+    return {
+      next() {
+        if (currentNode !== null) {
+          const value = currentNode;
+          currentNode = currentNode.next;
 
-    return array;
+          return {
+            done: false,
+            value,
+          };
+        }
+
+        return {
+          value: undefined as any,
+          done: true,
+        };
+      },
+    };
   }
 
-  toString(): string {
-    return this.toArray().toString();
+  toArray(): T[] {
+    let values = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const node of this) {
+      values.push(node.value);
+    }
+
+    return values;
+  }
+
+  toString(callback?: Callback<T>): string {
+    let nodes = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const node of this) {
+      nodes.push(node);
+    }
+
+    return nodes.map((node) => node.toString(callback)).toString();
   }
 
   prepend(value: T): this {
@@ -88,7 +119,7 @@ export class LinkedList<T = any> {
       this.#head = newNode;
     }
 
-    this.#length += 1;
+    this.#size += 1;
 
     return this;
   }
@@ -133,7 +164,7 @@ export class LinkedList<T = any> {
     if (deletedNode) {
       // Clear the reference of the deleted node.
       deletedNode.next = null;
-      this.#length -= 1;
+      this.#size -= 1;
     }
 
     return deletedNode;
@@ -162,7 +193,7 @@ export class LinkedList<T = any> {
   }
 
   insertAt(index: number, value: T): this {
-    const isInvalidIndex = index < 0 || index > this.#length;
+    const isInvalidIndex = index < 0 || index > this.#size;
 
     if (isInvalidIndex) {
       throw new Error(
@@ -173,7 +204,7 @@ export class LinkedList<T = any> {
     if (index === 0) {
       // Insert at the beginning.
       this.prepend(value);
-    } else if (index === this.#length) {
+    } else if (index === this.#size) {
       // Insert at the end.
       this.append(value);
     } else {
@@ -184,7 +215,7 @@ export class LinkedList<T = any> {
       newNode.next = prevNode.next;
       prevNode.next = newNode;
 
-      this.#length += 1;
+      this.#size += 1;
     }
 
     return this;
@@ -212,7 +243,7 @@ export class LinkedList<T = any> {
       this.#tail = null;
     }
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return deletedNode;
   }
@@ -238,7 +269,7 @@ export class LinkedList<T = any> {
       this.#tail = currentNode;
     }
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return deletedTail;
   }
@@ -280,6 +311,6 @@ export class LinkedList<T = any> {
   clear(): void {
     this.#head = null;
     this.#tail = null;
-    this.#length = 0;
+    this.#size = 0;
   }
 }

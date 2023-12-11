@@ -1,4 +1,7 @@
 module.exports = {
+  env: {
+    es2023: true,
+  },
   extends: [
     'airbnb-base',
     'airbnb-typescript/base',

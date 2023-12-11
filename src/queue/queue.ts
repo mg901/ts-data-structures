@@ -1,4 +1,4 @@
-import { LinkedList } from '../linked-list';
+import { LinkedList, type Callback } from '../linked-list';
 
 export class Queue<T = any> {
   #linkedList: LinkedList<T>;
@@ -7,23 +7,27 @@ export class Queue<T = any> {
     this.#linkedList = new LinkedList<T>();
   }
 
+  enqueue(value: T): void {
+    this.#linkedList.append(value);
+  }
+
   get size(): number {
-    return this.#linkedList.length;
+    return this.#linkedList.size;
   }
 
   get isEmpty(): boolean {
     return this.#linkedList.isEmpty;
   }
 
-  enqueue(value: T): void {
-    this.#linkedList.append(value);
+  toString(callback?: Callback<T>) {
+    return this.#linkedList.toString(callback);
   }
 
   dequeue(): T | undefined {
     return this.#linkedList.deleteHead()?.value;
   }
 
-  pick(): T | undefined {
+  peek(): T | undefined {
     return this.#linkedList.head?.value;
   }
 
