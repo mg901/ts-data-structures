@@ -1,7 +1,8 @@
-import { DoublyLinkedListNode } from './doubly-linked-list-node';
-import type { NullableDoublyLinkedListNode } from './doubly-linked-list-node';
-import { Comparator } from '../shared/comparator';
-import type { CompareFunction } from '../shared/comparator';
+import {
+  type NullableDoublyLinkedListNode,
+  DoublyLinkedListNode,
+} from './doubly-linked-list-node';
+import { type CompareFunction, Comparator } from '../shared/comparator';
 
 type FindMethodOptions<T = any> = {
   value?: T;
@@ -13,7 +14,7 @@ export class DoublyLinkedList<T = any> {
 
   #tail: NullableDoublyLinkedListNode<T> = null;
 
-  #length: number = 0;
+  #size: number = 0;
 
   #compare: Comparator<T>;
 
@@ -29,8 +30,8 @@ export class DoublyLinkedList<T = any> {
     return this.#tail;
   }
 
-  get length(): number {
-    return this.#length;
+  get size(): number {
+    return this.#size;
   }
 
   get isEmpty(): boolean {
@@ -49,7 +50,7 @@ export class DoublyLinkedList<T = any> {
       this.#tail = newNode;
     }
 
-    this.#length += 1;
+    this.#size += 1;
 
     return this;
   }
@@ -90,7 +91,7 @@ export class DoublyLinkedList<T = any> {
       this.#head = newNode;
     }
 
-    this.#length += 1;
+    this.#size += 1;
 
     return this;
   }
@@ -129,7 +130,7 @@ export class DoublyLinkedList<T = any> {
     currentNode.prev = null;
     currentNode.next = null;
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return currentNode;
   }
@@ -158,7 +159,7 @@ export class DoublyLinkedList<T = any> {
   }
 
   insertAt(index: number, value: T): this {
-    const isInvalidIndex = index < 0 || index > this.#length;
+    const isInvalidIndex = index < 0 || index > this.#size;
 
     if (isInvalidIndex) {
       throw new Error(
@@ -170,7 +171,7 @@ export class DoublyLinkedList<T = any> {
       // Insert at the beginning.
       this.prepend(value);
       // Insert at the end.
-    } else if (index === this.#length) {
+    } else if (index === this.#size) {
       this.append(value);
     } else {
       // Insert in the middle.
@@ -180,7 +181,7 @@ export class DoublyLinkedList<T = any> {
       newNode.prev = prevNode;
       prevNode.next = newNode;
 
-      this.#length += 1;
+      this.#size += 1;
     }
 
     return this;
@@ -209,7 +210,7 @@ export class DoublyLinkedList<T = any> {
       this.#tail = null;
     }
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return deletedNode;
   }
@@ -235,7 +236,7 @@ export class DoublyLinkedList<T = any> {
       this.#tail = currentNode;
     }
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return deletedNode;
   }
@@ -275,5 +276,11 @@ export class DoublyLinkedList<T = any> {
     }
 
     return null;
+  }
+
+  clear() {
+    this.#head = null;
+    this.#tail = null;
+    this.#size = 0;
   }
 }
