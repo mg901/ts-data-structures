@@ -2,8 +2,7 @@ import { describe, beforeEach, it, expect } from 'vitest';
 import { LRUCacheOnMap } from '../lru-cache-on-map';
 
 describe('LRUCacheOnMap', () => {
-  // @ts-ignore
-  let cache = null as LRUCacheOnMap<number, string>;
+  let cache: LRUCacheOnMap<number, string>;
 
   // Arrange
   beforeEach(() => {

@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     'newline-before-return': 2,
     'prefer-const': 0,
+    'no-param-reassign': 0,
     'import/prefer-default-export': 0,
     'import/no-extraneous-dependencies': 0,
   },

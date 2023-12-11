@@ -1,6 +1,4 @@
-/* eslint-disable no-param-reassign */
-import { Node } from './node';
-import type { NullableNode } from './node';
+import { type NullableNode, Node } from './node';
 
 export class DoublyLinkedList<Key = any, Value = any> {
   head: NullableNode<Key, Value>;
