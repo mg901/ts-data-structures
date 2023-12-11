@@ -1,2 +1,2 @@
 export * from './linked-list';
-export * from './linked-list-node';
+export { LinkedListNode } from './linked-list-node';

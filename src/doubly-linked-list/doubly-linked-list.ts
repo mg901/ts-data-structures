@@ -1,7 +1,9 @@
-import { DoublyLinkedListNode } from './doubly-linked-list-node';
-import type { NullableDoublyLinkedListNode } from './doubly-linked-list-node';
-import { Comparator } from '../shared/comparator';
-import type { CompareFunction } from '../shared/comparator';
+import {
+  type NullableDoublyLinkedListNode,
+  type Callback,
+  DoublyLinkedListNode,
+} from './doubly-linked-list-node';
+import { type CompareFunction, Comparator } from '../shared/comparator';
 
 type FindMethodOptions<T = any> = {
   value?: T;
@@ -13,7 +15,7 @@ export class DoublyLinkedList<T = any> {
 
   #tail: NullableDoublyLinkedListNode<T> = null;
 
-  #length: number = 0;
+  #size: number = 0;
 
   #compare: Comparator<T>;
 
@@ -29,8 +31,8 @@ export class DoublyLinkedList<T = any> {
     return this.#tail;
   }
 
-  get length(): number {
-    return this.#length;
+  get size(): number {
+    return this.#size;
   }
 
   get isEmpty(): boolean {
@@ -49,7 +51,7 @@ export class DoublyLinkedList<T = any> {
       this.#tail = newNode;
     }
 
-    this.#length += 1;
+    this.#size += 1;
 
     return this;
   }
@@ -62,20 +64,47 @@ export class DoublyLinkedList<T = any> {
     return this;
   }
 
-  toArray(): T[] {
-    let array = [];
+  [Symbol.iterator](): Iterator<DoublyLinkedListNode<T>> {
     let currentNode = this.#head;
 
-    while (currentNode !== null) {
-      array.push(currentNode.value);
-      currentNode = currentNode.next;
-    }
+    return {
+      next() {
+        if (currentNode !== null) {
+          const node = currentNode;
+          currentNode = currentNode.next;
 
-    return array;
+          return {
+            value: node,
+            done: false,
+          };
+        }
+
+        return {
+          value: undefined as any,
+          done: true,
+        };
+      },
+    };
   }
 
-  toString(): string {
-    return this.toArray().toString();
+  toArray(): T[] {
+    let values = [];
+
+    for (const node of this) {
+      values.push(node.value);
+    }
+
+    return values;
+  }
+
+  toString(callback?: Callback<T>): string {
+    let nodes = [];
+
+    for (const node of this) {
+      nodes.push(node);
+    }
+
+    return nodes.map((node) => node.toString(callback)).toString();
   }
 
   prepend(value: T): this {
@@ -90,7 +119,7 @@ export class DoublyLinkedList<T = any> {
       this.#head = newNode;
     }
 
-    this.#length += 1;
+    this.#size += 1;
 
     return this;
   }
@@ -129,7 +158,7 @@ export class DoublyLinkedList<T = any> {
     currentNode.prev = null;
     currentNode.next = null;
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return currentNode;
   }
@@ -158,7 +187,7 @@ export class DoublyLinkedList<T = any> {
   }
 
   insertAt(index: number, value: T): this {
-    const isInvalidIndex = index < 0 || index > this.#length;
+    const isInvalidIndex = index < 0 || index > this.#size;
 
     if (isInvalidIndex) {
       throw new Error(
@@ -170,7 +199,7 @@ export class DoublyLinkedList<T = any> {
       // Insert at the beginning.
       this.prepend(value);
       // Insert at the end.
-    } else if (index === this.#length) {
+    } else if (index === this.#size) {
       this.append(value);
     } else {
       // Insert in the middle.
@@ -180,7 +209,7 @@ export class DoublyLinkedList<T = any> {
       newNode.prev = prevNode;
       prevNode.next = newNode;
 
-      this.#length += 1;
+      this.#size += 1;
     }
 
     return this;
@@ -209,7 +238,7 @@ export class DoublyLinkedList<T = any> {
       this.#tail = null;
     }
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return deletedNode;
   }
@@ -235,7 +264,7 @@ export class DoublyLinkedList<T = any> {
       this.#tail = currentNode;
     }
 
-    this.#length -= 1;
+    this.#size -= 1;
 
     return deletedNode;
   }
@@ -275,5 +304,11 @@ export class DoublyLinkedList<T = any> {
     }
 
     return null;
+  }
+
+  clear() {
+    this.#head = null;
+    this.#tail = null;
+    this.#size = 0;
   }
 }
