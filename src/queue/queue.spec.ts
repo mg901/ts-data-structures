@@ -68,7 +68,7 @@ describe('Queue', () => {
       expect(queue.size).toBe(1);
     });
 
-    it('returns null when deleting an element on the empty queue', () => {
+    it('returns undefined when deleting an element on the empty queue', () => {
       // Act
       const removedElement = queue.dequeue();
 
@@ -90,6 +90,13 @@ describe('Queue', () => {
       // Assert
       expect(frontElement).toBe(5);
       expect(queue.size).toBe(2);
+    });
+
+    it('returns undefined for the empty list', () => {
+      // Act
+      const frontElement = queue.pick();
+
+      expect(frontElement).toBeUndefined();
     });
   });
 
