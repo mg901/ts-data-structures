@@ -2,19 +2,10 @@ import isEqual from 'lodash.isequal';
 
 export type CompareFunction<T> = (a: T, b: T) => -1 | 0 | 1;
 
-export interface IComparator<T> {
-  equal(a: T, b: T): boolean;
-  lessThan(a: T, b: T): boolean;
-  greaterThan(a: T, b: T): boolean;
-  lessThanOrEqual(a: T, b: T): boolean;
-  greaterThanOrEqual(a: T, b: T): boolean;
-  reverse(): void;
-}
-
-export class Comparator<T = any> implements IComparator<T> {
+export class Comparator<T = any> {
   #compare: CompareFunction<T>;
 
-  #isEqual: typeof isEqual;
+  #isEqual = isEqual;
 
   static defaultCompareFunction<T>(a: T, b: T) {
     if (a === b) return 0;
@@ -24,30 +15,29 @@ export class Comparator<T = any> implements IComparator<T> {
 
   constructor(compareFunction?: CompareFunction<T>) {
     this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
-    this.#isEqual = isEqual;
   }
 
-  equal(a: T, b: T) {
+  equal(a: T, b: T): boolean {
     return this.#isEqual(a, b);
   }
 
-  lessThan(a: T, b: T) {
+  lessThan(a: T, b: T): boolean {
     return this.#compare(a, b) < 0;
   }
 
-  greaterThan(a: T, b: T) {
+  greaterThan(a: T, b: T): boolean {
     return this.#compare(a, b) > 0;
   }
 
-  lessThanOrEqual(a: T, b: T) {
+  lessThanOrEqual(a: T, b: T): boolean {
     return this.lessThan(a, b) || this.equal(a, b);
   }
 
-  greaterThanOrEqual(a: T, b: T) {
+  greaterThanOrEqual(a: T, b: T): boolean {
     return this.greaterThan(a, b) || this.equal(a, b);
   }
 
-  reverse() {
+  reverse(): void {
     const compareOriginal = this.#compare;
 
     this.#compare = (a, b) => compareOriginal(b, a);

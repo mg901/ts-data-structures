@@ -1,66 +1,43 @@
 import { DoublyLinkedListNode } from './doubly-linked-list-node';
 import type { NullableDoublyLinkedListNode } from './doubly-linked-list-node';
 import { Comparator } from '../shared/comparator';
-import type { IComparator, CompareFunction } from '../shared/comparator';
+import type { CompareFunction } from '../shared/comparator';
 
 type FindMethodOptions<T = any> = {
   value?: T;
   predicate?: (value: T) => boolean;
 };
 
-export interface IDoublyLinkedList<T = any> {
-  readonly head: NullableDoublyLinkedListNode<T>;
-  readonly tail: NullableDoublyLinkedListNode<T>;
-  readonly length: number;
-  readonly isEmpty: boolean;
+export class DoublyLinkedList<T = any> {
+  #head: NullableDoublyLinkedListNode<T> = null;
 
-  append(value: T): this;
-  fromArray(array: T[]): this;
-  toArray(): T[];
-  toString(): string;
-  prepend(value: T): this;
-  delete(value: T): NullableDoublyLinkedListNode<T>;
-  reverse(): this;
-  insertAt(index: number, value: T): this;
-  deleteHead(): NullableDoublyLinkedListNode<T>;
-  deleteTail(): NullableDoublyLinkedListNode<T>;
-  indexOf(value: T): number;
-  find(options: FindMethodOptions<T>): NullableDoublyLinkedListNode<T>;
-}
+  #tail: NullableDoublyLinkedListNode<T> = null;
 
-export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
-  #head: NullableDoublyLinkedListNode<T>;
+  #length: number = 0;
 
-  #tail: NullableDoublyLinkedListNode<T>;
-
-  #length: number;
-
-  #compare: IComparator<T>;
+  #compare: Comparator<T>;
 
   constructor(compareFunction?: CompareFunction<T>) {
-    this.#head = null;
-    this.#tail = null;
-    this.#length = 0;
     this.#compare = new Comparator(compareFunction);
   }
 
-  get head() {
+  get head(): NullableDoublyLinkedListNode<T> {
     return this.#head;
   }
 
-  get tail() {
+  get tail(): NullableDoublyLinkedListNode<T> {
     return this.#tail;
   }
 
-  get length() {
+  get length(): number {
     return this.#length;
   }
 
-  get isEmpty() {
+  get isEmpty(): boolean {
     return this.#head === null;
   }
 
-  append(value: T) {
+  append(value: T): this {
     const newNode = new DoublyLinkedListNode(value);
 
     if (this.#head === null) {
@@ -77,7 +54,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return this;
   }
 
-  fromArray(array: T[]) {
+  fromArray(array: T[]): this {
     array.forEach((value) => {
       this.append(value);
     });
@@ -85,7 +62,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return this;
   }
 
-  toArray() {
+  toArray(): T[] {
     let array = [];
     let currentNode = this.#head;
 
@@ -97,11 +74,11 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return array;
   }
 
-  toString() {
+  toString(): string {
     return this.toArray().toString();
   }
 
-  prepend(value: T) {
+  prepend(value: T): this {
     const newNode = new DoublyLinkedListNode(value);
 
     if (this.#head === null) {
@@ -118,7 +95,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return this;
   }
 
-  delete(value: T) {
+  delete(value: T): NullableDoublyLinkedListNode<T> {
     if (this.#head === null) return null;
 
     let currentNode: NullableDoublyLinkedListNode = this.#head;
@@ -157,7 +134,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return currentNode;
   }
 
-  reverse() {
+  reverse(): this {
     if (this.#head === null || this.#head.next === null) {
       return this;
     }
@@ -180,17 +157,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return this;
   }
 
-  #findNodeByIndex(index: number) {
-    let currentNode = this.#head!;
-
-    for (let i = 0; i < index; i += 1) {
-      currentNode = currentNode.next!;
-    }
-
-    return currentNode;
-  }
-
-  insertAt(index: number, value: T) {
+  insertAt(index: number, value: T): this {
     const isInvalidIndex = index < 0 || index > this.#length;
 
     if (isInvalidIndex) {
@@ -219,7 +186,17 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return this;
   }
 
-  deleteHead() {
+  #findNodeByIndex(index: number) {
+    let currentNode = this.#head!;
+
+    for (let i = 0; i < index; i += 1) {
+      currentNode = currentNode.next!;
+    }
+
+    return currentNode;
+  }
+
+  deleteHead(): NullableDoublyLinkedListNode<T> {
     if (this.#head === null) return null;
 
     const deletedNode = this.#head;
@@ -237,7 +214,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return deletedNode;
   }
 
-  deleteTail() {
+  deleteTail(): NullableDoublyLinkedListNode<T> {
     if (this.#head === null) return null;
 
     let deletedNode = this.#tail;
@@ -263,7 +240,7 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return deletedNode;
   }
 
-  indexOf(value: T) {
+  indexOf(value: T): number {
     let count = 0;
     let currentNode = this.#head;
 
@@ -277,7 +254,10 @@ export class DoublyLinkedList<T = any> implements IDoublyLinkedList<T> {
     return -1;
   }
 
-  find({ value, predicate }: FindMethodOptions<T>) {
+  find({
+    value,
+    predicate,
+  }: FindMethodOptions<T>): NullableDoublyLinkedListNode<T> {
     if (this.#head === null) return null;
 
     let currentNode: NullableDoublyLinkedListNode = this.#head;
