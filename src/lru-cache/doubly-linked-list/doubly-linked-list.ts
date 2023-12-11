@@ -1,11 +1,17 @@
 import { type NullableNode, Node } from './node';
 
 export class DoublyLinkedList<Key = any, Value = any> {
-  head: NullableNode<Key, Value> = null;
+  head: NullableNode<Key, Value>;
 
-  tail: NullableNode<Key, Value> = null;
+  tail: NullableNode<Key, Value>;
 
-  length: number = 0;
+  length: number;
+
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
 
   push(key: Key, value: Value): Node<Key, Value> {
     const newNode = new Node(key, value);
