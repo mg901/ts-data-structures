@@ -2,8 +2,7 @@ import { describe, beforeEach, it, expect } from 'vitest';
 import { LRUCache } from '../lru-cache';
 
 describe('LRUCache', () => {
-  // @ts-ignore
-  let cache = null as LRUCache<number, string>;
+  let cache: LRUCache<number, string>;
 
   // Arrange
   beforeEach(() => {

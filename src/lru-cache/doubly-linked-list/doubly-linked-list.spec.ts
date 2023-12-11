@@ -1,10 +1,10 @@
 import { describe, beforeEach, it, expect } from 'vitest';
-import { DoublyLinkedList } from '../doubly-linked-list';
+import { DoublyLinkedList } from './doubly-linked-list';
 
 describe('LRUCache/DoublyLinkedList', () => {
-  // @ts-ignore
-  let list = null as DoublyLinkedList<string, string>;
+  let list: DoublyLinkedList<string, string>;
 
+  // Arrange
   beforeEach(() => {
     list = new DoublyLinkedList<string, string>();
   });

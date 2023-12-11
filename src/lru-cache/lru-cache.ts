@@ -1,5 +1,5 @@
-import { DoublyLinkedList } from './doubly-linked-list';
-import { Node } from './node';
+import { DoublyLinkedList } from './doubly-linked-list/doubly-linked-list';
+import { Node } from './doubly-linked-list/node';
 
 export class LRUCache<Key extends string | number | symbol = any, Value = any> {
   #cache = {} as Record<Key, Node<Key, Value>>;
