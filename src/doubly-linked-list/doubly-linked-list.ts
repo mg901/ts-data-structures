@@ -1,5 +1,6 @@
 import {
   type NullableDoublyLinkedListNode,
+  type Callback,
   DoublyLinkedListNode,
 } from './doubly-linked-list-node';
 import { type CompareFunction, Comparator } from '../shared/comparator';
@@ -63,20 +64,47 @@ export class DoublyLinkedList<T = any> {
     return this;
   }
 
-  toArray(): T[] {
-    let array = [];
+  [Symbol.iterator](): Iterator<DoublyLinkedListNode<T>> {
     let currentNode = this.#head;
 
-    while (currentNode !== null) {
-      array.push(currentNode.value);
-      currentNode = currentNode.next;
-    }
+    return {
+      next() {
+        if (currentNode !== null) {
+          const node = currentNode;
+          currentNode = currentNode.next;
 
-    return array;
+          return {
+            value: node,
+            done: false,
+          };
+        }
+
+        return {
+          value: undefined as any,
+          done: true,
+        };
+      },
+    };
   }
 
-  toString(): string {
-    return this.toArray().toString();
+  toArray(): T[] {
+    let values = [];
+
+    for (const node of this) {
+      values.push(node.value);
+    }
+
+    return values;
+  }
+
+  toString(callback?: Callback<T>): string {
+    let nodes = [];
+
+    for (const node of this) {
+      nodes.push(node);
+    }
+
+    return nodes.map((node) => node.toString(callback)).toString();
   }
 
   prepend(value: T): this {

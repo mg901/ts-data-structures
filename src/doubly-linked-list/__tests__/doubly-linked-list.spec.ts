@@ -91,6 +91,35 @@ describe('DoublyLinkedList', () => {
     });
   });
 
+  describe('Iterator', () => {
+    it('iterates through the elements of the list', () => {
+      // Arrange
+      doublyLinkedList.fromArray([1, 2, 3]);
+      let values: number[] = [];
+
+      // Act
+      for (const node of doublyLinkedList) {
+        values.push(node?.value);
+      }
+
+      // Assert
+      expect(values).toEqual([1, 2, 3]);
+    });
+
+    it('handles an empty list', () => {
+      // Arrange
+      let values: number[] = [];
+
+      // Act
+      for (const node of doublyLinkedList) {
+        values.push(node?.value);
+      }
+
+      // Assert
+      expect(values).toEqual([]);
+    });
+  });
+
   describe('toArray', () => {
     it('returns an empty array for the empty list', () => {
       // Act
