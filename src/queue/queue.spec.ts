@@ -94,7 +94,7 @@ describe('Queue', () => {
   });
 
   describe('clear', () => {
-    it.todo('removes all elements from the queue', () => {
+    it('removes all elements from the queue', () => {
       // Arrange
       queue.enqueue(7);
       queue.enqueue(14);
