@@ -1,9 +1,9 @@
-// import { Comparator } from 'shared/comparator';
+import { Comparator } from '../shared/comparator';
 
 type NullableBinaryTreeNode<T> = BinaryTreeNode<T> | null;
 
 export class BinaryTreeNode<T = any> {
-  // #comparator: Comparator<T>;
+  #compare: Comparator<T>;
 
   constructor(
     public value: T,
@@ -11,7 +11,7 @@ export class BinaryTreeNode<T = any> {
     public left: NullableBinaryTreeNode<T> = null,
     public right: NullableBinaryTreeNode<T> = null,
   ) {
-    // this.#comparator = new Comparator<T>();
+    this.#compare = new Comparator<T>();
   }
 
   setValue(value: T): this {
@@ -21,48 +21,56 @@ export class BinaryTreeNode<T = any> {
   }
 
   setLeft(node: BinaryTreeNode<T>): this {
-    if (node) {
-      this.parent = null;
+    // Remove parent for existing node.
+    if (this.left) {
+      this.left.parent = null;
     }
 
+    // Attach new node.
     this.left = node;
 
+    // Make the current node the parent for the new node.
     if (this.left) {
-      this.parent = this;
+      this.left.parent = this;
     }
 
     return this;
   }
 
   setRight(node: BinaryTreeNode<T>): this {
-    if (node) {
-      this.parent = null;
+    // Remove parent for existing node.
+    if (this.right) {
+      this.right.parent = null;
     }
 
+    // Attach new node.
     this.right = node;
 
-    if (node.right) {
-      this.parent = this;
+    // Make the current node the parent for the new node.
+    if (node) {
+      this.right.parent = this;
     }
 
     return this;
   }
 
-  // removeChild(node: BinaryTreeNode<T>) {
-  //   if (this.left && this.#comparator.equal(node.value, this.left.value)) {
-  //     let removedNode = this.left;
-  //     this.left = null;
+  removeChild(node: BinaryTreeNode<T>) {
+    if (this.left && this.#compare.equal(node.value, this.left.value)) {
+      let removedNode = this.left;
+      removedNode.parent = null;
+      this.left = null;
 
-  //     return removedNode;
-  //   }
+      return removedNode;
+    }
 
-  //   if (this.right && this.#comparator.equal(node.value, this.right.value)) {
-  //     let removedNode = this.right;
-  //     this.right = null;
+    if (this.right && this.#compare.equal(node.value, this.right.value)) {
+      let removedNode = this.right;
+      removedNode.parent = null;
+      this.right = null;
 
-  //     return removedNode;
-  //   }
+      return removedNode;
+    }
 
-  //   return null;
-  // }
+    return null;
+  }
 }
