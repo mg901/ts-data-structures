@@ -1,22 +1,35 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { BinaryTreeNode } from '../binary-tree-node';
 
 describe('BinaryTreeNode', () => {
-  it('creates a binary tree node with the given value', () => {
-    // Act
-    const node = new BinaryTreeNode(10);
+  let parent: BinaryTreeNode<number>;
 
+  // Arrange
+  beforeEach(() => {
+    parent = new BinaryTreeNode(10);
+  });
+
+  it('returns the initial state of the binary tree node correctly', () => {
     // Assert
-    expect(node.value).toBe(10);
-    expect(node.left).toBeNull();
-    expect(node.right).toBeNull();
-    expect(node.parent).toBeNull();
+    expect(parent.value).toBe(10);
+    expect(parent.left).toBeNull();
+    expect(parent.right).toBeNull();
+    expect(parent.parent).toBeNull();
+  });
+
+  describe('setValue', () => {
+    it('replaces the initial value correctly for the initial method', () => {
+      // Act
+      parent.setValue(20);
+
+      // Assert
+      expect(parent.value).toBe(20);
+    });
   });
 
   describe('setLeft', () => {
     it('sets left child and parent correctly', () => {
       // Arrange
-      const parent = new BinaryTreeNode(10);
       const leftChild1 = new BinaryTreeNode(5);
 
       // Act
@@ -43,7 +56,6 @@ describe('BinaryTreeNode', () => {
   describe('setRight', () => {
     it('sets right child and parent correctly', () => {
       // Arrange
-      const parent = new BinaryTreeNode(10);
       const rightChild1 = new BinaryTreeNode(15);
 
       // Act
@@ -68,9 +80,8 @@ describe('BinaryTreeNode', () => {
   });
 
   describe('removeNode', () => {
-    it('removes child correctly', () => {
+    it('removes children correctly', () => {
       // Arrange
-      const parent = new BinaryTreeNode(10);
       const leftChild = new BinaryTreeNode(5);
       const rightChild = new BinaryTreeNode(15);
 
@@ -88,6 +99,38 @@ describe('BinaryTreeNode', () => {
       expect(removedRight).toEqual(removedRight);
       expect(removedLeft?.parent).toBeNull();
       expect(removedRight?.parent).toBeNull();
+    });
+  });
+
+  describe('replaceChild', () => {
+    it('replaces left child correctly', () => {
+      // Arrange
+      const oldChild = new BinaryTreeNode(5);
+      const newChild = new BinaryTreeNode(8);
+      parent.setLeft(oldChild);
+
+      // Act
+      parent.replaceChild(oldChild, newChild);
+
+      // Assert
+      expect(parent.left).toEqual(newChild);
+      expect(oldChild.parent).toBeNull();
+      expect(newChild.parent).toEqual(parent);
+    });
+
+    it('replaces right child correctly', () => {
+      // Arrange
+      const oldChild = new BinaryTreeNode(15);
+      const newChild = new BinaryTreeNode(20);
+      parent.setRight(oldChild);
+
+      // Act
+      parent.replaceChild(oldChild, newChild);
+
+      // Assert
+      expect(parent.right).toEqual(newChild);
+      expect(oldChild.parent).toBeNull();
+      expect(newChild.parent).toEqual(parent);
     });
   });
 });

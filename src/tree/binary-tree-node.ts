@@ -73,4 +73,28 @@ export class BinaryTreeNode<T = any> {
 
     return null;
   }
+
+  replaceChild(toReplace: BinaryTreeNode<T>, replacement: BinaryTreeNode<T>) {
+    if (this.left === null && this.right === null) {
+      return false;
+    }
+
+    if (this.left && this.#compare.equal(toReplace.value, this.left.value)) {
+      this.left.parent = null;
+      this.left = replacement;
+      this.left.parent = this;
+
+      return true;
+    }
+
+    if (this.right && this.#compare.equal(toReplace.value, this.right.value)) {
+      this.right.parent = null;
+      this.right = replacement;
+      this.right.parent = this;
+
+      return true;
+    }
+
+    return false;
+  }
 }
