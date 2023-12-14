@@ -11,6 +11,11 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.eslint.json',
   },
+  settings: {
+    'import/resolver': {
+      typescript: {},
+    },
+  },
   rules: {
     'newline-before-return': 2,
     'prefer-const': 0,

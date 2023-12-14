@@ -1,4 +1,4 @@
-import { Comparator } from '../shared/comparator';
+import { Comparator } from '@/shared/comparator';
 
 type NullableBinaryTreeNode<T> = BinaryTreeNode<T> | null;
 
