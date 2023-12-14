@@ -1,4 +1,4 @@
-export type Callback<T> = (data: T) => string;
+import { type Callback } from '../shared/types';
 
 export type NullableLinkedListNode<T = any> = LinkedListNode<T> | null;
 

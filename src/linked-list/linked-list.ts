@@ -1,9 +1,9 @@
 import {
   type NullableLinkedListNode,
-  type Callback,
   LinkedListNode,
 } from './linked-list-node';
 import { type CompareFunction, Comparator } from '../shared/comparator';
+import { type Callback } from '../shared/types';
 
 type FindMethodOptions<T = any> = {
   value?: T;
