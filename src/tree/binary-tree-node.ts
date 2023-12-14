@@ -97,4 +97,26 @@ export class BinaryTreeNode<T = any> {
 
     return false;
   }
+
+  traverseInOrder(): T[] {
+    let traverse: T[] = [];
+
+    const inOrder = (node: BinaryTreeNode<T>) => {
+      if (node) {
+        if (node.left) {
+          inOrder(node.left);
+        }
+
+        traverse.push(node.value);
+
+        if (node.right) {
+          inOrder(node.right);
+        }
+      }
+    };
+
+    inOrder(this);
+
+    return traverse;
+  }
 }

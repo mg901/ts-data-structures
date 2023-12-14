@@ -133,4 +133,26 @@ describe('BinaryTreeNode', () => {
       expect(newChild.parent).toEqual(parent);
     });
   });
+
+  describe('traverseInOrder', () => {
+    it('traverses in order correctly', () => {
+      // Arrange
+      const leftChild = new BinaryTreeNode(5);
+      const rightChild = new BinaryTreeNode(15);
+
+      parent.setLeft(leftChild);
+      parent.setRight(rightChild);
+
+      const expected = [5, 10, 15];
+
+      // Act
+      const received = parent.traverseInOrder();
+
+      // Assert
+      expect(received).toEqual(expected);
+    });
+  });
 });
+
+//    10
+// 5    15
