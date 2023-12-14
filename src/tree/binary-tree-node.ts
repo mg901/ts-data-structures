@@ -119,4 +119,8 @@ export class BinaryTreeNode<T = any> {
 
     return traverse;
   }
+
+  toString() {
+    return this.traverseInOrder().toString();
+  }
 }

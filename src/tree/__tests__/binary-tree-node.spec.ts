@@ -152,7 +152,22 @@ describe('BinaryTreeNode', () => {
       expect(received).toEqual(expected);
     });
   });
-});
 
-//    10
-// 5    15
+  describe('toString', () => {
+    it('returns string representation of the tree in in-order traversal', () => {
+      // Arrange
+      const leftChild = new BinaryTreeNode(5);
+      const rightChild = new BinaryTreeNode(15);
+      const leftLeftChild = new BinaryTreeNode(3);
+      const leftRightChild = new BinaryTreeNode(7);
+
+      parent.setLeft(leftChild);
+      parent.setRight(rightChild);
+      leftChild.setLeft(leftLeftChild);
+      leftChild.setRight(leftRightChild);
+
+      // Act and Assert
+      expect(parent.toString()).toBe('3,5,7,10,15');
+    });
+  });
+});
