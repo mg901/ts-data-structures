@@ -14,6 +14,32 @@ export class BinaryTreeNode<T = any> {
     this.#compare = new Comparator<T>();
   }
 
+  get leftHeight() {
+    if (!this.left) {
+      return 0;
+    }
+
+    return this.left.height + 1;
+  }
+
+  /**
+   * @return {number}
+   */
+  get rightHeight() {
+    if (!this.right) {
+      return 0;
+    }
+
+    return this.right.height + 1;
+  }
+
+  get height(): number {
+    const leftHeight = this.left ? this.left.height + 1 : 0;
+    const rightHeight = this.right ? this.right.height + 1 : 0;
+
+    return Math.max(leftHeight, rightHeight);
+  }
+
   setValue(value: T): this {
     this.value = value;
 
@@ -26,11 +52,10 @@ export class BinaryTreeNode<T = any> {
       this.left.parent = null;
     }
 
-    // Attach new node.
-    this.left = node;
-
-    // Make the current node the parent for the new node.
-    if (this.left) {
+    if (node) {
+      // Attach new node.
+      this.left = node;
+      // Make the current node the parent for the new node.
       this.left.parent = this;
     }
 
@@ -43,11 +68,10 @@ export class BinaryTreeNode<T = any> {
       this.right.parent = null;
     }
 
-    // Attach new node.
-    this.right = node;
-
     // Make the current node the parent for the new node.
     if (node) {
+      // Attach new node.
+      this.right = node;
       this.right.parent = this;
     }
 

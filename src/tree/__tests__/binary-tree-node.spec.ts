@@ -17,6 +17,25 @@ describe('BinaryTreeNode', () => {
     expect(parent.parent).toBeNull();
   });
 
+  describe('height', () => {
+    it('returns 0 for the parent node', () => {
+      // Act and Assert
+      expect(parent.height).toBe(0);
+    });
+
+    it('returns height of 1 for the node with left and right children', () => {
+      // Arrange
+      const leftChild = new BinaryTreeNode(5);
+      const rightChild = new BinaryTreeNode(15);
+
+      parent.setLeft(leftChild);
+      parent.setRight(rightChild);
+
+      // Act
+      expect(parent.height).toBe(1);
+    });
+  });
+
   describe('setValue', () => {
     it('replaces the initial value correctly for the initial method', () => {
       // Act
