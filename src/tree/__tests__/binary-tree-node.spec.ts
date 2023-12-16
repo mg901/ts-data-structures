@@ -98,6 +98,43 @@ describe('BinaryTreeNode', () => {
     });
   });
 
+  describe('leftHeight', () => {
+    it('returns 0 for a node with no left child', () => {
+      expect(parent.leftHeight).toBe(0);
+    });
+
+    it('returns 2 for a node with left child and its left child', () => {
+      // Arrange
+      const leftChild = new BinaryTreeNode(5);
+      parent.setLeft(leftChild);
+
+      const leftLeftChild = new BinaryTreeNode(1);
+      leftChild.setLeft(leftLeftChild);
+
+      // Act and Assert
+      expect(parent.leftHeight).toBe(2);
+    });
+  });
+
+  describe('rightHeight', () => {
+    it('returns 0 for a node with no right child', () => {
+      // Act and Assert
+      expect(parent.rightHeight).toBe(0);
+    });
+
+    it('returns 2 for a node with right child and its right child', () => {
+      // Arrange
+      const rightChild = new BinaryTreeNode(15);
+      parent.setRight(rightChild);
+
+      const rightRightChild = new BinaryTreeNode(20);
+      rightChild.setRight(rightRightChild);
+
+      // Act and Assert
+      expect(parent.rightHeight).toBe(2);
+    });
+  });
+
   describe('removeNode', () => {
     it('removes children correctly', () => {
       // Arrange
