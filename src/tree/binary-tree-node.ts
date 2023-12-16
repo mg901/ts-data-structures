@@ -29,6 +29,10 @@ export class BinaryTreeNode<T = any> {
     return this.right === null ? 0 : this.right.height + 1;
   }
 
+  get balanceFactor() {
+    return this.leftHeight - this.rightHeight;
+  }
+
   setValue(value: T): this {
     this.value = value;
 

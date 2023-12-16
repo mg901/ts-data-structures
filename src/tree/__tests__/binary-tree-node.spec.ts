@@ -31,7 +31,7 @@ describe('BinaryTreeNode', () => {
       parent.setLeft(leftChild);
       parent.setRight(rightChild);
 
-      // Act
+      // Act and Assert
       expect(parent.height).toBe(1);
     });
   });
@@ -100,6 +100,7 @@ describe('BinaryTreeNode', () => {
 
   describe('leftHeight', () => {
     it('returns 0 for a node with no left child', () => {
+      // Act and Assert
       expect(parent.leftHeight).toBe(0);
     });
 
@@ -132,6 +133,46 @@ describe('BinaryTreeNode', () => {
 
       // Act and Assert
       expect(parent.rightHeight).toBe(2);
+    });
+  });
+
+  describe('balanceFactor', () => {
+    it('returns 0 for a node with no children', () => {
+      // Act and Assert
+      expect(parent.balanceFactor).toBe(0);
+    });
+
+    it('returns positive value for a node with a left child', () => {
+      // Arrange
+      const leftChild = new BinaryTreeNode(5);
+      parent.setLeft(leftChild);
+
+      // Act and Assert
+      expect(parent.balanceFactor).toBe(1);
+    });
+
+    it('returns negative value for a node with a right child', () => {
+      // Arrange
+      const rightChild = new BinaryTreeNode(15);
+      parent.setRight(rightChild);
+
+      // Act and Assert
+      expect(parent.balanceFactor).toBe(-1);
+    });
+
+    it('returns correct balance factor for a more complex tree', () => {
+      // Arrange
+      const leftChild = new BinaryTreeNode(7);
+      parent.setLeft(leftChild);
+
+      const rightChild = new BinaryTreeNode(15);
+      parent.setRight(rightChild);
+
+      const rightRightChild = new BinaryTreeNode(20);
+      rightChild.setRight(rightRightChild);
+
+      // Act and Assert
+      expect(parent.balanceFactor).toBe(-1);
     });
   });
 
