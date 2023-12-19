@@ -39,7 +39,7 @@ export class BinaryTreeNode<T = any> {
     return this;
   }
 
-  setLeft(node: BinaryTreeNode<T>): this {
+  setLeft(node?: NullableBinaryTreeNode<T>): this {
     // Remove parent for existing node.
     if (this.left) {
       this.left.parent = null;
@@ -55,7 +55,7 @@ export class BinaryTreeNode<T = any> {
     return this;
   }
 
-  setRight(node: BinaryTreeNode<T>): this {
+  setRight(node?: NullableBinaryTreeNode<T>): this {
     // Remove parent for existing node.
     if (this.right) {
       this.right.parent = null;
