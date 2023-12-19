@@ -1,4 +1,5 @@
-import { type Callback, LinkedList } from '../linked-list';
+import { type Callback } from '@/shared/types';
+import { LinkedList } from '../linked-list';
 
 export class Stack<T> {
   #linkedList: LinkedList;

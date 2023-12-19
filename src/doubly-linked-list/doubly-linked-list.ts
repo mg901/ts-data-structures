@@ -1,9 +1,9 @@
+import { type CompareFunction, Comparator } from '@/shared/comparator';
+import { type Callback } from '@/shared/types';
 import {
   type NullableDoublyLinkedListNode,
-  type Callback,
   DoublyLinkedListNode,
 } from './doubly-linked-list-node';
-import { type CompareFunction, Comparator } from '../shared/comparator';
 
 type FindMethodOptions<T = any> = {
   value?: T;

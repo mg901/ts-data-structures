@@ -1,4 +1,4 @@
-export type Callback<T> = (value: T) => string;
+import { type Callback } from '@/shared/types';
 
 export type NullableDoublyLinkedListNode<T = any> =
   DoublyLinkedListNode<T> | null;
