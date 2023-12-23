@@ -124,7 +124,7 @@ export class DoublyLinkedList<T = any> {
     return this;
   }
 
-  delete(value: T): NullableDoublyLinkedListNode<T> {
+  deleteByValue(value: T): NullableDoublyLinkedListNode<T> {
     if (this.#head === null) return null;
 
     let currentNode: NullableDoublyLinkedListNode = this.#head;

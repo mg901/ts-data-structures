@@ -185,10 +185,10 @@ describe('DoublyLinkedList', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('deleteByValue', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
-      const deletedNode = doublyLinkedList.delete(5);
+      const deletedNode = doublyLinkedList.deleteByValue(5);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -203,7 +203,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = doublyLinkedList.delete(3);
+      const deletedNode = doublyLinkedList.deleteByValue(3);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -222,7 +222,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.append(1);
 
       // Act
-      const deletedNode = doublyLinkedList.delete(1);
+      const deletedNode = doublyLinkedList.deleteByValue(1);
 
       // Assert
       expect(deletedNode?.value).toBe(1);
@@ -237,7 +237,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedNode = doublyLinkedList.delete(1);
+      const deletedNode = doublyLinkedList.deleteByValue(1);
 
       // Assert
       expect(deletedNode?.value).toBe(1);
@@ -258,7 +258,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2, 3, 4]);
 
       // Act
-      const deletedNode = doublyLinkedList.delete(2);
+      const deletedNode = doublyLinkedList.deleteByValue(2);
 
       // Assert
       expect(deletedNode?.value).toBe(2);
@@ -275,7 +275,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
-      const deleteNode = doublyLinkedList.delete(3);
+      const deleteNode = doublyLinkedList.deleteByValue(3);
 
       // Assert
       expect(deleteNode?.value).toBe(3);
