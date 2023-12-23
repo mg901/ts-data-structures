@@ -124,7 +124,7 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  delete(value: T): NullableLinkedListNode<T> {
+  deleteByValue(value: T): NullableLinkedListNode<T> {
     if (this.#head === null) return null;
 
     let deletedNode: NullableLinkedListNode = null;
