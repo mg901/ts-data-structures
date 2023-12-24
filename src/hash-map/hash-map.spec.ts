@@ -27,4 +27,15 @@ describe('HashMap', () => {
     // Assert
     expect(hashMap.get('value')).toBe(2);
   });
+
+  it('checks if a key exists using has method ', () => {
+    // Arrange
+    hashMap.set('one', 1);
+    hashMap.set('two', 2);
+
+    // Act and Assert
+    expect(hashMap.has('one')).toBeTruthy();
+    expect(hashMap.has('two')).toBeTruthy();
+    expect(hashMap.has('three')).toBeFalsy();
+  });
 });
