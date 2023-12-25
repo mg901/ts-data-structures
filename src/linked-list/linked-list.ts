@@ -5,10 +5,7 @@ import {
   LinkedListNode,
 } from './linked-list-node';
 
-type FindMethodOptions<T = any> = {
-  value?: T;
-  predicate?: (value: T) => boolean;
-};
+type SearchOptions<T> = T | { predicate?: (value: T) => boolean };
 
 export class LinkedList<T = any> {
   #head: NullableLinkedListNode<T> = null;
@@ -37,6 +34,15 @@ export class LinkedList<T = any> {
 
   get isEmpty(): boolean {
     return this.#head === null;
+  }
+
+  #isMatch(nodeValue: T, options: SearchOptions<T>) {
+    return typeof options === 'object' &&
+      options !== null &&
+      'predicate' in options &&
+      options.predicate
+      ? options.predicate(nodeValue)
+      : this.#compare.equal(options as T, nodeValue);
   }
 
   append(value: T): this {
@@ -124,50 +130,69 @@ export class LinkedList<T = any> {
     return this;
   }
 
-  delete(value: T): NullableLinkedListNode<T> {
+  delete(options: SearchOptions<T>): NullableLinkedListNode<T> {
     if (this.#head === null) return null;
 
     let deletedNode: NullableLinkedListNode = null;
 
-    // Delete from the beginning of the list.
-    if (this.#compare.equal(value, this.#head.value)) {
-      deletedNode = this.#head;
-      this.#head = deletedNode.next;
-
-      // Update tail if the list becomes empty.
-      if (this.#head === null) {
-        this.#tail = null;
-      }
+    if (this.#isMatch(this.#head.value, options)) {
+      deletedNode = this.#deleteHeadAndUpdateTail();
     } else {
       let currentNode = this.#head;
 
-      // Search for the node by value.
       while (
         currentNode.next &&
-        !this.#compare.equal(value, currentNode.next.value)
+        !this.#isMatch(currentNode.next.value, options)
       ) {
         currentNode = currentNode.next;
       }
 
-      // Delete the node from the middle.
-      if (currentNode.next !== null) {
-        deletedNode = currentNode.next;
-        currentNode.next = deletedNode?.next;
+      deletedNode = this.#deleteNodeAndUpdateTail(currentNode);
+    }
 
-        // Update tail if the last node is deleted.
-        if (currentNode.next === null) {
-          this.#tail = currentNode;
-        }
+    this.#updateSize(deletedNode);
+
+    return deletedNode;
+  }
+
+  #deleteHeadAndUpdateTail(): NullableLinkedListNode<T> {
+    const deletedNode = this.#head;
+
+    if (deletedNode?.next) {
+      this.#head = deletedNode.next;
+    } else {
+      this.#head = null;
+      this.#tail = null;
+    }
+
+    return deletedNode;
+  }
+
+  #deleteNodeAndUpdateTail(
+    prevNode: LinkedListNode<T>,
+  ): NullableLinkedListNode<T> {
+    let deletedNode: NullableLinkedListNode<T> = null;
+
+    // Delete the node from the middle.
+    if (prevNode.next !== null) {
+      deletedNode = prevNode.next;
+      prevNode.next = deletedNode?.next;
+
+      // Update tail if the last node is deleted.
+      if (prevNode.next === null) {
+        this.#tail = prevNode;
       }
     }
 
+    return deletedNode;
+  }
+
+  #updateSize(deletedNode: NullableLinkedListNode) {
     if (deletedNode) {
       // Clear the reference of the deleted node.
       deletedNode.next = null;
       this.#size -= 1;
     }
-
-    return deletedNode;
   }
 
   reverse(): this {
@@ -288,17 +313,13 @@ export class LinkedList<T = any> {
     return -1;
   }
 
-  find({ value, predicate }: FindMethodOptions<T>): NullableLinkedListNode<T> {
+  find(options: SearchOptions<T>): NullableLinkedListNode<T> {
     if (this.#head === null) return null;
 
     let currentNode: NullableLinkedListNode = this.#head;
 
     while (currentNode) {
-      if (predicate && predicate(currentNode.value)) {
-        return currentNode;
-      }
-
-      if (value && this.#compare.equal(value, currentNode.value)) {
+      if (this.#isMatch(currentNode.value, options)) {
         return currentNode;
       }
 

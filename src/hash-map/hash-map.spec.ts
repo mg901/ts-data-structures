@@ -17,6 +17,7 @@ describe('HashMap', () => {
     // Assert
     expect(hashMap.get('one')).toBe(1);
     expect(hashMap.get('two')).toBe(2);
+    expect(hashMap.size).toBe(2);
   });
 
   it('updates existing values', () => {
@@ -37,5 +38,21 @@ describe('HashMap', () => {
     expect(hashMap.has('one')).toBeTruthy();
     expect(hashMap.has('two')).toBeTruthy();
     expect(hashMap.has('three')).toBeFalsy();
+  });
+
+  it('deletes values', () => {
+    // Arrange
+    hashMap.set('one', 1);
+    hashMap.set('two', 2);
+
+    // Act and Assert
+    expect(hashMap.delete('one')).toBeTruthy();
+    expect(hashMap.size).toBe(1);
+    expect(hashMap.delete('two')).toBeTruthy();
+    expect(hashMap.size).toBe(0);
+    expect(hashMap.delete('three')).toBeFalsy();
+
+    expect(hashMap.has('one')).toBeFalsy();
+    expect(hashMap.has('two')).toBeFalsy();
   });
 });

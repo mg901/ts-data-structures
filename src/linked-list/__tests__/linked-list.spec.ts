@@ -186,7 +186,7 @@ describe('LinkedList', () => {
   describe('delete', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
-      const deletedNode = linkedList.delete(5);
+      const deletedNode = linkedList.delete(2);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -261,6 +261,33 @@ describe('LinkedList', () => {
 
       expect(linkedList.toString()).toBe('1,3,4');
       expect(linkedList.size).toBe(3);
+    });
+
+    it('deletes by predicate', () => {
+      // Arrange
+      type Value = {
+        key: string;
+        value: number;
+      };
+
+      const list = new LinkedList<Value>().fromArray([
+        { key: 'one', value: 1 },
+        { key: 'two', value: 2 },
+        { key: 'three', value: 3 },
+        { key: 'four', value: 4 },
+      ]);
+
+      // Act
+      const deletedNode = list.delete({
+        predicate: (pair) => pair.key === 'two',
+      });
+
+      // Assert
+      expect(deletedNode?.value.value).toBe(2);
+      expect(list.head?.value.value).toBe(1);
+      expect(list.head?.next?.value.value).toBe(3);
+      expect(list.tail?.value.value).toBe(4);
+      expect(list.size).toBe(3);
     });
 
     it('deletes the last element', () => {
@@ -553,7 +580,7 @@ describe('LinkedList', () => {
   describe('find', () => {
     it('returns null for an empty list', () => {
       // Act and Assert
-      expect(linkedList.find({ value: 1 })).toBeNull();
+      expect(linkedList.find(1)).toBeNull();
     });
 
     it('finds a node by value', () => {
@@ -561,7 +588,7 @@ describe('LinkedList', () => {
       linkedList.fromArray([1, 2]);
 
       // Act
-      const foundedNode = linkedList.find({ value: 2 });
+      const foundedNode = linkedList.find(2);
 
       // Assert
       expect(foundedNode?.value).toBe(2);
@@ -581,11 +608,11 @@ describe('LinkedList', () => {
     });
 
     it('returns null if a node is not found by value or predicate', () => {
-      // Act
-      const foundedNode = linkedList.find({ value: 3 });
-
-      // Assert
-      expect(foundedNode).toBeNull();
+      // Act and Assert
+      expect(linkedList.find(3)).toBeNull();
+      expect(
+        linkedList.find({ predicate: (value) => value === 100 }),
+      ).toBeNull();
     });
 
     it('prioritizes predicate over value', () => {

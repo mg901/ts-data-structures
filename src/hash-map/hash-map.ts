@@ -35,7 +35,10 @@ export class HashMap<K = any, V = any> {
 
   constructor(capacity = INITIAL_CAPACITY) {
     this.#capacity = capacity;
-    // this.#buckets = createArrayOfLinkedLists(capacity);
+  }
+
+  get size() {
+    return this.#size;
   }
 
   #hashCode(key: K): number {
@@ -133,6 +136,25 @@ export class HashMap<K = any, V = any> {
     });
 
     return Boolean(node);
+  }
+
+  delete(key: K): boolean {
+    const hash = this.#hashCode(key);
+    const bucket = this.#buckets[hash];
+
+    if (bucket) {
+      const deletedNode = bucket.delete({
+        predicate: (pair) => pair.key === key,
+      });
+
+      if (deletedNode) {
+        this.#size -= 1;
+
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 
