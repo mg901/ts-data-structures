@@ -145,13 +145,12 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
   }
 
   deleteHead() {
+    if (this.$head === null) return null;
+
     const deletedNode = this.$head;
 
     if (deletedNode?.next) {
       this.$head = deletedNode.next;
-    } else {
-      this.$head = null;
-      this.$tail = null;
     }
 
     this.$size -= 1;
