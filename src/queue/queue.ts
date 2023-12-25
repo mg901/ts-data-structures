@@ -1,5 +1,5 @@
 import { type Callback } from '@/shared/types';
-import { LinkedList } from '../linked-list';
+import { LinkedList } from '@/linked-list';
 
 export class Queue<T = any> {
   #linkedList: LinkedList<T>;
