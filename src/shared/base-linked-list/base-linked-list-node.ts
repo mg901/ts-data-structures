@@ -1,4 +1,4 @@
-import { type Callback } from '@/shared/types';
+import { type Callback } from '@/shared/base-linked-list';
 
 export class BaseLinkedListNode<T = any> {
   constructor(

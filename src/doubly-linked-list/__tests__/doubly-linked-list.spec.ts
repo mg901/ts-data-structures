@@ -1,12 +1,12 @@
 import { describe, beforeEach, it, expect } from 'vitest';
-import { DoublyLinkedList } from '..';
+import { DoublyLinkedList as Node } from '../doubly-linked-list';
 
 describe('DoublyLinkedList', () => {
-  let doublyLinkedList: DoublyLinkedList<number>;
+  let doublyLinkedList: Node<number>;
 
   // Arrange
   beforeEach(() => {
-    doublyLinkedList = new DoublyLinkedList<number>();
+    doublyLinkedList = new Node<number>();
   });
 
   it('returns the initial state correctly', () => {
@@ -138,6 +138,25 @@ describe('DoublyLinkedList', () => {
       // Act and Assert
       expect(doublyLinkedList.toString()).toBe('');
     });
+
+    it('converts to list to string with custom callback', () => {
+      // Arrange
+      type NodeValue = {
+        key: string;
+        value: number;
+      };
+
+      const list = new Node<NodeValue>().fromArray([
+        { key: 'one', value: 1 },
+        { key: 'two', value: 2 },
+      ]);
+
+      // Act
+      const received = list.toString((node) => `${node.value}`);
+
+      // Assert
+      expect(received).toBe('1,2');
+    });
   });
 
   describe('prepend', () => {
@@ -185,7 +204,7 @@ describe('DoublyLinkedList', () => {
     });
   });
 
-  describe('deleteByValue', () => {
+  describe('deleteNodeByValue', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
       const deletedNode = doublyLinkedList.deleteByValue(5);
@@ -268,6 +287,34 @@ describe('DoublyLinkedList', () => {
 
       expect(doublyLinkedList.toString()).toBe('1,3,4');
       expect(doublyLinkedList.size).toBe(3);
+    });
+
+    it('deletes by predicate', () => {
+      // Arrange
+      type Value = {
+        key: string;
+        value: number;
+      };
+
+      const list = new Node<Value>().fromArray([
+        { key: 'one', value: 1 },
+        { key: 'two', value: 2 },
+        { key: 'three', value: 3 },
+        { key: 'four', value: 4 },
+      ]);
+
+      // Act
+      const deletedNode = list.deleteByValue({
+        predicate: (pair) => pair.key === 'two',
+      });
+
+      // Assert
+      expect(deletedNode?.value.value).toBe(2);
+
+      expect(list.head?.value.value).toBe(1);
+      expect(list.head?.next?.value.value).toBe(3);
+      expect(list.tail?.value.value).toBe(4);
+      expect(list.size).toBe(3);
     });
 
     it('deletes the last element', () => {
@@ -479,7 +526,7 @@ describe('DoublyLinkedList', () => {
   });
 
   describe('deleteTail', () => {
-    it('deletes the tail from an empty list', () => {
+    it('deletes the tail from the empty list', () => {
       // Act
       const deletedTail = doublyLinkedList.deleteTail();
 
@@ -487,6 +534,21 @@ describe('DoublyLinkedList', () => {
       expect(deletedTail).toBeNull();
       expect(doublyLinkedList.head).toBeNull();
       expect(doublyLinkedList.tail).toBeNull();
+      expect(doublyLinkedList.size).toBe(0);
+    });
+
+    it('deletes the tail form the list with single node', () => {
+      // Arrange
+      doublyLinkedList.append(1);
+
+      // Act
+      const deletedTail = doublyLinkedList.deleteTail();
+
+      // Assert
+      expect(deletedTail?.value).toBe(1);
+      expect(doublyLinkedList.head).toBeNull();
+      expect(doublyLinkedList.tail).toBeNull();
+      expect(doublyLinkedList.size).toBe(0);
       expect(doublyLinkedList.size).toBe(0);
     });
 
@@ -551,10 +613,7 @@ describe('DoublyLinkedList', () => {
 
     it('handles custom objects and comparison correctly', () => {
       // Arrange
-      const list = new DoublyLinkedList().fromArray([
-        { key: 'value1' },
-        { key: 'value2' },
-      ]);
+      const list = new Node().fromArray([{ key: 'value1' }, { key: 'value2' }]);
 
       // Act and Assert
       expect(list.indexOf({ key: 'value1' })).toBe(0);
@@ -564,7 +623,7 @@ describe('DoublyLinkedList', () => {
   describe('find', () => {
     it('returns null for an empty list', () => {
       // Act and Assert
-      expect(doublyLinkedList.find({ value: 1 })).toBeNull();
+      expect(doublyLinkedList.find(1)).toBeNull();
     });
 
     it('finds a node by value', () => {
@@ -572,7 +631,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const foundedNode = doublyLinkedList.find({ value: 2 });
+      const foundedNode = doublyLinkedList.find(2);
 
       // Assert
       expect(foundedNode?.value).toBe(2);
@@ -593,10 +652,12 @@ describe('DoublyLinkedList', () => {
 
     it('returns null if a node is not found by value or predicate', () => {
       // Act
-      const foundedNode = doublyLinkedList.find({ value: 3 });
 
-      // Assert
-      expect(foundedNode).toBeNull();
+      // Act and Assert
+      expect(doublyLinkedList.find(3)).toBeNull();
+      expect(
+        doublyLinkedList.find({ predicate: (value) => value === 4 }),
+      ).toBeNull();
     });
 
     it('prioritizes predicate over value', () => {

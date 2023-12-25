@@ -1,11 +1,9 @@
-import { BaseLinkedList, type Callback } from '@/shared/base-linked-list';
-import { LinkedListNode } from './linked-list-node';
+import { BaseLinkedList, type SearchOptions } from '@/shared/base-linked-list';
+import { LinkedListNode as Node } from './linked-list-node';
 
-type SearchOptions<T> = T | { predicate?: (value: T) => boolean };
-
-export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
+export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   append(value: T): this {
-    const newNode = new LinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this.$head === null) {
       this.$head = newNode;
@@ -20,61 +18,8 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return this;
   }
 
-  fromArray(array: T[]): this {
-    array.forEach((value) => {
-      this.append(value);
-    });
-
-    return this;
-  }
-
-  [Symbol.iterator](): Iterator<LinkedListNode<T>> {
-    let currentNode = this.$head;
-
-    return {
-      next() {
-        if (currentNode !== null) {
-          const value = currentNode;
-          currentNode = currentNode.next;
-
-          return {
-            done: false,
-            value,
-          };
-        }
-
-        return {
-          value: undefined as any,
-          done: true,
-        };
-      },
-    };
-  }
-
-  toArray(): T[] {
-    let values = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const node of this) {
-      values.push(node.value);
-    }
-
-    return values;
-  }
-
-  toString(callback?: Callback<T>) {
-    let nodes = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const node of this) {
-      nodes.push(node);
-    }
-
-    return nodes.map((node) => node.toString(callback)).toString();
-  }
-
   prepend(value: T): this {
-    const newNode = new LinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this.$head === null) {
       this.$head = newNode;
@@ -89,10 +34,10 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return this;
   }
 
-  delete(options: SearchOptions<T>) {
+  deleteByValue(options: SearchOptions<T>) {
     if (this.$head === null) return null;
 
-    let deletedNode: LinkedListNode | null = null;
+    let deletedNode: Node | null = null;
 
     if (this.$isMatch(this.$head.value, options)) {
       deletedNode = this.#deleteHeadAndUpdateTail();
@@ -109,7 +54,11 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
       deletedNode = this.#deleteNodeAndUpdateTail(currentNode);
     }
 
-    this.#updateSize(deletedNode);
+    if (deletedNode) {
+      // Clear the reference of the deleted node.
+      deletedNode.next = null;
+      this.$size -= 1;
+    }
 
     return deletedNode;
   }
@@ -127,8 +76,8 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return deletedNode;
   }
 
-  #deleteNodeAndUpdateTail(prevNode: LinkedListNode<T>) {
-    let deletedNode: LinkedListNode | null = null;
+  #deleteNodeAndUpdateTail(prevNode: Node<T>) {
+    let deletedNode: Node | null = null;
 
     // Delete the node from the middle.
     if (prevNode.next !== null) {
@@ -144,20 +93,12 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return deletedNode;
   }
 
-  #updateSize(deletedNode: LinkedListNode | null) {
-    if (deletedNode) {
-      // Clear the reference of the deleted node.
-      deletedNode.next = null;
-      this.$size -= 1;
-    }
-  }
-
   reverse(): this {
     if (this.$head === null || this.$head.next === null) {
       return this;
     }
 
-    let currentNode = this.$head as LinkedListNode | null;
+    let currentNode = this.$head as Node | null;
     let prevNode = null;
 
     while (currentNode !== null) {
@@ -191,8 +132,8 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
       this.append(value);
     } else {
       // Insert in the middle.
-      const prevNode = this.#findNodeByIndex(index - 1);
-      const newNode = new LinkedListNode(value);
+      const prevNode = this.$findNodeByIndex(index - 1);
+      const newNode = new Node(value);
 
       newNode.next = prevNode.next;
       prevNode.next = newNode;
@@ -203,16 +144,6 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return this;
   }
 
-  #findNodeByIndex(index: number) {
-    let currentNode = this.$head!;
-
-    for (let i = 0; i < index; i += 1) {
-      currentNode = currentNode.next!;
-    }
-
-    return currentNode;
-  }
-
   deleteHead() {
     if (this.$head === null) return null;
 
@@ -220,9 +151,6 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
 
     if (deletedNode?.next) {
       this.$head = deletedNode.next;
-    } else {
-      this.$head = null;
-      this.$tail = null;
     }
 
     this.$size -= 1;
@@ -256,24 +184,10 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return deletedTail;
   }
 
-  indexOf(value: T): number {
-    let count = 0;
-    let currentNode = this.$head;
-
-    while (currentNode !== null) {
-      if (this.$compare.equal(value, currentNode.value)) return count;
-
-      currentNode = currentNode.next;
-      count += 1;
-    }
-
-    return -1;
-  }
-
   find(options: SearchOptions<T>) {
     if (this.$head === null) return null;
 
-    let currentNode: LinkedListNode | null = this.$head;
+    let currentNode: Node | null = this.$head;
 
     while (currentNode) {
       if (this.$isMatch(currentNode.value, options)) {
@@ -284,11 +198,5 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     }
 
     return null;
-  }
-
-  clear(): void {
-    this.$head = null;
-    this.$tail = null;
-    this.$size = 0;
   }
 }

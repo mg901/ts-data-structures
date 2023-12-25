@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { LinkedListNode } from '../linked-list-node';
+import { BaseLinkedListNode } from '../base-linked-list-node';
 
-describe('LinkedListNode', () => {
+class BaseLinkedListNodeTest<T> extends BaseLinkedListNode<T> {}
+
+describe('BaseLinkedListNode', () => {
   it('creates list node with value', () => {
     // Act
-    const node = new LinkedListNode<number>(1);
+    const node = new BaseLinkedListNodeTest<number>(1);
 
     // Assert
     expect(node.value).toEqual(1);
@@ -19,7 +21,7 @@ describe('LinkedListNode', () => {
     };
 
     // Act
-    const node = new LinkedListNode<typeof nodeValue>(nodeValue);
+    const node = new BaseLinkedListNodeTest<typeof nodeValue>(nodeValue);
 
     // Assert
     expect(node.value.value).toEqual(1);
@@ -29,10 +31,10 @@ describe('LinkedListNode', () => {
 
   it('links nodes together', () => {
     // Arrange
-    const node2 = new LinkedListNode<number>(1);
+    const node2 = new BaseLinkedListNodeTest<number>(1);
 
     // Act
-    const node1 = new LinkedListNode<number>(2, node2);
+    const node1 = new BaseLinkedListNodeTest<number>(2, node2);
 
     // Assert
     expect(node1.next).toBeDefined();
@@ -44,7 +46,7 @@ describe('LinkedListNode', () => {
   describe('toString', () => {
     it('converts node to string', () => {
       // Arrange
-      const node = new LinkedListNode<number>(1);
+      const node = new BaseLinkedListNodeTest<number>(1);
 
       // Act and Assert
       expect(node.toString()).toEqual('1');
@@ -57,7 +59,7 @@ describe('LinkedListNode', () => {
         key: 'test',
       };
 
-      const list = new LinkedListNode<typeof nodeValue>(nodeValue);
+      const list = new BaseLinkedListNodeTest<typeof nodeValue>(nodeValue);
       const toStringCallback = (x: typeof nodeValue) =>
         `value: ${x.value}, key: ${x.key}`;
 

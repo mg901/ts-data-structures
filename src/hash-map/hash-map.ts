@@ -143,7 +143,7 @@ export class HashMap<K = any, V = any> {
     const bucket = this.#buckets[hash];
 
     if (bucket) {
-      const deletedNode = bucket.delete({
+      const deletedNode = bucket.deleteByValue({
         predicate: (pair) => pair.key === key,
       });
 

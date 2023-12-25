@@ -136,9 +136,25 @@ describe('LinkedList', () => {
     it('returns an empty string for the empty list', () => {
       // Act and Assert
       expect(linkedList.toString()).toBe('');
-      expect(linkedList.head).toBeNull();
-      expect(linkedList.tail).toBeNull();
-      expect(linkedList.size).toBe(0);
+    });
+
+    it('converts to list to string with custom callback', () => {
+      // Arrange
+      type NodeValue = {
+        key: string;
+        value: number;
+      };
+
+      const list = new LinkedList<NodeValue>().fromArray([
+        { key: 'one', value: 1 },
+        { key: 'two', value: 2 },
+      ]);
+
+      // Act
+      const received = list.toString((node) => `${node.value}`);
+
+      // Assert
+      expect(received).toBe('1,2');
     });
   });
 
@@ -183,10 +199,10 @@ describe('LinkedList', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('deleteByValue', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
-      const deletedNode = linkedList.delete(2);
+      const deletedNode = linkedList.deleteByValue(2);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -200,7 +216,7 @@ describe('LinkedList', () => {
       linkedList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = linkedList.delete(3);
+      const deletedNode = linkedList.deleteByValue(3);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -217,7 +233,7 @@ describe('LinkedList', () => {
       linkedList.append(1);
 
       // Act
-      const deletedElement = linkedList.delete(1)!;
+      const deletedElement = linkedList.deleteByValue(1)!;
 
       // Assert
       expect(deletedElement.value).toBe(1);
@@ -232,7 +248,7 @@ describe('LinkedList', () => {
       linkedList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedNode = linkedList.delete(1);
+      const deletedNode = linkedList.deleteByValue(1);
 
       // Assert
       expect(deletedNode?.value).toBe(1);
@@ -250,7 +266,7 @@ describe('LinkedList', () => {
       linkedList.fromArray([1, 2, 3, 4]);
 
       // Act
-      const deletedElement = linkedList.delete(2);
+      const deletedElement = linkedList.deleteByValue(2);
 
       // Assert
       expect(deletedElement?.value).toBe(2);
@@ -278,15 +294,17 @@ describe('LinkedList', () => {
       ]);
 
       // Act
-      const deletedNode = list.delete({
+      const deletedNode = list.deleteByValue({
         predicate: (pair) => pair.key === 'two',
       });
 
       // Assert
       expect(deletedNode?.value.value).toBe(2);
+
       expect(list.head?.value.value).toBe(1);
       expect(list.head?.next?.value.value).toBe(3);
       expect(list.tail?.value.value).toBe(4);
+      expect(list.toString((node) => `${node.value}`)).toBe('1,3,4');
       expect(list.size).toBe(3);
     });
 
@@ -295,7 +313,7 @@ describe('LinkedList', () => {
       linkedList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedElement = linkedList.delete(3);
+      const deletedElement = linkedList.deleteByValue(3);
 
       // Assert
       expect(deletedElement?.value).toBe(3);

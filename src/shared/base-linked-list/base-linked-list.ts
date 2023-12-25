@@ -1,9 +1,9 @@
 import { BaseLinkedListNode } from './base-linked-list-node';
 import { Comparator, CompareFunction } from '../comparator';
 
-export type Callback<T> = (data: T) => string;
+export type Callback<T> = (value: T) => string;
 
-type SearchOptions<T> = T | { predicate?: (value: T) => boolean };
+export type SearchOptions<T> = T | { predicate?: (value: T) => boolean };
 
 export abstract class BaseLinkedList<
   T = any,
@@ -46,19 +46,94 @@ export abstract class BaseLinkedList<
       : this.$compare.equal(options as T, nodeValue);
   }
 
+  protected $findNodeByIndex(index: number) {
+    let currentNode = this.$head!;
+
+    for (let i = 0; i < index; i += 1) {
+      currentNode = currentNode.next as Node;
+    }
+
+    return currentNode;
+  }
+
+  [Symbol.iterator]() {
+    let currentNode = this.$head;
+
+    return {
+      next() {
+        if (currentNode !== null) {
+          const node = currentNode;
+          currentNode = currentNode.next as Node;
+
+          return {
+            value: node,
+            done: false,
+          };
+        }
+
+        return {
+          value: undefined as any,
+          done: true,
+        };
+      },
+    };
+  }
+
+  fromArray(array: T[]) {
+    array.forEach((value) => {
+      this.append(value);
+    });
+
+    return this;
+  }
+
+  toArray() {
+    let values = [];
+
+    for (const node of this) {
+      values.push(node.value);
+    }
+
+    return values;
+  }
+
+  indexOf(value: T): number {
+    let count = 0;
+    let currentNode = this.$head;
+
+    while (currentNode !== null) {
+      if (this.$compare.equal(value, currentNode.value)) return count;
+
+      currentNode = currentNode.next as Node;
+      count += 1;
+    }
+
+    return -1;
+  }
+
+  clear(): void {
+    this.$head = null;
+    this.$tail = null;
+    this.$size = 0;
+  }
+
+  toString(callback?: Callback<T>) {
+    let nodes = [];
+
+    for (const node of this) {
+      nodes.push(node);
+    }
+
+    return nodes.map((node: Node) => node.toString(callback)).toString();
+  }
+
   // Common methods
   abstract append(value: T): this;
   abstract prepend(value: T): this;
-  abstract delete(options: SearchOptions<T>): Node | null;
+  abstract deleteByValue(options: SearchOptions<T>): Node | null;
   abstract find(options: SearchOptions<T>): Node | null;
   abstract insertAt(index: number, value: T): this;
   abstract reverse(): this;
-  abstract indexOf(value: T): number;
   abstract deleteHead(): Node | null;
   abstract deleteTail(): Node | null;
-  abstract fromArray(array: T[]): this;
-  abstract toArray(): T[];
-  abstract clear(): void;
-  abstract toString(callback: Callback<T>): string;
-  abstract [Symbol.iterator](): Iterator<Node>;
 }
