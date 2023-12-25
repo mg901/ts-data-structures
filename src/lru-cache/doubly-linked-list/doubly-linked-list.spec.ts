@@ -34,7 +34,7 @@ describe('LRUCache/DoublyLinkedList', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('deleteByNodeValue', () => {
     it('deletes the only node in the list', () => {
       // Arrange
       const node = list.push('key1', 'value1');

@@ -185,7 +185,7 @@ describe('DoublyLinkedList', () => {
     });
   });
 
-  describe('deleteByValue', () => {
+  describe('deleteNodeByValue', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
       const deletedNode = doublyLinkedList.deleteByValue(5);
@@ -564,7 +564,7 @@ describe('DoublyLinkedList', () => {
   describe('find', () => {
     it('returns null for an empty list', () => {
       // Act and Assert
-      expect(doublyLinkedList.find({ value: 1 })).toBeNull();
+      expect(doublyLinkedList.find(1)).toBeNull();
     });
 
     it('finds a node by value', () => {
@@ -572,7 +572,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const foundedNode = doublyLinkedList.find({ value: 2 });
+      const foundedNode = doublyLinkedList.find(2);
 
       // Assert
       expect(foundedNode?.value).toBe(2);
@@ -593,10 +593,12 @@ describe('DoublyLinkedList', () => {
 
     it('returns null if a node is not found by value or predicate', () => {
       // Act
-      const foundedNode = doublyLinkedList.find({ value: 3 });
 
-      // Assert
-      expect(foundedNode).toBeNull();
+      // Act and Assert
+      expect(doublyLinkedList.find(3)).toBeNull();
+      expect(
+        doublyLinkedList.find({ predicate: (value) => value === 4 }),
+      ).toBeNull();
     });
 
     it('prioritizes predicate over value', () => {

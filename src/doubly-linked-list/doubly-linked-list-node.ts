@@ -1,16 +1,12 @@
-import { type Callback } from '@/shared/types';
+import { BaseLinkedListNode } from '@/shared/base-linked-list';
 
-export type NullableDoublyLinkedListNode<T = any> =
-  DoublyLinkedListNode<T> | null;
-
-export class DoublyLinkedListNode<T = any> {
+export class DoublyLinkedListNode<T = any> extends BaseLinkedListNode<T> {
   constructor(
     public value: T,
-    public next: NullableDoublyLinkedListNode<T> = null,
-    public prev: NullableDoublyLinkedListNode<T> = null,
-  ) {}
-
-  toString(callback?: Callback<T>): string {
-    return callback ? callback(this.value) : `${this.value}`;
+    public next: DoublyLinkedListNode<T> | null = null,
+    public prev: DoublyLinkedListNode<T> | null = null,
+  ) {
+    super(value, next);
+    this.prev = prev;
   }
 }
