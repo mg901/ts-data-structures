@@ -1,12 +1,12 @@
 import { describe, beforeEach, it, expect } from 'vitest';
-import { DoublyLinkedList } from '..';
+import { DoublyLinkedList as Node } from '../doubly-linked-list';
 
 describe('DoublyLinkedList', () => {
-  let doublyLinkedList: DoublyLinkedList<number>;
+  let doublyLinkedList: Node<number>;
 
   // Arrange
   beforeEach(() => {
-    doublyLinkedList = new DoublyLinkedList<number>();
+    doublyLinkedList = new Node<number>();
   });
 
   it('returns the initial state correctly', () => {
@@ -146,7 +146,7 @@ describe('DoublyLinkedList', () => {
         value: number;
       };
 
-      const list = new DoublyLinkedList<NodeValue>().fromArray([
+      const list = new Node<NodeValue>().fromArray([
         { key: 'one', value: 1 },
         { key: 'two', value: 2 },
       ]);
@@ -296,7 +296,7 @@ describe('DoublyLinkedList', () => {
         value: number;
       };
 
-      const list = new DoublyLinkedList<Value>().fromArray([
+      const list = new Node<Value>().fromArray([
         { key: 'one', value: 1 },
         { key: 'two', value: 2 },
         { key: 'three', value: 3 },
@@ -613,10 +613,7 @@ describe('DoublyLinkedList', () => {
 
     it('handles custom objects and comparison correctly', () => {
       // Arrange
-      const list = new DoublyLinkedList().fromArray([
-        { key: 'value1' },
-        { key: 'value2' },
-      ]);
+      const list = new Node().fromArray([{ key: 'value1' }, { key: 'value2' }]);
 
       // Act and Assert
       expect(list.indexOf({ key: 'value1' })).toBe(0);

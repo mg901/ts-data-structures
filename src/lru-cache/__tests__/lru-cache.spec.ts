@@ -2,43 +2,42 @@ import { describe, beforeEach, it, expect } from 'vitest';
 import { LRUCache } from '../lru-cache';
 
 describe('LRUCache', () => {
-  let cache: LRUCache<number, string>;
+  let cache: LRUCache<string, number>;
 
   // Arrange
   beforeEach(() => {
-    cache = new LRUCache<number, string>(2);
+    cache = new LRUCache<string, number>(2);
 
-    cache.put(1, 'value1');
-    cache.put(2, 'value2');
+    cache.put('one', 1);
+    cache.put('two', 2);
   });
 
   it('stores and retrieve values', () => {
-    // Act
-    cache.put(1, 'value1');
-    cache.put(2, 'value2');
-
     // Assert
-    expect(cache.get(1)).toBe('value1');
-    expect(cache.get(2)).toBe('value2');
+    expect(cache.get('one')).toBe(1);
+    expect(cache.get('two')).toBe(2);
   });
 
   it('evicts least recently used item when exceeding capacity', () => {
     // Act
-    cache.get(1); // Move 1 to the front
-    cache.put(3, 'value3'); // Should evict 2
+    cache.get('one'); // Move 1 to the front
+    cache.put('three', 3); // Should evict 2
 
     // Assert
-    expect(cache.get(1)).toBe('value1');
-    expect(cache.get(2)).toBe(-1); // 2 should be evicted
-    expect(cache.get(3)).toBe('value3');
+    expect(cache.get('one')).toBe(1);
+    expect(cache.get('two')).toBe(-1);
+    expect(cache.get('three')).toBe(3);
   });
 
   it('updates value for an existing key', () => {
+    // Arrange
+    cache.put('value', 10);
+    expect(cache.get('value')).toBe(10);
+
     // Act
-    cache.put(1, 'updatedValue');
+    cache.put('value', 20);
 
     // Assert
-    expect(cache.get(1)).toBe('updatedValue');
-    expect(cache.get(2)).toBe('value2');
+    expect(cache.get('value')).toBe(20);
   });
 });

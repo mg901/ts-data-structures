@@ -1,12 +1,9 @@
 import { BaseLinkedList, type SearchOptions } from '@/shared/base-linked-list';
-import { DoublyLinkedListNode } from './doubly-linked-list-node';
+import { DoublyLinkedListNode as Node } from './doubly-linked-list-node';
 
-export class DoublyLinkedList<T = any> extends BaseLinkedList<
-  T,
-  DoublyLinkedListNode<T>
-> {
+export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   append(value: T) {
-    const newNode = new DoublyLinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this.$head === null) {
       this.$head = newNode;
@@ -23,7 +20,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
   }
 
   prepend(value: T): this {
-    const newNode = new DoublyLinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this.$head === null) {
       this.$head = newNode;
@@ -42,7 +39,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
   deleteByValue(options: SearchOptions<T>) {
     if (this.$head === null) return null;
 
-    let deletedNode: DoublyLinkedListNode | null = this.$head;
+    let deletedNode: Node | null = this.$head;
 
     // Search for the node by value.
     while (deletedNode !== null && !this.$isMatch(deletedNode.value, options)) {
@@ -81,7 +78,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
     }
 
     let prevNode = null;
-    let currentNode = this.$head as DoublyLinkedListNode | null;
+    let currentNode = this.$head as Node | null;
 
     while (currentNode !== null) {
       const nextNode = currentNode.next;
@@ -116,7 +113,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
     } else {
       // Insert in the middle.
       let prevNode = this.$findNodeByIndex(index - 1);
-      let newNode = new DoublyLinkedListNode(value);
+      let newNode = new Node(value);
       newNode.next = prevNode.next;
       newNode.prev = prevNode;
       prevNode.next = newNode;
@@ -129,6 +126,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
 
   deleteHead() {
     if (this.$head === null) return null;
+
     const deletedNode = this.$head;
 
     if (deletedNode?.next) {
@@ -154,6 +152,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
 
       return deletedNode;
     }
+
     const deletedNode = this.tail!;
 
     this.$tail = deletedNode.prev!;
@@ -167,7 +166,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
   find(options: SearchOptions<T>) {
     if (this.$head === null) return null;
 
-    let currentNode: DoublyLinkedListNode | null = this.$head;
+    let currentNode: Node | null = this.$head;
 
     while (currentNode) {
       if (this.$isMatch(currentNode.value, options)) {

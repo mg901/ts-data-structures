@@ -1,9 +1,9 @@
 import { BaseLinkedList, type SearchOptions } from '@/shared/base-linked-list';
-import { LinkedListNode } from './linked-list-node';
+import { LinkedListNode as Node } from './linked-list-node';
 
-export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
+export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   append(value: T): this {
-    const newNode = new LinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this.$head === null) {
       this.$head = newNode;
@@ -19,7 +19,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
   }
 
   prepend(value: T): this {
-    const newNode = new LinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this.$head === null) {
       this.$head = newNode;
@@ -37,7 +37,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
   deleteByValue(options: SearchOptions<T>) {
     if (this.$head === null) return null;
 
-    let deletedNode: LinkedListNode | null = null;
+    let deletedNode: Node | null = null;
 
     if (this.$isMatch(this.$head.value, options)) {
       deletedNode = this.#deleteHeadAndUpdateTail();
@@ -76,8 +76,8 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return deletedNode;
   }
 
-  #deleteNodeAndUpdateTail(prevNode: LinkedListNode<T>) {
-    let deletedNode: LinkedListNode | null = null;
+  #deleteNodeAndUpdateTail(prevNode: Node<T>) {
+    let deletedNode: Node | null = null;
 
     // Delete the node from the middle.
     if (prevNode.next !== null) {
@@ -98,7 +98,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
       return this;
     }
 
-    let currentNode = this.$head as LinkedListNode | null;
+    let currentNode = this.$head as Node | null;
     let prevNode = null;
 
     while (currentNode !== null) {
@@ -133,7 +133,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     } else {
       // Insert in the middle.
       const prevNode = this.$findNodeByIndex(index - 1);
-      const newNode = new LinkedListNode(value);
+      const newNode = new Node(value);
 
       newNode.next = prevNode.next;
       prevNode.next = newNode;
@@ -187,7 +187,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
   find(options: SearchOptions<T>) {
     if (this.$head === null) return null;
 
-    let currentNode: LinkedListNode | null = this.$head;
+    let currentNode: Node | null = this.$head;
 
     while (currentNode) {
       if (this.$isMatch(currentNode.value, options)) {
