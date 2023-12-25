@@ -21,7 +21,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
   }
 
   #push<K = any, V = any>(key: K, value: V) {
-    const newNode = new Node({ key, value }) as Node;
+    const newNode = new Node({ key, value });
 
     if (this.#head === null) {
       this.#head = newNode;
