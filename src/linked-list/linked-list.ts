@@ -1,62 +1,21 @@
-import { type CompareFunction, Comparator } from '@/shared/comparator';
-import { type Callback } from '@/shared/types';
-import {
-  type NullableLinkedListNode,
-  LinkedListNode,
-} from './linked-list-node';
+import { BaseLinkedList, type Callback } from '@/shared/base-linked-list';
+import { LinkedListNode } from './linked-list-node';
 
 type SearchOptions<T> = T | { predicate?: (value: T) => boolean };
 
-export class LinkedList<T = any> {
-  #head: NullableLinkedListNode<T> = null;
-
-  #tail: NullableLinkedListNode<T> = null;
-
-  #size: number = 0;
-
-  #compare: Comparator<T>;
-
-  constructor(compareFunction?: CompareFunction<T>) {
-    this.#compare = new Comparator(compareFunction);
-  }
-
-  get head(): NullableLinkedListNode<T> {
-    return this.#head;
-  }
-
-  get tail(): NullableLinkedListNode<T> {
-    return this.#tail;
-  }
-
-  get size(): number {
-    return this.#size;
-  }
-
-  get isEmpty(): boolean {
-    return this.#head === null;
-  }
-
-  #isMatch(nodeValue: T, options: SearchOptions<T>) {
-    return typeof options === 'object' &&
-      options !== null &&
-      'predicate' in options &&
-      options.predicate
-      ? options.predicate(nodeValue)
-      : this.#compare.equal(options as T, nodeValue);
-  }
-
+export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
   append(value: T): this {
     const newNode = new LinkedListNode(value);
 
-    if (this.#head === null) {
-      this.#head = newNode;
-      this.#tail = newNode;
+    if (this.$head === null) {
+      this.$head = newNode;
+      this.$tail = newNode;
     } else {
-      this.#tail!.next = newNode;
-      this.#tail = newNode;
+      this.$tail!.next = newNode;
+      this.$tail = newNode;
     }
 
-    this.#size += 1;
+    this.$size += 1;
 
     return this;
   }
@@ -70,7 +29,7 @@ export class LinkedList<T = any> {
   }
 
   [Symbol.iterator](): Iterator<LinkedListNode<T>> {
-    let currentNode = this.#head;
+    let currentNode = this.$head;
 
     return {
       next() {
@@ -103,7 +62,7 @@ export class LinkedList<T = any> {
     return values;
   }
 
-  toString(callback?: Callback<T>): string {
+  toString(callback?: Callback<T>) {
     let nodes = [];
 
     // eslint-disable-next-line no-restricted-syntax
@@ -117,32 +76,32 @@ export class LinkedList<T = any> {
   prepend(value: T): this {
     const newNode = new LinkedListNode(value);
 
-    if (this.#head === null) {
-      this.#head = newNode;
-      this.#tail = newNode;
+    if (this.$head === null) {
+      this.$head = newNode;
+      this.$tail = newNode;
     } else {
-      newNode.next = this.#head;
-      this.#head = newNode;
+      newNode.next = this.$head;
+      this.$head = newNode;
     }
 
-    this.#size += 1;
+    this.$size += 1;
 
     return this;
   }
 
-  delete(options: SearchOptions<T>): NullableLinkedListNode<T> {
-    if (this.#head === null) return null;
+  delete(options: SearchOptions<T>) {
+    if (this.$head === null) return null;
 
-    let deletedNode: NullableLinkedListNode = null;
+    let deletedNode: LinkedListNode | null = null;
 
-    if (this.#isMatch(this.#head.value, options)) {
+    if (this.$isMatch(this.$head.value, options)) {
       deletedNode = this.#deleteHeadAndUpdateTail();
     } else {
-      let currentNode = this.#head;
+      let currentNode = this.$head;
 
       while (
         currentNode.next &&
-        !this.#isMatch(currentNode.next.value, options)
+        !this.$isMatch(currentNode.next.value, options)
       ) {
         currentNode = currentNode.next;
       }
@@ -155,23 +114,21 @@ export class LinkedList<T = any> {
     return deletedNode;
   }
 
-  #deleteHeadAndUpdateTail(): NullableLinkedListNode<T> {
-    const deletedNode = this.#head;
+  #deleteHeadAndUpdateTail() {
+    const deletedNode = this.$head;
 
     if (deletedNode?.next) {
-      this.#head = deletedNode.next;
+      this.$head = deletedNode.next;
     } else {
-      this.#head = null;
-      this.#tail = null;
+      this.$head = null;
+      this.$tail = null;
     }
 
     return deletedNode;
   }
 
-  #deleteNodeAndUpdateTail(
-    prevNode: LinkedListNode<T>,
-  ): NullableLinkedListNode<T> {
-    let deletedNode: NullableLinkedListNode<T> = null;
+  #deleteNodeAndUpdateTail(prevNode: LinkedListNode<T>) {
+    let deletedNode: LinkedListNode | null = null;
 
     // Delete the node from the middle.
     if (prevNode.next !== null) {
@@ -180,27 +137,27 @@ export class LinkedList<T = any> {
 
       // Update tail if the last node is deleted.
       if (prevNode.next === null) {
-        this.#tail = prevNode;
+        this.$tail = prevNode;
       }
     }
 
     return deletedNode;
   }
 
-  #updateSize(deletedNode: NullableLinkedListNode) {
+  #updateSize(deletedNode: LinkedListNode | null) {
     if (deletedNode) {
       // Clear the reference of the deleted node.
       deletedNode.next = null;
-      this.#size -= 1;
+      this.$size -= 1;
     }
   }
 
   reverse(): this {
-    if (this.#head === null || this.#head.next === null) {
+    if (this.$head === null || this.$head.next === null) {
       return this;
     }
 
-    let currentNode = this.#head as NullableLinkedListNode;
+    let currentNode = this.$head as LinkedListNode | null;
     let prevNode = null;
 
     while (currentNode !== null) {
@@ -211,14 +168,14 @@ export class LinkedList<T = any> {
       currentNode = nextNode;
     }
 
-    this.#tail = this.#head;
-    this.#head = prevNode;
+    this.$tail = this.$head;
+    this.$head = prevNode;
 
     return this;
   }
 
   insertAt(index: number, value: T): this {
-    const isInvalidIndex = index < 0 || index > this.#size;
+    const isInvalidIndex = index < 0 || index > this.$size;
 
     if (isInvalidIndex) {
       throw new Error(
@@ -229,7 +186,7 @@ export class LinkedList<T = any> {
     if (index === 0) {
       // Insert at the beginning.
       this.prepend(value);
-    } else if (index === this.#size) {
+    } else if (index === this.$size) {
       // Insert at the end.
       this.append(value);
     } else {
@@ -240,14 +197,14 @@ export class LinkedList<T = any> {
       newNode.next = prevNode.next;
       prevNode.next = newNode;
 
-      this.#size += 1;
+      this.$size += 1;
     }
 
     return this;
   }
 
   #findNodeByIndex(index: number) {
-    let currentNode = this.#head!;
+    let currentNode = this.$head!;
 
     for (let i = 0; i < index; i += 1) {
       currentNode = currentNode.next!;
@@ -256,55 +213,55 @@ export class LinkedList<T = any> {
     return currentNode;
   }
 
-  deleteHead(): NullableLinkedListNode<T> {
-    if (this.#head === null) return null;
+  deleteHead() {
+    if (this.$head === null) return null;
 
-    const deletedNode = this.#head;
+    const deletedNode = this.$head;
 
     if (deletedNode?.next) {
-      this.#head = deletedNode.next;
+      this.$head = deletedNode.next;
     } else {
-      this.#head = null;
-      this.#tail = null;
+      this.$head = null;
+      this.$tail = null;
     }
 
-    this.#size -= 1;
+    this.$size -= 1;
 
     return deletedNode;
   }
 
-  deleteTail(): NullableLinkedListNode<T> {
-    if (this.#head === null) return null;
+  deleteTail() {
+    if (this.$head === null) return null;
 
-    const deletedTail = this.#tail;
+    const deletedTail = this.$tail;
 
     // If there is only one node.
-    if (this.#head === this.#tail) {
-      this.#head = null;
-      this.#tail = null;
+    if (this.$head === this.$tail) {
+      this.$head = null;
+      this.$tail = null;
     } else {
       // If multiple nodes.
-      let currentNode = this.#head;
+      let currentNode = this.$head;
 
       while (currentNode?.next?.next) {
         currentNode = currentNode.next;
       }
 
       currentNode.next = null;
-      this.#tail = currentNode;
+      this.$tail = currentNode;
     }
 
-    this.#size -= 1;
+    this.$size -= 1;
 
     return deletedTail;
   }
 
   indexOf(value: T): number {
     let count = 0;
-    let currentNode = this.#head;
+    let currentNode = this.$head;
 
     while (currentNode !== null) {
-      if (this.#compare.equal(value, currentNode.value)) return count;
+      if (this.$compare.equal(value, currentNode.value)) return count;
 
       currentNode = currentNode.next;
       count += 1;
@@ -313,13 +270,13 @@ export class LinkedList<T = any> {
     return -1;
   }
 
-  find(options: SearchOptions<T>): NullableLinkedListNode<T> {
-    if (this.#head === null) return null;
+  find(options: SearchOptions<T>) {
+    if (this.$head === null) return null;
 
-    let currentNode: NullableLinkedListNode = this.#head;
+    let currentNode: LinkedListNode | null = this.$head;
 
     while (currentNode) {
-      if (this.#isMatch(currentNode.value, options)) {
+      if (this.$isMatch(currentNode.value, options)) {
         return currentNode;
       }
 
@@ -330,8 +287,8 @@ export class LinkedList<T = any> {
   }
 
   clear(): void {
-    this.#head = null;
-    this.#tail = null;
-    this.#size = 0;
+    this.$head = null;
+    this.$tail = null;
+    this.$size = 0;
   }
 }
