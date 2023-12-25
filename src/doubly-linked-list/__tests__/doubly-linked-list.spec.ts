@@ -138,6 +138,25 @@ describe('DoublyLinkedList', () => {
       // Act and Assert
       expect(doublyLinkedList.toString()).toBe('');
     });
+
+    it('converts to list to string with custom callback', () => {
+      // Arrange
+      type NodeValue = {
+        key: string;
+        value: number;
+      };
+
+      const list = new DoublyLinkedList<NodeValue>().fromArray([
+        { key: 'one', value: 1 },
+        { key: 'two', value: 2 },
+      ]);
+
+      // Act
+      const received = list.toString((node) => `${node.value}`);
+
+      // Assert
+      expect(received).toBe('1,2');
+    });
   });
 
   describe('prepend', () => {
@@ -268,6 +287,34 @@ describe('DoublyLinkedList', () => {
 
       expect(doublyLinkedList.toString()).toBe('1,3,4');
       expect(doublyLinkedList.size).toBe(3);
+    });
+
+    it('deletes by predicate', () => {
+      // Arrange
+      type Value = {
+        key: string;
+        value: number;
+      };
+
+      const list = new DoublyLinkedList<Value>().fromArray([
+        { key: 'one', value: 1 },
+        { key: 'two', value: 2 },
+        { key: 'three', value: 3 },
+        { key: 'four', value: 4 },
+      ]);
+
+      // Act
+      const deletedNode = list.deleteByValue({
+        predicate: (pair) => pair.key === 'two',
+      });
+
+      // Assert
+      expect(deletedNode?.value.value).toBe(2);
+
+      expect(list.head?.value.value).toBe(1);
+      expect(list.head?.next?.value.value).toBe(3);
+      expect(list.tail?.value.value).toBe(4);
+      expect(list.size).toBe(3);
     });
 
     it('deletes the last element', () => {
@@ -479,7 +526,7 @@ describe('DoublyLinkedList', () => {
   });
 
   describe('deleteTail', () => {
-    it('deletes the tail from an empty list', () => {
+    it('deletes the tail from the empty list', () => {
       // Act
       const deletedTail = doublyLinkedList.deleteTail();
 
@@ -487,6 +534,21 @@ describe('DoublyLinkedList', () => {
       expect(deletedTail).toBeNull();
       expect(doublyLinkedList.head).toBeNull();
       expect(doublyLinkedList.tail).toBeNull();
+      expect(doublyLinkedList.size).toBe(0);
+    });
+
+    it('deletes the tail form the list with single node', () => {
+      // Arrange
+      doublyLinkedList.append(1);
+
+      // Act
+      const deletedTail = doublyLinkedList.deleteTail();
+
+      // Assert
+      expect(deletedTail?.value).toBe(1);
+      expect(doublyLinkedList.head).toBeNull();
+      expect(doublyLinkedList.tail).toBeNull();
+      expect(doublyLinkedList.size).toBe(0);
       expect(doublyLinkedList.size).toBe(0);
     });
 

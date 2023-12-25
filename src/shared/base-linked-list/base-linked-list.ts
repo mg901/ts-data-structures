@@ -1,7 +1,7 @@
 import { BaseLinkedListNode } from './base-linked-list-node';
 import { Comparator, CompareFunction } from '../comparator';
 
-export type Callback<T> = (data: T) => string;
+export type Callback<T> = (value: T) => string;
 
 export type SearchOptions<T> = T | { predicate?: (value: T) => boolean };
 
@@ -124,7 +124,7 @@ export abstract class BaseLinkedList<
       nodes.push(node);
     }
 
-    return nodes.map((node) => node.toString(callback)).toString();
+    return nodes.map((node: Node) => node.toString(callback)).toString();
   }
 
   // Common methods

@@ -128,8 +128,6 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
   }
 
   deleteHead() {
-    if (this.$head === null) return null;
-
     const deletedNode = this.$head;
 
     if (deletedNode?.next) {
@@ -150,9 +148,11 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<
 
     // If there is only one node.
     if (this.$head === this.$tail) {
-      let deletedNode = this.$tail;
+      const deletedNode = this.$tail;
       this.$head = null;
       this.$tail = null;
+
+      this.$size -= 1;
 
       return deletedNode;
     }

@@ -50,30 +50,4 @@ describe('DoublyLinkedListNode', () => {
     expect(node3.next?.value).toBe(1);
     expect(node3.prev?.value).toBe(2);
   });
-
-  it('converts node to string', () => {
-    // Arrange
-    const list = new DoublyLinkedListNode<number>(1);
-
-    // Act and Assert
-    expect(list.toString()).toBe('1');
-  });
-
-  it('converts node to string with custom stringifier', () => {
-    // Arrange
-    const nodeValue = {
-      value: 1,
-      key: 'test',
-    };
-
-    const list = new DoublyLinkedListNode<typeof nodeValue>(nodeValue);
-    const toStringCallback = (x: typeof nodeValue) =>
-      `value: ${x.value}, key: ${x.key}`;
-
-    // Act
-    const received = list.toString(toStringCallback);
-
-    // Assert
-    expect(received).toBe('value: 1, key: test');
-  });
 });
