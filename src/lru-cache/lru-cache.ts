@@ -6,7 +6,7 @@ type NodeValue<K = any, V = any> = {
 };
 
 export class LRUCache<Key extends string | number | symbol = any, Value = any> {
-  #nodesMap = {} as Record<Key, Node<NodeValue<Key, Value>>>;
+  #nodeMap = {} as Record<Key, Node<NodeValue<Key, Value>>>;
 
   #capacity: number;
 
@@ -56,28 +56,28 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
   }
 
   get(key: Key) {
-    if (!Object.hasOwn(this.#nodesMap, key)) return -1;
+    if (!Object.hasOwn(this.#nodeMap, key)) return -1;
 
-    const node = this.#nodesMap[key];
+    const node = this.#nodeMap[key];
     this.#deleteByReference(node);
-    this.#nodesMap[key] = this.#push(key, node.value.value);
+    this.#nodeMap[key] = this.#push(key, node.value.value);
 
     return node.value.value;
   }
 
   put(key: Key, value: Value): void {
-    if (Object.hasOwn(this.#nodesMap, key)) {
-      const node = this.#nodesMap[key];
+    if (Object.hasOwn(this.#nodeMap, key)) {
+      const node = this.#nodeMap[key];
       this.#deleteByReference(node!);
     }
 
     if (this.#size === this.#capacity) {
       const head = this.#head as Node<NodeValue<Key, Value>>;
 
-      delete this.#nodesMap[head.value.key];
+      delete this.#nodeMap[head.value.key];
       this.#deleteByReference(head);
     }
 
-    this.#nodesMap[key] = this.#push(key, value);
+    this.#nodeMap[key] = this.#push(key, value);
   }
 }
