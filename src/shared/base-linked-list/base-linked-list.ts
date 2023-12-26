@@ -56,27 +56,13 @@ export abstract class BaseLinkedList<
     return currentNode;
   }
 
-  [Symbol.iterator]() {
+  *[Symbol.iterator]() {
     let currentNode = this.$head;
 
-    return {
-      next() {
-        if (currentNode !== null) {
-          const node = currentNode;
-          currentNode = currentNode.next as Node;
-
-          return {
-            value: node,
-            done: false,
-          };
-        }
-
-        return {
-          value: undefined as any,
-          done: true,
-        };
-      },
-    };
+    while (currentNode !== null) {
+      yield currentNode;
+      currentNode = currentNode.next as Node;
+    }
   }
 
   fromArray(array: T[]) {
