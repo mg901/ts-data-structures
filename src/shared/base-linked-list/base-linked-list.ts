@@ -44,15 +44,6 @@ export abstract class BaseLinkedList<
       : this.$compare.equal(matcher, value);
   }
 
-  // protected $isMatch(nodeValue: T, options: Matcher<T>) {
-  //   return typeof options === 'object' &&
-  //     options !== null &&
-  //     'predicate' in options &&
-  //     options.predicate
-  //     ? options.predicate(nodeValue)
-  //     : this.$compare.equal(options as T, nodeValue);
-  // }
-
   protected $findNodeByIndex(index: number) {
     let currentNode = this.$head!;
 
