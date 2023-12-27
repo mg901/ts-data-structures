@@ -1,4 +1,4 @@
-import { BaseLinkedList, type SearchOptions } from '@/shared/base-linked-list';
+import { BaseLinkedList, type Matcher } from '@/shared/base-linked-list';
 import { LinkedListNode as Node } from './linked-list-node';
 
 export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
@@ -34,19 +34,19 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  deleteByValue(options: SearchOptions<T>) {
+  deleteByValue(matcher: Matcher<T>) {
     if (this.$head === null) return null;
 
     let deletedNode: Node | null = null;
 
-    if (this.$isMatch(this.$head.value, options)) {
+    if (this.$isMatch(this.$head.value, matcher)) {
       deletedNode = this.#deleteHeadAndUpdateTail();
     } else {
       let currentNode = this.$head;
 
       while (
         currentNode.next &&
-        !this.$isMatch(currentNode.next.value, options)
+        !this.$isMatch(currentNode.next.value, matcher)
       ) {
         currentNode = currentNode.next;
       }
@@ -184,13 +184,13 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return deletedTail;
   }
 
-  find(options: SearchOptions<T>) {
+  find(matcher: Matcher<T>) {
     if (this.$head === null) return null;
 
     let currentNode: Node | null = this.$head;
 
     while (currentNode) {
-      if (this.$isMatch(currentNode.value, options)) {
+      if (this.$isMatch(currentNode.value, matcher)) {
         return currentNode;
       }
 

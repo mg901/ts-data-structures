@@ -304,9 +304,7 @@ describe('DoublyLinkedList', () => {
       ]);
 
       // Act
-      const deletedNode = list.deleteByValue({
-        predicate: (pair) => pair.key === 'two',
-      });
+      const deletedNode = list.deleteByValue((pair) => pair.key === 'two');
 
       // Assert
       expect(deletedNode?.value.value).toBe(2);
@@ -642,9 +640,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
-      const foundedNode = doublyLinkedList.find({
-        predicate: (value) => value > 2,
-      });
+      const foundedNode = doublyLinkedList.find((value) => value > 2);
 
       // Assert
       expect(foundedNode?.value).toBe(3);
@@ -655,9 +651,7 @@ describe('DoublyLinkedList', () => {
 
       // Act and Assert
       expect(doublyLinkedList.find(3)).toBeNull();
-      expect(
-        doublyLinkedList.find({ predicate: (value) => value === 4 }),
-      ).toBeNull();
+      expect(doublyLinkedList.find((value) => value === 4)).toBeNull();
     });
 
     it('prioritizes predicate over value', () => {
@@ -665,9 +659,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const foundedNode = doublyLinkedList.find({
-        predicate: (value) => value > 1,
-      });
+      const foundedNode = doublyLinkedList.find((value) => value > 1);
 
       // Assert
       expect(foundedNode?.value).toBe(2);
@@ -678,9 +670,7 @@ describe('DoublyLinkedList', () => {
       doublyLinkedList.fromArray([1, 2, 3, 4]);
 
       // Act
-      const foundedNode = doublyLinkedList.find({
-        predicate: (value) => value > 1,
-      });
+      const foundedNode = doublyLinkedList.find((value) => value > 1);
 
       // Assert
       expect(foundedNode?.value).toBe(2);

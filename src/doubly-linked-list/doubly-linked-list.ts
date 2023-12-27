@@ -1,4 +1,4 @@
-import { BaseLinkedList, type SearchOptions } from '@/shared/base-linked-list';
+import { BaseLinkedList, type Matcher } from '@/shared/base-linked-list';
 import { DoublyLinkedListNode as Node } from './doubly-linked-list-node';
 
 export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
@@ -36,7 +36,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  deleteByValue(options: SearchOptions<T>) {
+  deleteByValue(options: Matcher<T>) {
     if (this.$head === null) return null;
 
     let deletedNode: Node | null = this.$head;
@@ -163,7 +163,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return deletedNode;
   }
 
-  find(options: SearchOptions<T>) {
+  find(options: Matcher<T>) {
     if (this.$head === null) return null;
 
     let currentNode: Node | null = this.$head;
