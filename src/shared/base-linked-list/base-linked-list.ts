@@ -3,7 +3,7 @@ import { Comparator, CompareFunction } from '../comparator';
 
 export type Callback<T> = (value: T) => string;
 
-export type SearchOptions<T> = T | { predicate?: (value: T) => boolean };
+export type Matcher<T> = T | ((value: T) => boolean);
 
 export abstract class BaseLinkedList<
   T = any,
@@ -37,14 +37,21 @@ export abstract class BaseLinkedList<
     return this.$head === null;
   }
 
-  protected $isMatch(nodeValue: T, options: SearchOptions<T>) {
-    return typeof options === 'object' &&
-      options !== null &&
-      'predicate' in options &&
-      options.predicate
-      ? options.predicate(nodeValue)
-      : this.$compare.equal(options as T, nodeValue);
+  protected $isMatch(value: T, matcher: Matcher<T>) {
+    return typeof matcher === 'function'
+      ? // @ts-ignore
+        matcher(value)
+      : this.$compare.equal(matcher, value);
   }
+
+  // protected $isMatch(nodeValue: T, options: Matcher<T>) {
+  //   return typeof options === 'object' &&
+  //     options !== null &&
+  //     'predicate' in options &&
+  //     options.predicate
+  //     ? options.predicate(nodeValue)
+  //     : this.$compare.equal(options as T, nodeValue);
+  // }
 
   protected $findNodeByIndex(index: number) {
     let currentNode = this.$head!;
@@ -116,8 +123,8 @@ export abstract class BaseLinkedList<
   // Common methods
   abstract append(value: T): this;
   abstract prepend(value: T): this;
-  abstract deleteByValue(options: SearchOptions<T>): Node | null;
-  abstract find(options: SearchOptions<T>): Node | null;
+  abstract deleteByValue(matcher: Matcher<T>): Node | null;
+  abstract find(options: Matcher<T>): Node | null;
   abstract insertAt(index: number, value: T): this;
   abstract reverse(): this;
   abstract deleteHead(): Node | null;

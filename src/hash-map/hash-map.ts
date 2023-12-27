@@ -95,12 +95,9 @@ export class HashMap<K = any, V = any> {
   set(key: K, value: V): this {
     this.#resizeIfNeeded();
 
-    // const bucket = this.#findBucketByKey(key);
     const hash = this.#hashCode(key);
     const bucket = this.#buckets[hash] || new LinkedList<KeyValuePair<K, V>>();
-    const existingNode = bucket.find({
-      predicate: (pair) => pair.key === key,
-    });
+    const existingNode = bucket.find((pair) => pair.key === key);
 
     if (existingNode) {
       // Update existing key-value pair.
@@ -121,9 +118,7 @@ export class HashMap<K = any, V = any> {
   get(key: K) {
     const bucket = this.#findBucketByKey(key);
 
-    const node = bucket.find({
-      predicate: (pair) => pair.key === key,
-    });
+    const node = bucket.find((pair) => pair.key === key);
 
     return node?.value.value;
   }
@@ -131,9 +126,7 @@ export class HashMap<K = any, V = any> {
   has(key: K) {
     const bucket = this.#findBucketByKey(key);
 
-    const node = bucket.find({
-      predicate: (pair) => pair.key === key,
-    });
+    const node = bucket.find((pair) => pair.key === key);
 
     return Boolean(node);
   }
@@ -143,9 +136,7 @@ export class HashMap<K = any, V = any> {
     const bucket = this.#buckets[hash];
 
     if (bucket) {
-      const deletedNode = bucket.deleteByValue({
-        predicate: (pair) => pair.key === key,
-      });
+      const deletedNode = bucket.deleteByValue((pair) => pair.key === key);
 
       if (deletedNode) {
         this.#size -= 1;
