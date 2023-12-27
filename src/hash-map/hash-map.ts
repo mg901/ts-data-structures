@@ -147,6 +147,19 @@ export class HashMap<K = any, V = any> {
 
     return false;
   }
+
+  *keys() {
+    for (const bucket of this.#buckets) {
+      let currentNode = bucket.head;
+
+      while (currentNode !== null) {
+        const pair = currentNode.value;
+
+        yield pair.key;
+        currentNode = currentNode.next;
+      }
+    }
+  }
 }
 
 function createArrayOfLinkedLists<K = any, V = any>(capacity: number) {

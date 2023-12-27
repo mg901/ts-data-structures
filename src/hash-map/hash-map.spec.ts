@@ -55,4 +55,84 @@ describe('HashMap', () => {
     expect(hashMap.has('one')).toBeFalsy();
     expect(hashMap.has('two')).toBeFalsy();
   });
+
+  describe('keys', () => {
+    it('returns an iterator with all keys', () => {
+      // Arrange
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+      hashMap.set('three', 3);
+
+      // Act
+      const keysIterator = hashMap.keys();
+      const keysArray = Array.from(keysIterator);
+
+      // Assert
+      expect(keysArray).toContain('one');
+      expect(keysArray).toContain('two');
+      expect(keysArray).toContain('three');
+    });
+
+    it('returns an empty iterator for an empty HashMap', () => {
+      // Act
+      const emptyKeysIterator = hashMap.keys();
+
+      // Assert
+      expect(Array.from(emptyKeysIterator)).toHaveLength(0);
+    });
+
+    it('returns unique keys even with duplicate entries', () => {
+      // Arrange
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+      hashMap.set('one', 3);
+
+      // Act
+      const keysIterator = hashMap.keys();
+      const keysArray = Array.from(keysIterator);
+
+      // Assert
+      expect(keysArray).toEqual(expect.arrayContaining(['one', 'two']));
+      expect(keysArray).toHaveLength(2);
+    });
+
+    it('returns an iterator with all keys including colliding keys', () => {
+      // Arrange
+      const map = new HashMap<string, number>(5);
+
+      map.set('one', 1);
+      map.set('two', 2);
+      map.set('three', 3);
+      map.set('neo', 4); // Collision with 'one'
+
+      // Act
+      const keysIterator = map.keys();
+      const keysArray = Array.from(keysIterator);
+
+      // Assert
+      expect(keysArray).toEqual(
+        expect.arrayContaining(['one', 'two', 'three', 'neo']),
+      );
+    });
+
+    it('returns an iterator with all unique keys for colliding entries', () => {
+      // Arrange
+      const map = new HashMap<string, number>(5);
+
+      map.set('one', 1);
+      map.set('two', 2);
+      map.set('three', 3);
+      map.set('neo', 4); // Collision with 'one'
+      map.set('one', 5); // Addition with the same collision-causing key
+
+      // Act
+      const keysIterator = map.keys();
+      const keysArray = Array.from(keysIterator);
+
+      // Assert
+      expect(keysArray).toEqual(
+        expect.arrayContaining(['one', 'two', 'three', 'neo']),
+      );
+    });
+  });
 });
