@@ -166,4 +166,36 @@ describe('HashMap', () => {
       expect(Array.from(emptyKeysIterator)).toHaveLength(0);
     });
   });
+
+  describe('entries', () => {
+    it('returns an iterator with all entries', () => {
+      // Arrange
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+      hashMap.set('three', 3);
+
+      // Act
+      const keysIterator = hashMap.entries();
+      const entriesArray = Array.from(keysIterator);
+
+      // Assert
+      expect(entriesArray).toEqual(
+        expect.arrayContaining([
+          ['one', 1],
+          ['two', 2],
+          ['three', 3],
+        ]),
+      );
+      expect(entriesArray).toHaveLength(3);
+    });
+
+    it('returns an empty iterator for an empty HashMap', () => {
+      // Act
+      const emptyKeysIterator = hashMap.entries();
+
+      // Assert
+      expect(Array.from(emptyKeysIterator)).toEqual([]);
+      expect(Array.from(emptyKeysIterator)).toHaveLength(0);
+    });
+  });
 });
