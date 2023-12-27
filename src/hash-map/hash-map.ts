@@ -44,14 +44,14 @@ export class HashMap<K = any, V = any> {
   #hashCode(key: K): number {
     const hashString = String(key);
 
+    // The choice of 31 is a common practice in hash functions due to its properties.
     const prime = 31;
     let hash = 0;
 
     for (let i = 0; i < hashString.length; i += 1) {
       const codePoint = hashString.codePointAt(i);
-      if (codePoint === undefined) {
-        break; // Invalid Unicode character.
-      }
+      // Invalid Unicode character.
+      if (codePoint === undefined) break;
 
       hash = (hash * prime + codePoint) % this.#buckets.length;
       // Move to the next code point.
@@ -86,7 +86,7 @@ export class HashMap<K = any, V = any> {
     this.#capacity = newCapacity;
   }
 
-  #findBucketByKey(key: K) {
+  #findBucketByKey(key: K): LinkedList<KeyValuePair<K, V>> | undefined {
     const index = this.#hashCode(key);
 
     return this.#buckets[index];
@@ -115,8 +115,49 @@ export class HashMap<K = any, V = any> {
     return this;
   }
 
+  *keys() {
+    for (const bucket of this.#buckets) {
+      let currentNode = bucket.head;
+
+      while (currentNode !== null) {
+        const pair = currentNode.value;
+
+        yield pair.key;
+        currentNode = currentNode.next;
+      }
+    }
+  }
+
+  *values() {
+    for (const bucket of this.#buckets) {
+      let currentNode = bucket.head;
+
+      while (currentNode !== null) {
+        const pair = currentNode.value;
+
+        yield pair.value;
+        currentNode = currentNode.next;
+      }
+    }
+  }
+
+  *entries() {
+    for (const bucket of this.#buckets) {
+      let currentNode = bucket.head;
+
+      while (currentNode !== null) {
+        const pair = currentNode.value;
+
+        yield [pair.key, pair.value];
+        currentNode = currentNode.next;
+      }
+    }
+  }
+
   get(key: K) {
     const bucket = this.#findBucketByKey(key);
+
+    if (!bucket) return undefined;
 
     const node = bucket.find((pair) => pair.key === key);
 
@@ -146,6 +187,35 @@ export class HashMap<K = any, V = any> {
     }
 
     return false;
+  }
+
+  forEach(
+    callbackFn: (value: V, key: K, map: HashMap<K, V>) => void,
+    thisArg?: any,
+  ) {
+    const buckets = this.#buckets;
+
+    for (const bucket of buckets) {
+      let currentNode = bucket.head;
+
+      while (currentNode !== null) {
+        const pair = currentNode.value;
+
+        if (thisArg) {
+          callbackFn(pair.value, pair.key, thisArg);
+        } else {
+          callbackFn(pair.value, pair.key, this);
+        }
+
+        currentNode = currentNode.next;
+      }
+    }
+  }
+
+  clear() {
+    this.#capacity = INITIAL_CAPACITY;
+    this.#buckets = [];
+    this.#size = 0;
   }
 }
 
