@@ -17,7 +17,7 @@ HashTable:
 
 In summary, while there may be historical differences between the terms in certain languages, in modern JavaScript, the distinction is less pronounced. The Map object is commonly referred to as a hash map, and the term "HashTable" may be less commonly used in the context of JavaScript due to the prevalence of Map and Object for handling key-value data.
 */
-import { LinkedList } from '@/linked-list';
+import { LinkedList } from '@/data-structures/linked-list';
 
 const INITIAL_CAPACITY = 10;
 
