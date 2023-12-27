@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { HashMap } from './hash-map';
 
 describe('HashMap', () => {
@@ -63,16 +63,13 @@ describe('HashMap', () => {
       hashMap.set('two', 2);
       hashMap.set('three', 3);
 
+      const expected = ['one', 'two', 'three'];
+
       // Act
-      const keysIterator = hashMap.keys();
-      const keysArray = Array.from(keysIterator);
+      const received = Array.from(hashMap.keys());
 
       // Assert
-      expect(keysArray).toEqual(
-        expect.arrayContaining(['one', 'two', 'three']),
-      );
-
-      expect(keysArray).toHaveLength(3);
+      expect(received).toEqual(expected);
     });
 
     it('returns an empty iterator for an empty HashMap', () => {
@@ -148,22 +145,18 @@ describe('HashMap', () => {
       hashMap.set('two', 2);
       hashMap.set('three', 3);
 
+      const expected = [1, 2, 3];
+
       // Act
-      const keysIterator = hashMap.values();
-      const keysArray = Array.from(keysIterator);
+      const received = Array.from(hashMap.values());
 
       // Assert
-      expect(keysArray).toEqual(expect.arrayContaining([1, 2, 3]));
-      expect(keysArray).toHaveLength(3);
+      expect(received).toEqual(expected);
     });
 
     it('returns an empty iterator for an empty HashMap', () => {
-      // Act
-      const emptyKeysIterator = hashMap.values();
-
-      // Assert
-      expect(Array.from(emptyKeysIterator)).toEqual([]);
-      expect(Array.from(emptyKeysIterator)).toHaveLength(0);
+      // Act and Assert
+      expect(Array.from(hashMap.values())).toEqual([]);
     });
   });
 
@@ -174,28 +167,66 @@ describe('HashMap', () => {
       hashMap.set('two', 2);
       hashMap.set('three', 3);
 
+      const expected = [
+        ['one', 1],
+        ['two', 2],
+        ['three', 3],
+      ];
+
       // Act
-      const keysIterator = hashMap.entries();
-      const entriesArray = Array.from(keysIterator);
+      const received = Array.from(hashMap.entries());
 
       // Assert
-      expect(entriesArray).toEqual(
-        expect.arrayContaining([
-          ['one', 1],
-          ['two', 2],
-          ['three', 3],
-        ]),
-      );
-      expect(entriesArray).toHaveLength(3);
+      expect(received).toEqual(expected);
     });
 
     it('returns an empty iterator for an empty HashMap', () => {
+      // Act and Assert
+      expect(Array.from(hashMap.entries())).toEqual([]);
+    });
+  });
+
+  describe('forEach', () => {
+    it('iterates over each the key-value pairs', () => {
+      // Arrange
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+      hashMap.set('three', 3);
+
+      const callbackFn = vi.fn();
+
       // Act
-      const emptyKeysIterator = hashMap.entries();
+      hashMap.forEach(callbackFn);
 
       // Assert
-      expect(Array.from(emptyKeysIterator)).toEqual([]);
-      expect(Array.from(emptyKeysIterator)).toHaveLength(0);
+      expect(callbackFn).toHaveBeenCalledTimes(3);
+    });
+
+    it('uses the provided thisArg as the context if provided', () => {
+      // Arrange
+      hashMap.set('one', 1);
+
+      const thisArg = { customContext: true };
+      const callbackFn = vi.fn();
+
+      // Act
+      hashMap.forEach(callbackFn, thisArg);
+
+      // Assert
+      expect(callbackFn.mock.calls[0][2]).toBe(thisArg);
+    });
+
+    it('uses the HashMap as the context if thisArg is not provided', () => {
+      // Arrange
+      hashMap.set('one', 1);
+
+      const callbackFn = vi.fn();
+
+      // Act
+      hashMap.forEach(callbackFn);
+
+      // Assert
+      expect(callbackFn.mock.calls[0][2]).toBe(hashMap);
     });
   });
 });
