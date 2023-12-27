@@ -68,9 +68,11 @@ describe('HashMap', () => {
       const keysArray = Array.from(keysIterator);
 
       // Assert
-      expect(keysArray).toContain('one');
-      expect(keysArray).toContain('two');
-      expect(keysArray).toContain('three');
+      expect(keysArray).toEqual(
+        expect.arrayContaining(['one', 'two', 'three']),
+      );
+
+      expect(keysArray).toHaveLength(3);
     });
 
     it('returns an empty iterator for an empty HashMap', () => {
@@ -78,6 +80,7 @@ describe('HashMap', () => {
       const emptyKeysIterator = hashMap.keys();
 
       // Assert
+      expect(Array.from(emptyKeysIterator)).toEqual([]);
       expect(Array.from(emptyKeysIterator)).toHaveLength(0);
     });
 
@@ -113,6 +116,7 @@ describe('HashMap', () => {
       expect(keysArray).toEqual(
         expect.arrayContaining(['one', 'two', 'three', 'neo']),
       );
+      expect(keysArray).toHaveLength(4);
     });
 
     it('returns an iterator with all unique keys for colliding entries', () => {
@@ -133,6 +137,7 @@ describe('HashMap', () => {
       expect(keysArray).toEqual(
         expect.arrayContaining(['one', 'two', 'three', 'neo']),
       );
+      expect(keysArray).toHaveLength(4);
     });
   });
 });
