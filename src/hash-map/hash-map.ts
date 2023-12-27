@@ -86,7 +86,7 @@ export class HashMap<K = any, V = any> {
     this.#capacity = newCapacity;
   }
 
-  #findBucketByKey(key: K) {
+  #findBucketByKey(key: K): LinkedList<KeyValuePair<K, V>> | undefined {
     const index = this.#hashCode(key);
 
     return this.#buckets[index];
@@ -117,6 +117,8 @@ export class HashMap<K = any, V = any> {
 
   get(key: K) {
     const bucket = this.#findBucketByKey(key);
+
+    if (!bucket) return undefined;
 
     const node = bucket.find((pair) => pair.key === key);
 
@@ -208,6 +210,12 @@ export class HashMap<K = any, V = any> {
         currentNode = currentNode.next;
       }
     }
+  }
+
+  clear() {
+    this.#capacity = INITIAL_CAPACITY;
+    this.#buckets = [];
+    this.#size = 0;
   }
 }
 
