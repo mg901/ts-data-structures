@@ -140,4 +140,30 @@ describe('HashMap', () => {
       expect(keysArray).toHaveLength(4);
     });
   });
+
+  describe('values', () => {
+    it('returns an iterator with all values', () => {
+      // Arrange
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+      hashMap.set('three', 3);
+
+      // Act
+      const keysIterator = hashMap.values();
+      const keysArray = Array.from(keysIterator);
+
+      // Assert
+      expect(keysArray).toEqual(expect.arrayContaining([1, 2, 3]));
+      expect(keysArray).toHaveLength(3);
+    });
+
+    it('returns an empty iterator for an empty HashMap', () => {
+      // Act
+      const emptyKeysIterator = hashMap.values();
+
+      // Assert
+      expect(Array.from(emptyKeysIterator)).toEqual([]);
+      expect(Array.from(emptyKeysIterator)).toHaveLength(0);
+    });
+  });
 });
