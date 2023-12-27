@@ -9,18 +9,27 @@ describe('HashMap', () => {
     hashMap = new HashMap<string, number>();
   });
 
-  it('set and get values', () => {
-    // Act
-    hashMap.set('one', 1);
-    hashMap.set('two', 2);
-
-    // Assert
-    expect(hashMap.get('one')).toBe(1);
-    expect(hashMap.get('two')).toBe(2);
-    expect(hashMap.size).toBe(2);
+  it('returns the initial state of the HashMap correctly', () => {
+    expect(hashMap.size).toBe(0);
   });
 
-  describe('get', () => {
+  describe('set', () => {
+    it('set values', () => {
+      // Act
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+
+      // Assert
+      const received = Object.fromEntries(hashMap.entries());
+
+      expect(received).toEqual({
+        one: 1,
+        two: 2,
+      });
+
+      expect(hashMap.size).toBe(2);
+    });
+
     it('updates existing values', () => {
       // Act
       hashMap.set('value', 1);
@@ -28,37 +37,6 @@ describe('HashMap', () => {
 
       // Assert
       expect(hashMap.get('value')).toBe(2);
-    });
-  });
-
-  describe('has', () => {
-    it('checks if a key exists using has method ', () => {
-      // Arrange
-      hashMap.set('one', 1);
-      hashMap.set('two', 2);
-
-      // Act and Assert
-      expect(hashMap.has('one')).toBeTruthy();
-      expect(hashMap.has('two')).toBeTruthy();
-      expect(hashMap.has('three')).toBeFalsy();
-    });
-  });
-
-  describe('delete', () => {
-    it('deletes values', () => {
-      // Arrange
-      hashMap.set('one', 1);
-      hashMap.set('two', 2);
-
-      // Act and Assert
-      expect(hashMap.delete('one')).toBeTruthy();
-      expect(hashMap.size).toBe(1);
-      expect(hashMap.delete('two')).toBeTruthy();
-      expect(hashMap.size).toBe(0);
-      expect(hashMap.delete('three')).toBeFalsy();
-
-      expect(hashMap.has('one')).toBeFalsy();
-      expect(hashMap.has('two')).toBeFalsy();
     });
   });
 
@@ -192,6 +170,79 @@ describe('HashMap', () => {
     });
   });
 
+  describe('get', () => {
+    it('handles a non-existing key in an empty HashMap', () => {
+      // Act and Assert
+      expect(hashMap.get('one')).toBeUndefined();
+      expect(hashMap.size).toBe(0);
+    });
+
+    it('handles a non-existing key in a non-empty HashMap', () => {
+      // Arrange
+      hashMap.set('one', 1);
+
+      // Act and Assert
+      expect(hashMap.get('two')).toBeUndefined();
+      expect(hashMap.size).toBe(1);
+    });
+
+    it('returns the value for an existing key in a non-empty HashMap', () => {
+      // Act
+      hashMap.set('key', 10);
+
+      // Assert
+      expect(hashMap.get('key')).toBe(10);
+      expect(hashMap.size).toBe(1);
+    });
+
+    it('returns the values for existing keys in a non-empty HashMap', () => {
+      // Act
+      hashMap.set('ten', 10);
+      hashMap.set('twenty', 20);
+
+      // Assert
+      expect(hashMap.get('ten')).toBe(10);
+      expect(hashMap.get('twenty')).toBe(20);
+      expect(hashMap.size).toBe(2);
+    });
+  });
+
+  describe('has', () => {
+    it('checks if a key exists using has method ', () => {
+      // Arrange
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+
+      // Act and Assert
+      expect(hashMap.has('one')).toBeTruthy();
+      expect(hashMap.has('two')).toBeTruthy();
+      expect(hashMap.has('three')).toBeFalsy();
+    });
+  });
+
+  describe('delete', () => {
+    it('deletes a none-existing value in a an empty HashMap', () => {
+      // Act
+      const received = hashMap.delete('non-existing-key');
+
+      // Assert
+      expect(hashMap.size).toBe(0);
+      expect(received).toBeFalsy();
+    });
+
+    it('deletes existing values for existing keys in a non-empty HashMap', () => {
+      // Arrange
+      hashMap.set('one', 1);
+      hashMap.set('two', 2);
+
+      // Act and Assert
+      expect(hashMap.delete('one')).toBeTruthy();
+      expect(hashMap.size).toBe(1);
+      expect(hashMap.delete('two')).toBeTruthy();
+      expect(hashMap.size).toBe(0);
+    });
+  });
+
   describe('forEach', () => {
     it('iterates over each the key-value pairs', () => {
       // Arrange
@@ -248,6 +299,7 @@ describe('HashMap', () => {
       // Assert
       expect(hashMap.get('one')).toBeUndefined();
       expect(hashMap.get('two')).toBeUndefined();
+      expect(hashMap.size).toBe(0);
     });
   });
 });

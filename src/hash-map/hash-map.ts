@@ -115,41 +115,6 @@ export class HashMap<K = any, V = any> {
     return this;
   }
 
-  get(key: K) {
-    const bucket = this.#findBucketByKey(key);
-
-    if (!bucket) return undefined;
-
-    const node = bucket.find((pair) => pair.key === key);
-
-    return node?.value.value;
-  }
-
-  has(key: K) {
-    const bucket = this.#findBucketByKey(key);
-
-    const node = bucket.find((pair) => pair.key === key);
-
-    return Boolean(node);
-  }
-
-  delete(key: K): boolean {
-    const hash = this.#hashCode(key);
-    const bucket = this.#buckets[hash];
-
-    if (bucket) {
-      const deletedNode = bucket.deleteByValue((pair) => pair.key === key);
-
-      if (deletedNode) {
-        this.#size -= 1;
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   *keys() {
     for (const bucket of this.#buckets) {
       let currentNode = bucket.head;
@@ -187,6 +152,41 @@ export class HashMap<K = any, V = any> {
         currentNode = currentNode.next;
       }
     }
+  }
+
+  get(key: K) {
+    const bucket = this.#findBucketByKey(key);
+
+    if (!bucket) return undefined;
+
+    const node = bucket.find((pair) => pair.key === key);
+
+    return node?.value.value;
+  }
+
+  has(key: K) {
+    const bucket = this.#findBucketByKey(key);
+
+    const node = bucket.find((pair) => pair.key === key);
+
+    return Boolean(node);
+  }
+
+  delete(key: K): boolean {
+    const hash = this.#hashCode(key);
+    const bucket = this.#buckets[hash];
+
+    if (bucket) {
+      const deletedNode = bucket.deleteByValue((pair) => pair.key === key);
+
+      if (deletedNode) {
+        this.#size -= 1;
+
+        return true;
+      }
+    }
+
+    return false;
   }
 
   forEach(
