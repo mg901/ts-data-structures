@@ -10,6 +10,7 @@ describe('HashMap', () => {
   });
 
   it('returns the initial state of the HashMap correctly', () => {
+    // Act and Assert
     expect(hashMap.size).toBe(0);
   });
 
