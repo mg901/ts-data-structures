@@ -167,7 +167,7 @@ export class HashMap<K = any, V = any> {
   has(key: K) {
     const bucket = this.#findBucketByKey(key);
 
-    const node = bucket.find((pair) => pair.key === key);
+    const node = bucket?.find((pair) => pair.key === key);
 
     return Boolean(node);
   }
