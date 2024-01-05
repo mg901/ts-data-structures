@@ -1,3 +1,3 @@
 module.exports = {
-  '*.{j,t}s': ['eslint --fix', 'prettier --write --ignore-unknown'],
+  '*.ts': ['bun prettify'],
 };
