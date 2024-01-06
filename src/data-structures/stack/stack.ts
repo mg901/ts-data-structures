@@ -1,7 +1,7 @@
 import { type Callback } from '@/shared/base-linked-list';
 import { LinkedList } from '@/data-structures/linked-list';
 
-export class Stack<T> {
+export class Stack<T = any> {
   #linkedList: LinkedList;
 
   constructor() {
@@ -21,7 +21,7 @@ export class Stack<T> {
   }
 
   toString(callback?: Callback<T>) {
-    return this.#linkedList.toString(callback);
+    return this.#linkedList.toString(callback as Callback<T>);
   }
 
   pop(): T | undefined {
