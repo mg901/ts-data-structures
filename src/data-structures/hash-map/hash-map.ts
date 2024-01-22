@@ -177,7 +177,7 @@ export class HashMap<K = any, V = any> {
     const bucket = this.#buckets[hash];
 
     if (bucket) {
-      const deletedNode = bucket.deleteByValue((pair) => pair.key === key);
+      const deletedNode = bucket.delete((pair) => pair.key === key);
 
       if (deletedNode) {
         this.#size -= 1;

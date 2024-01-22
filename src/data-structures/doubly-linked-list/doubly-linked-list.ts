@@ -36,7 +36,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  deleteByValue(options: Matcher<T>) {
+  delete(options: Matcher<T>) {
     if (this.$head === null) return null;
 
     let deletedNode: Node | null = this.$head;
