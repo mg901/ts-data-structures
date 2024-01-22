@@ -114,7 +114,7 @@ export abstract class BaseLinkedList<
   // Common methods
   abstract append(value: T): this;
   abstract prepend(value: T): this;
-  abstract deleteByValue(matcher: Matcher<T>): Node | null;
+  abstract delete(matcher: Matcher<T>): Node | null;
   abstract find(options: Matcher<T>): Node | null;
   abstract insertAt(index: number, value: T): this;
   abstract reverse(): this;

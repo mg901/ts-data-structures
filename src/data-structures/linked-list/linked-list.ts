@@ -34,7 +34,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  deleteByValue(matcher: Matcher<T>) {
+  delete(matcher: Matcher<T>) {
     if (this.$head === null) return null;
 
     let deletedNode: Node | null = null;
