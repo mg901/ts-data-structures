@@ -16,4 +16,8 @@ export class Dequeue<T = any> {
   peekFront() {
     return this.#list.head;
   }
+
+  removeFront() {
+    return this.#list.deleteHead();
+  }
 }
