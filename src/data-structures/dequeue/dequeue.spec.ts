@@ -13,7 +13,7 @@ describe('Dequeue', () => {
     expect(dequeue).not.toBeNull();
     expect(dequeue.size).toBe(0);
     expect(dequeue.toString()).toBe('');
-    expect(dequeue.isEmpty).toBeFalsy();
+    expect(dequeue.isEmpty).toBeTruthy();
   });
 
   describe('addFront', () => {
@@ -116,6 +116,7 @@ describe('Dequeue', () => {
     it('returns false for a non-empty stack', () => {
       // Act
       dequeue.addFront(1);
+
       // Assert
       expect(dequeue.isEmpty).toBeFalsy();
     });
