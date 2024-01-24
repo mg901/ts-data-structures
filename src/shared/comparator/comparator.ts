@@ -17,7 +17,7 @@ export class Comparator<T = any> {
     this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
   }
 
-  equal(a: T, b: T): boolean {
+  equal(a: unknown, b: unknown): boolean {
     return this.#isEqual(a, b);
   }
 
