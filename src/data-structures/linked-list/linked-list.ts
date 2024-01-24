@@ -150,6 +150,9 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
 
     if (deletedNode?.next) {
       this._head = deletedNode.next;
+    } else {
+      this._head = null;
+      this._tail = null;
     }
 
     this._size -= 1;

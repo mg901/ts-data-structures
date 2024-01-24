@@ -499,6 +499,19 @@ describe('LinkedList', () => {
       expect(linkedList.toString()).toBe('2,3');
       expect(linkedList.size).toBe(2);
     });
+
+    it('removes elements from the front correctly', () => {
+      // Arrange
+      linkedList.fromArray([1, 2]);
+
+      // Act and Assert
+      expect(linkedList.deleteHead()?.data).toBe(1);
+      expect(linkedList.deleteHead()?.data).toBe(2);
+      expect(linkedList.deleteHead()).toBeNull();
+
+      expect(linkedList.head).toBeNull();
+      expect(linkedList.tail).toBeNull();
+    });
   });
 
   describe('deleteTail', () => {
