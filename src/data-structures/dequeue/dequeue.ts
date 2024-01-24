@@ -25,4 +25,10 @@ export class Dequeue<T = any> {
   peekFront() {
     return this.#list.head;
   }
+
+  addRear(value: T) {
+    this.#list.append(value);
+
+    return this;
+  }
 }

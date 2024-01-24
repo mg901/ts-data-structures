@@ -64,4 +64,24 @@ describe('Dequeue', () => {
       });
     });
   });
+
+  describe('rear', () => {
+    describe('addRear', () => {
+      it('add elements to the rear in the correct order', () => {
+        // Act
+        dequeue.addRear(1);
+
+        // Assert
+        expect(dequeue.toString()).toBe('1');
+        expect(dequeue.size).toBe(1);
+
+        // Act
+        dequeue.addRear(2);
+
+        // // Assert
+        expect(dequeue.toString()).toBe('1,2');
+        expect(dequeue.size).toBe(2);
+      });
+    });
+  });
 });
