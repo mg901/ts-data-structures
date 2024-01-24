@@ -7,43 +7,43 @@ export abstract class BaseLinkedList<
   T = any,
   Node extends BaseLinkedListNode<T> = BaseLinkedListNode<T>,
 > {
-  protected $head: Node | null = null;
+  protected _head: Node | null = null;
 
-  protected $tail: Node | null = null;
+  protected _tail: Node | null = null;
 
-  protected $size: number = 0;
+  protected _size: number = 0;
 
-  protected $compare: Comparator<T>;
+  protected _compare: Comparator<T>;
 
   constructor(compareFunction?: CompareFunction<T>) {
-    this.$compare = new Comparator(compareFunction);
+    this._compare = new Comparator(compareFunction);
   }
 
   get head() {
-    return this.$head;
+    return this._head;
   }
 
   get tail() {
-    return this.$tail;
+    return this._tail;
   }
 
   get size() {
-    return this.$size;
+    return this._size;
   }
 
   get isEmpty() {
-    return this.$head === null;
+    return this._head === null;
   }
 
-  protected $isMatch(value: T, matcher: Matcher<T>) {
+  protected _isMatch(value: T, matcher: Matcher<T>) {
     return typeof matcher === 'function'
       ? // @ts-ignore
         matcher(value)
-      : this.$compare.equal(matcher, value);
+      : this._compare.equal(matcher, value);
   }
 
-  protected $findNodeByIndex(index: number) {
-    let currentNode = this.$head!;
+  protected _findNodeByIndex(index: number) {
+    let currentNode = this._head!;
 
     for (let i = 0; i < index; i += 1) {
       currentNode = currentNode.next as Node;
@@ -53,7 +53,7 @@ export abstract class BaseLinkedList<
   }
 
   *[Symbol.iterator]() {
-    let currentNode = this.$head;
+    let currentNode = this._head;
 
     while (currentNode !== null) {
       yield currentNode;
@@ -81,10 +81,10 @@ export abstract class BaseLinkedList<
 
   indexOf(value: T): number {
     let count = 0;
-    let currentNode = this.$head;
+    let currentNode = this._head;
 
     while (currentNode !== null) {
-      if (this.$compare.equal(value, currentNode.value)) return count;
+      if (this._compare.equal(value, currentNode.value)) return count;
 
       currentNode = currentNode.next as Node;
       count += 1;
@@ -94,9 +94,9 @@ export abstract class BaseLinkedList<
   }
 
   clear(): void {
-    this.$head = null;
-    this.$tail = null;
-    this.$size = 0;
+    this._head = null;
+    this._tail = null;
+    this._size = 0;
   }
 
   toString(callback?: Callback<T>) {

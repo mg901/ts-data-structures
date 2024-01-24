@@ -5,15 +5,15 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   append(value: T): this {
     const newNode = new Node(value);
 
-    if (this.$head === null) {
-      this.$head = newNode;
-      this.$tail = newNode;
+    if (this._head === null) {
+      this._head = newNode;
+      this._tail = newNode;
     } else {
-      this.$tail!.next = newNode;
-      this.$tail = newNode;
+      this._tail!.next = newNode;
+      this._tail = newNode;
     }
 
-    this.$size += 1;
+    this._size += 1;
 
     return this;
   }
@@ -21,32 +21,32 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   prepend(value: T): this {
     const newNode = new Node(value);
 
-    if (this.$head === null) {
-      this.$head = newNode;
-      this.$tail = newNode;
+    if (this._head === null) {
+      this._head = newNode;
+      this._tail = newNode;
     } else {
-      newNode.next = this.$head;
-      this.$head = newNode;
+      newNode.next = this._head;
+      this._head = newNode;
     }
 
-    this.$size += 1;
+    this._size += 1;
 
     return this;
   }
 
   delete(matcher: Matcher<T>) {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
     let deletedNode: Node | null = null;
 
-    if (this.$isMatch(this.$head.value, matcher)) {
+    if (this._isMatch(this._head.value, matcher)) {
       deletedNode = this.#deleteHeadAndUpdateTail();
     } else {
-      let currentNode = this.$head;
+      let currentNode = this._head;
 
       while (
         currentNode.next &&
-        !this.$isMatch(currentNode.next.value, matcher)
+        !this._isMatch(currentNode.next.value, matcher)
       ) {
         currentNode = currentNode.next;
       }
@@ -57,20 +57,20 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     if (deletedNode) {
       // Clear the reference of the deleted node.
       deletedNode.next = null;
-      this.$size -= 1;
+      this._size -= 1;
     }
 
     return deletedNode;
   }
 
   #deleteHeadAndUpdateTail() {
-    const deletedNode = this.$head;
+    const deletedNode = this._head;
 
     if (deletedNode?.next) {
-      this.$head = deletedNode.next;
+      this._head = deletedNode.next;
     } else {
-      this.$head = null;
-      this.$tail = null;
+      this._head = null;
+      this._tail = null;
     }
 
     return deletedNode;
@@ -86,7 +86,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
 
       // Update tail if the last node is deleted.
       if (prevNode.next === null) {
-        this.$tail = prevNode;
+        this._tail = prevNode;
       }
     }
 
@@ -94,11 +94,11 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   }
 
   reverse(): this {
-    if (this.$head === null || this.$head.next === null) {
+    if (this._head === null || this._head.next === null) {
       return this;
     }
 
-    let currentNode = this.$head as Node | null;
+    let currentNode = this._head as Node | null;
     let prevNode = null;
 
     while (currentNode !== null) {
@@ -109,14 +109,14 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       currentNode = nextNode;
     }
 
-    this.$tail = this.$head;
-    this.$head = prevNode;
+    this._tail = this._head;
+    this._head = prevNode;
 
     return this;
   }
 
   insertAt(index: number, value: T): this {
-    const isInvalidIndex = index < 0 || index > this.$size;
+    const isInvalidIndex = index < 0 || index > this._size;
 
     if (isInvalidIndex) {
       throw new Error(
@@ -127,70 +127,70 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     if (index === 0) {
       // Insert at the beginning.
       this.prepend(value);
-    } else if (index === this.$size) {
+    } else if (index === this._size) {
       // Insert at the end.
       this.append(value);
     } else {
       // Insert in the middle.
-      const prevNode = this.$findNodeByIndex(index - 1);
+      const prevNode = this._findNodeByIndex(index - 1);
       const newNode = new Node(value);
 
       newNode.next = prevNode.next;
       prevNode.next = newNode;
 
-      this.$size += 1;
+      this._size += 1;
     }
 
     return this;
   }
 
   deleteHead() {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
-    const deletedNode = this.$head;
+    const deletedNode = this._head;
 
     if (deletedNode?.next) {
-      this.$head = deletedNode.next;
+      this._head = deletedNode.next;
     }
 
-    this.$size -= 1;
+    this._size -= 1;
 
     return deletedNode;
   }
 
   deleteTail() {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
-    const deletedTail = this.$tail;
+    const deletedTail = this._tail;
 
     // If there is only one node.
-    if (this.$head === this.$tail) {
-      this.$head = null;
-      this.$tail = null;
+    if (this._head === this._tail) {
+      this._head = null;
+      this._tail = null;
     } else {
       // If multiple nodes.
-      let currentNode = this.$head;
+      let currentNode = this._head;
 
       while (currentNode?.next?.next) {
         currentNode = currentNode.next;
       }
 
       currentNode.next = null;
-      this.$tail = currentNode;
+      this._tail = currentNode;
     }
 
-    this.$size -= 1;
+    this._size -= 1;
 
     return deletedTail;
   }
 
   find(matcher: Matcher<T>) {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
-    let currentNode: Node | null = this.$head;
+    let currentNode: Node | null = this._head;
 
     while (currentNode) {
-      if (this.$isMatch(currentNode.value, matcher)) {
+      if (this._isMatch(currentNode.value, matcher)) {
         return currentNode;
       }
 

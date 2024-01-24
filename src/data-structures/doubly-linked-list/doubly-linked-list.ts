@@ -5,16 +5,16 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   append(value: T) {
     const newNode = new Node(value);
 
-    if (this.$head === null) {
-      this.$head = newNode;
-      this.$tail = newNode;
+    if (this._head === null) {
+      this._head = newNode;
+      this._tail = newNode;
     } else {
-      this.$tail!.next = newNode;
-      newNode.prev = this.$tail;
-      this.$tail = newNode;
+      this._tail!.next = newNode;
+      newNode.prev = this._tail;
+      this._tail = newNode;
     }
 
-    this.$size += 1;
+    this._size += 1;
 
     return this;
   }
@@ -22,27 +22,27 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   prepend(value: T): this {
     const newNode = new Node(value);
 
-    if (this.$head === null) {
-      this.$head = newNode;
-      this.$tail = newNode;
+    if (this._head === null) {
+      this._head = newNode;
+      this._tail = newNode;
     } else {
-      newNode.next = this.$head;
-      this.$head.prev = newNode;
-      this.$head = newNode;
+      newNode.next = this._head;
+      this._head.prev = newNode;
+      this._head = newNode;
     }
 
-    this.$size += 1;
+    this._size += 1;
 
     return this;
   }
 
   delete(options: Matcher<T>) {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
-    let deletedNode: Node | null = this.$head;
+    let deletedNode: Node | null = this._head;
 
     // Search for the node by value.
-    while (deletedNode !== null && !this.$isMatch(deletedNode.value, options)) {
+    while (deletedNode !== null && !this._isMatch(deletedNode.value, options)) {
       deletedNode = deletedNode.next;
     }
 
@@ -52,7 +52,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       deletedNode.prev.next = deletedNode.next;
     } else {
       // Deleted node is the head;
-      this.$head = deletedNode.next;
+      this._head = deletedNode.next;
     }
 
     // Delete the node from the middle.
@@ -60,25 +60,25 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       deletedNode.next.prev = deletedNode.prev;
     } else {
       // Deleted node is the tail
-      this.$tail = deletedNode.prev;
+      this._tail = deletedNode.prev;
     }
 
     // Clear the reference of the deleted node.
     deletedNode.prev = null;
     deletedNode.next = null;
 
-    this.$size -= 1;
+    this._size -= 1;
 
     return deletedNode;
   }
 
   reverse() {
-    if (this.$head === null || this.$head.next === null) {
+    if (this._head === null || this._head.next === null) {
       return this;
     }
 
     let prevNode = null;
-    let currentNode = this.$head as Node | null;
+    let currentNode = this._head as Node | null;
 
     while (currentNode !== null) {
       const nextNode = currentNode.next;
@@ -89,14 +89,14 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       currentNode = nextNode;
     }
 
-    this.$tail = this.$head;
-    this.$head = prevNode;
+    this._tail = this._head;
+    this._head = prevNode;
 
     return this;
   }
 
   insertAt(index: number, value: T) {
-    const isInvalidIndex = index < 0 || index > this.$size;
+    const isInvalidIndex = index < 0 || index > this._size;
 
     if (isInvalidIndex) {
       throw new Error(
@@ -108,68 +108,68 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       // Insert at the beginning.
       this.prepend(value);
       // Insert at the end.
-    } else if (index === this.$size) {
+    } else if (index === this._size) {
       this.append(value);
     } else {
       // Insert in the middle.
-      let prevNode = this.$findNodeByIndex(index - 1);
+      let prevNode = this._findNodeByIndex(index - 1);
       let newNode = new Node(value);
       newNode.next = prevNode.next;
       newNode.prev = prevNode;
       prevNode.next = newNode;
 
-      this.$size += 1;
+      this._size += 1;
     }
 
     return this;
   }
 
   deleteHead() {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
-    const deletedNode = this.$head;
+    const deletedNode = this._head;
 
     if (deletedNode?.next) {
-      this.$head = deletedNode.next;
-      this.$head.prev = null;
+      this._head = deletedNode.next;
+      this._head.prev = null;
     }
 
-    this.$size -= 1;
+    this._size -= 1;
 
     return deletedNode;
   }
 
   deleteTail() {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
     // If there is only one node.
-    if (this.$head === this.$tail) {
-      const deletedNode = this.$tail;
-      this.$head = null;
-      this.$tail = null;
+    if (this._head === this._tail) {
+      const deletedNode = this._tail;
+      this._head = null;
+      this._tail = null;
 
-      this.$size -= 1;
+      this._size -= 1;
 
       return deletedNode;
     }
 
     const deletedNode = this.tail!;
 
-    this.$tail = deletedNode.prev!;
-    this.$tail.next = null;
+    this._tail = deletedNode.prev!;
+    this._tail.next = null;
 
-    this.$size -= 1;
+    this._size -= 1;
 
     return deletedNode;
   }
 
   find(options: Matcher<T>) {
-    if (this.$head === null) return null;
+    if (this._head === null) return null;
 
-    let currentNode: Node | null = this.$head;
+    let currentNode: Node | null = this._head;
 
     while (currentNode) {
-      if (this.$isMatch(currentNode.value, options)) {
+      if (this._isMatch(currentNode.value, options)) {
         return currentNode;
       }
 
