@@ -93,4 +93,21 @@ describe('Dequeue', () => {
       expect(dequeue.size).toBe(0);
     });
   });
+
+  describe('peekRear', () => {
+    it('peeks elements from the rear without removing it', () => {
+      // Act and Assert
+      expect(dequeue.peekRear()).toBeNull();
+
+      dequeue.addRear(1);
+
+      // Act and Assert
+      expect(dequeue.peekRear()?.data).toBe(1);
+
+      dequeue.addRear(2);
+
+      // Act and Assert
+      expect(dequeue.peekRear()?.data).toBe(2);
+    });
+  });
 });
