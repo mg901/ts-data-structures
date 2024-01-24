@@ -1,4 +1,4 @@
-import { BaseLinkedList, type Matcher } from '@/shared/base-linked-list';
+import { BaseLinkedList, type Predicate } from '@/shared/base-linked-list';
 import { LinkedListNode as Node } from './linked-list-node';
 
 export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
@@ -34,20 +34,19 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  delete(matcher: Matcher<T>) {
+  delete(value: T): Node<T> | null;
+  delete(predicate: Predicate<T>): Node<T> | null;
+  delete(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
     let deletedNode: Node | null = null;
 
-    if (this._isMatch(this._head.data, matcher)) {
+    if (this._isMatch(this._head.data, arg)) {
       deletedNode = this.#deleteHeadAndUpdateTail();
     } else {
       let currentNode = this._head;
 
-      while (
-        currentNode.next &&
-        !this._isMatch(currentNode.next.data, matcher)
-      ) {
+      while (currentNode.next && !this._isMatch(currentNode.next.data, arg)) {
         currentNode = currentNode.next;
       }
 
@@ -93,7 +92,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return deletedNode;
   }
 
-  reverse(): this {
+  reverse() {
     if (this._head === null || this._head.next === null) {
       return this;
     }
@@ -115,7 +114,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  insertAt(index: number, value: T): this {
+  insertAt(index: number, value: T) {
     const isInvalidIndex = index < 0 || index > this._size;
 
     if (isInvalidIndex) {
@@ -182,21 +181,5 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     this._size -= 1;
 
     return deletedTail;
-  }
-
-  find(matcher: Matcher<T>) {
-    if (this._head === null) return null;
-
-    let currentNode: Node | null = this._head;
-
-    while (currentNode) {
-      if (this._isMatch(currentNode.data, matcher)) {
-        return currentNode;
-      }
-
-      currentNode = currentNode.next;
-    }
-
-    return null;
   }
 }

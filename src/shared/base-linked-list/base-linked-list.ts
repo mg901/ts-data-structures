@@ -1,7 +1,7 @@
 import { BaseLinkedListNode, type Callback } from './base-linked-list-node';
 import { Comparator, CompareFunction } from '../comparator';
 
-export type Matcher<T> = T | ((value: T) => boolean);
+export type Predicate<T = unknown> = (value: T) => boolean;
 
 export abstract class BaseLinkedList<
   T = any,
@@ -35,10 +35,9 @@ export abstract class BaseLinkedList<
     return this._head === null;
   }
 
-  protected _isMatch(value: T, matcher: Matcher<T>) {
-    return typeof matcher === 'function'
-      ? // @ts-ignore
-        matcher(value)
+  protected _isMatch(value: T, matcher: T | Predicate<T>) {
+    return isFunction(matcher)
+      ? matcher(value)
       : this._compare.equal(matcher, value);
   }
 
@@ -79,12 +78,32 @@ export abstract class BaseLinkedList<
     return values;
   }
 
-  indexOf(value: T): number {
+  find(value: T): Node | null;
+  find(predicate: Predicate<T>): Node | null;
+  find(arg: T | Predicate<T>): Node | null {
+    if (this._head === null) return null;
+
+    let currentNode: Node | null = this._head;
+
+    while (currentNode) {
+      if (this._isMatch(currentNode.data, arg)) {
+        return currentNode;
+      }
+
+      currentNode = currentNode.next as Node;
+    }
+
+    return null;
+  }
+
+  indexOf(value: T) {
     let count = 0;
     let currentNode = this._head;
 
     while (currentNode !== null) {
-      if (this._compare.equal(value, currentNode.data)) return count;
+      if (this._compare.equal(value, currentNode.data)) {
+        return count;
+      }
 
       currentNode = currentNode.next as Node;
       count += 1;
@@ -93,7 +112,7 @@ export abstract class BaseLinkedList<
     return -1;
   }
 
-  clear(): void {
+  clear() {
     this._head = null;
     this._tail = null;
     this._size = 0;
@@ -114,10 +133,13 @@ export abstract class BaseLinkedList<
   // Common methods
   abstract append(value: T): this;
   abstract prepend(value: T): this;
-  abstract delete(matcher: Matcher<T>): Node | null;
-  abstract find(options: Matcher<T>): Node | null;
+  abstract delete(value: T | Predicate<T>): Node | null;
   abstract insertAt(index: number, value: T): this;
   abstract reverse(): this;
   abstract deleteHead(): Node | null;
   abstract deleteTail(): Node | null;
+}
+
+function isFunction(a: unknown): a is Predicate {
+  return typeof a === 'function';
 }

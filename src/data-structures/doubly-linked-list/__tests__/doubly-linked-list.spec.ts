@@ -1,12 +1,12 @@
 import { describe, beforeEach, it, expect } from 'vitest';
-import { DoublyLinkedList as Node } from '../doubly-linked-list';
+import { DoublyLinkedList } from '../doubly-linked-list';
 
 describe('DoublyLinkedList', () => {
-  let doublyLinkedList: Node<number>;
+  let doublyLinkedList: DoublyLinkedList<number>;
 
   // Arrange
   beforeEach(() => {
-    doublyLinkedList = new Node<number>();
+    doublyLinkedList = new DoublyLinkedList<number>();
   });
 
   it('returns the initial state correctly', () => {
@@ -146,7 +146,7 @@ describe('DoublyLinkedList', () => {
         value: number;
       };
 
-      const list = new Node<NodeValue>().fromArray([
+      const list = new DoublyLinkedList<NodeValue>().fromArray([
         { key: 'one', value: 1 },
         { key: 'two', value: 2 },
       ]);
@@ -289,14 +289,14 @@ describe('DoublyLinkedList', () => {
       expect(doublyLinkedList.size).toBe(3);
     });
 
-    it('deletes by predicate', () => {
+    it('deletes node with object value', () => {
       // Arrange
       type Value = {
         key: string;
         value: number;
       };
 
-      const list = new Node<Value>().fromArray([
+      const list = new DoublyLinkedList<Value>().fromArray([
         { key: 'one', value: 1 },
         { key: 'two', value: 2 },
         { key: 'three', value: 3 },
@@ -304,7 +304,10 @@ describe('DoublyLinkedList', () => {
       ]);
 
       // Act
-      const deletedNode = list.delete((pair) => pair.key === 'two');
+      const deletedNode = list.delete({
+        key: 'two',
+        value: 2,
+      });
 
       // Assert
       expect(deletedNode?.data.value).toBe(2);
@@ -611,7 +614,10 @@ describe('DoublyLinkedList', () => {
 
     it('handles custom objects and comparison correctly', () => {
       // Arrange
-      const list = new Node().fromArray([{ key: 'value1' }, { key: 'value2' }]);
+      const list = new DoublyLinkedList().fromArray([
+        { key: 'value1' },
+        { key: 'value2' },
+      ]);
 
       // Act and Assert
       expect(list.indexOf({ key: 'value1' })).toBe(0);

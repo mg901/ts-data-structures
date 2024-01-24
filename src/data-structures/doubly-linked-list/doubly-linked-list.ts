@@ -1,4 +1,4 @@
-import { BaseLinkedList, type Matcher } from '@/shared/base-linked-list';
+import { BaseLinkedList, Predicate } from '@/shared/base-linked-list';
 import { DoublyLinkedListNode as Node } from './doubly-linked-list-node';
 
 export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
@@ -36,13 +36,15 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  delete(options: Matcher<T>) {
+  delete(value: T): Node<T> | null;
+  delete(predicate: Predicate<T>): Node<T> | null;
+  delete(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
     let deletedNode: Node | null = this._head;
 
     // Search for the node by value.
-    while (deletedNode !== null && !this._isMatch(deletedNode.data, options)) {
+    while (deletedNode !== null && !this._isMatch(deletedNode.data, arg)) {
       deletedNode = deletedNode.next;
     }
 
@@ -161,21 +163,5 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     this._size -= 1;
 
     return deletedNode;
-  }
-
-  find(options: Matcher<T>) {
-    if (this._head === null) return null;
-
-    let currentNode: Node | null = this._head;
-
-    while (currentNode) {
-      if (this._isMatch(currentNode.data, options)) {
-        return currentNode;
-      }
-
-      currentNode = currentNode.next;
-    }
-
-    return null;
   }
 }
