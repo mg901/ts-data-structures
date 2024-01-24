@@ -74,7 +74,7 @@ export class HashMap<K = any, V = any> {
       let currentNode = bucket.head;
 
       while (currentNode !== null) {
-        const pair = currentNode.value;
+        const pair = currentNode.data;
         const newIndex = this.#hashCode(pair.key) % this.#buckets.length;
         newBuckets[newIndex].append(pair);
 
@@ -101,7 +101,7 @@ export class HashMap<K = any, V = any> {
 
     if (existingNode) {
       // Update existing key-value pair.
-      existingNode.value.value = value;
+      existingNode.data.value = value;
     } else {
       // Add new key-value pair.
       bucket.append({ key, value });
@@ -120,7 +120,7 @@ export class HashMap<K = any, V = any> {
       let currentNode = bucket.head;
 
       while (currentNode !== null) {
-        const pair = currentNode.value;
+        const pair = currentNode.data;
 
         yield pair.key;
         currentNode = currentNode.next;
@@ -133,7 +133,7 @@ export class HashMap<K = any, V = any> {
       let currentNode = bucket.head;
 
       while (currentNode !== null) {
-        const pair = currentNode.value;
+        const pair = currentNode.data;
 
         yield pair.value;
         currentNode = currentNode.next;
@@ -146,7 +146,7 @@ export class HashMap<K = any, V = any> {
       let currentNode = bucket.head;
 
       while (currentNode !== null) {
-        const pair = currentNode.value;
+        const pair = currentNode.data;
 
         yield [pair.key, pair.value];
         currentNode = currentNode.next;
@@ -161,7 +161,7 @@ export class HashMap<K = any, V = any> {
 
     const node = bucket.find((pair) => pair.key === key);
 
-    return node?.value.value;
+    return node?.data.value;
   }
 
   has(key: K) {
@@ -199,7 +199,7 @@ export class HashMap<K = any, V = any> {
       let currentNode = bucket.head;
 
       while (currentNode !== null) {
-        const pair = currentNode.value;
+        const pair = currentNode.data;
 
         if (thisArg) {
           callbackFn(pair.value, pair.key, thisArg);

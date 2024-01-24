@@ -73,7 +73,7 @@ export abstract class BaseLinkedList<
     let values = [];
 
     for (const node of this) {
-      values.push(node.value);
+      values.push(node.data);
     }
 
     return values;
@@ -84,7 +84,7 @@ export abstract class BaseLinkedList<
     let currentNode = this._head;
 
     while (currentNode !== null) {
-      if (this._compare.equal(value, currentNode.value)) return count;
+      if (this._compare.equal(value, currentNode.data)) return count;
 
       currentNode = currentNode.next as Node;
       count += 1;

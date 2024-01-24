@@ -39,14 +39,14 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
 
     let deletedNode: Node | null = null;
 
-    if (this._isMatch(this._head.value, matcher)) {
+    if (this._isMatch(this._head.data, matcher)) {
       deletedNode = this.#deleteHeadAndUpdateTail();
     } else {
       let currentNode = this._head;
 
       while (
         currentNode.next &&
-        !this._isMatch(currentNode.next.value, matcher)
+        !this._isMatch(currentNode.next.data, matcher)
       ) {
         currentNode = currentNode.next;
       }
@@ -190,7 +190,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     let currentNode: Node | null = this._head;
 
     while (currentNode) {
-      if (this._isMatch(currentNode.value, matcher)) {
+      if (this._isMatch(currentNode.data, matcher)) {
         return currentNode;
       }
 

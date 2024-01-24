@@ -25,11 +25,11 @@ export class Queue<T = any> {
   }
 
   dequeue(): T | undefined {
-    return this.#linkedList.deleteHead()?.value;
+    return this.#linkedList.deleteHead()?.data;
   }
 
   peek(): T | undefined {
-    return this.#linkedList.head?.value;
+    return this.#linkedList.head?.data;
   }
 
   clear(): void {

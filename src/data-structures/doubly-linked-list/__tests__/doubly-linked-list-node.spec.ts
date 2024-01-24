@@ -7,7 +7,7 @@ describe('DoublyLinkedListNode', () => {
     const doublyList = new DoublyLinkedListNode<number>(1);
 
     // Assert
-    expect(doublyList.value).toBe(1);
+    expect(doublyList.data).toBe(1);
     expect(doublyList.next).toBeNull();
     expect(doublyList.prev).toBeNull();
   });
@@ -23,7 +23,7 @@ describe('DoublyLinkedListNode', () => {
     const list = new DoublyLinkedListNode<typeof expectedValue>(expectedValue);
 
     // Assert
-    expect(list.value).toEqual(expectedValue);
+    expect(list.data).toEqual(expectedValue);
     expect(list.next).toBeNull();
     expect(list.prev).toBeNull();
   });
@@ -45,9 +45,9 @@ describe('DoublyLinkedListNode', () => {
     expect(node2.prev).toBeNull();
     expect(node3.next).toBeDefined();
     expect(node3.prev).toBeDefined();
-    expect(node1.value).toBe(1);
-    expect(node1.next?.value).toBe(2);
-    expect(node3.next?.value).toBe(1);
-    expect(node3.prev?.value).toBe(2);
+    expect(node1.data).toBe(1);
+    expect(node1.next?.data).toBe(2);
+    expect(node3.next?.data).toBe(1);
+    expect(node3.prev?.data).toBe(2);
   });
 });

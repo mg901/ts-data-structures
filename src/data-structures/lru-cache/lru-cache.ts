@@ -60,9 +60,9 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
 
     const node = this.#nodeMap[key];
     this.#deleteByReference(node);
-    this.#nodeMap[key] = this.#push(key, node.value.value);
+    this.#nodeMap[key] = this.#push(key, node.data.value);
 
-    return node.value.value;
+    return node.data.value;
   }
 
   put(key: Key, value: Value): void {
@@ -74,7 +74,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
     if (this.#size === this.#capacity) {
       const head = this.#head as Node<NodeValue<Key, Value>>;
 
-      delete this.#nodeMap[head.value.key];
+      delete this.#nodeMap[head.data.key];
       this.#deleteByReference(head);
     }
 
