@@ -25,7 +25,7 @@ export class Stack<T = any> {
   }
 
   pop(): T | undefined {
-    return this.#linkedList.deleteHead()?.value;
+    return this.#linkedList.deleteHead()?.data;
   }
 
   clear(): void {

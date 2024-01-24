@@ -39,7 +39,7 @@ export class BinaryTreeNode<T = any> {
     return this;
   }
 
-  setLeft(node?: NullableBinaryTreeNode<T>): this {
+  setLeft(node?: NullableBinaryTreeNode<T>) {
     // Remove parent for existing node.
     if (this.left) {
       this.left.parent = null;
@@ -55,7 +55,7 @@ export class BinaryTreeNode<T = any> {
     return this;
   }
 
-  setRight(node?: NullableBinaryTreeNode<T>): this {
+  setRight(node?: NullableBinaryTreeNode<T>) {
     // Remove parent for existing node.
     if (this.right) {
       this.right.parent = null;
@@ -115,7 +115,7 @@ export class BinaryTreeNode<T = any> {
     return false;
   }
 
-  traverseInOrder(): T[] {
+  traverseInOrder() {
     let traverse: T[] = [];
 
     const inOrder = (node: BinaryTreeNode<T>) => {

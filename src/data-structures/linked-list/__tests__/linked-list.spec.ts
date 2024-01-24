@@ -38,10 +38,10 @@ describe('LinkedList', () => {
       linkedList.append(1);
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
+      expect(linkedList.head?.data).toBe(1);
       expect(linkedList.head?.next).toBeNull();
 
-      expect(linkedList.tail?.value).toBe(1);
+      expect(linkedList.tail?.data).toBe(1);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.size).toBe(1);
@@ -55,10 +55,10 @@ describe('LinkedList', () => {
       linkedList.append(2);
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.head?.next?.value).toBe(2);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.head?.next?.data).toBe(2);
 
-      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.tail?.data).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
@@ -101,7 +101,7 @@ describe('LinkedList', () => {
 
       // Act
       for (const node of linkedList) {
-        values.push(node?.value);
+        values.push(node?.data);
       }
 
       // Assert
@@ -114,7 +114,7 @@ describe('LinkedList', () => {
 
       // Act
       for (const node of linkedList) {
-        values.push(node?.value);
+        values.push(node?.data);
       }
 
       // Assert
@@ -164,10 +164,10 @@ describe('LinkedList', () => {
       linkedList.prepend(1);
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
+      expect(linkedList.head?.data).toBe(1);
       expect(linkedList.head?.next).toBeNull();
 
-      expect(linkedList.tail?.value).toBe(1);
+      expect(linkedList.tail?.data).toBe(1);
       expect(linkedList.tail?.next).toBeNull();
       expect(linkedList.size).toBe(1);
     });
@@ -180,10 +180,10 @@ describe('LinkedList', () => {
       linkedList.prepend(1);
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.head?.next?.value).toBe(2);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.head?.next?.data).toBe(2);
 
-      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.tail?.data).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.size).toBe(2);
@@ -220,8 +220,8 @@ describe('LinkedList', () => {
 
       // Assert
       expect(deletedNode).toBeNull();
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.tail?.data).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
@@ -236,7 +236,7 @@ describe('LinkedList', () => {
       const deletedElement = linkedList.delete(1)!;
 
       // Assert
-      expect(deletedElement.value).toBe(1);
+      expect(deletedElement.data).toBe(1);
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
 
@@ -251,11 +251,11 @@ describe('LinkedList', () => {
       const deletedNode = linkedList.delete(1);
 
       // Assert
-      expect(deletedNode?.value).toBe(1);
+      expect(deletedNode?.data).toBe(1);
 
-      expect(linkedList.head?.value).toBe(2);
-      expect(linkedList.head?.next?.value).toBe(3);
-      expect(linkedList.tail?.value).toBe(3);
+      expect(linkedList.head?.data).toBe(2);
+      expect(linkedList.head?.next?.data).toBe(3);
+      expect(linkedList.tail?.data).toBe(3);
 
       expect(linkedList.toString()).toEqual('2,3');
       expect(linkedList.size).toBe(2);
@@ -269,11 +269,11 @@ describe('LinkedList', () => {
       const deletedElement = linkedList.delete(2);
 
       // Assert
-      expect(deletedElement?.value).toBe(2);
+      expect(deletedElement?.data).toBe(2);
 
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.head?.next?.value).toBe(3);
-      expect(linkedList.tail?.value).toBe(4);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.head?.next?.data).toBe(3);
+      expect(linkedList.tail?.data).toBe(4);
 
       expect(linkedList.toString()).toBe('1,3,4');
       expect(linkedList.size).toBe(3);
@@ -297,11 +297,11 @@ describe('LinkedList', () => {
       const deletedNode = list.delete((pair) => pair.key === 'two');
 
       // Assert
-      expect(deletedNode?.value.value).toBe(2);
+      expect(deletedNode?.data.value).toBe(2);
 
-      expect(list.head?.value.value).toBe(1);
-      expect(list.head?.next?.value.value).toBe(3);
-      expect(list.tail?.value.value).toBe(4);
+      expect(list.head?.data.value).toBe(1);
+      expect(list.head?.next?.data.value).toBe(3);
+      expect(list.tail?.data.value).toBe(4);
       expect(list.toString((node) => `${node.value}`)).toBe('1,3,4');
       expect(list.size).toBe(3);
     });
@@ -314,12 +314,12 @@ describe('LinkedList', () => {
       const deletedElement = linkedList.delete(3);
 
       // Assert
-      expect(deletedElement?.value).toBe(3);
+      expect(deletedElement?.data).toBe(3);
 
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.head?.next?.value).toBe(2);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.head?.next?.data).toBe(2);
 
-      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.tail?.data).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
@@ -346,8 +346,8 @@ describe('LinkedList', () => {
       linkedList.reverse();
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.tail?.value).toBe(1);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.tail?.data).toBe(1);
       expect(linkedList.toString()).toBe('1');
       expect(linkedList.size).toBe(1);
     });
@@ -360,9 +360,9 @@ describe('LinkedList', () => {
       linkedList.reverse();
 
       // Assert
-      expect(linkedList.head?.value).toBe(3);
-      expect(linkedList.head?.next?.value).toBe(2);
-      expect(linkedList.tail?.value).toBe(1);
+      expect(linkedList.head?.data).toBe(3);
+      expect(linkedList.head?.next?.data).toBe(2);
+      expect(linkedList.tail?.data).toBe(1);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toEqual('3,2,1');
@@ -374,8 +374,8 @@ describe('LinkedList', () => {
       linkedList.fromArray([1, 2, 3]).reverse().append(4);
 
       // Assert
-      expect(linkedList.head?.value).toBe(3);
-      expect(linkedList.tail?.value).toBe(4);
+      expect(linkedList.head?.data).toBe(3);
+      expect(linkedList.tail?.data).toBe(4);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('3,2,1,4');
@@ -412,9 +412,9 @@ describe('LinkedList', () => {
       linkedList.insertAt(0, 0);
 
       // Assert
-      expect(linkedList.head?.value).toBe(0);
-      expect(linkedList.head?.next?.value).toBe(1);
-      expect(linkedList.tail?.value).toBe(1);
+      expect(linkedList.head?.data).toBe(0);
+      expect(linkedList.head?.next?.data).toBe(1);
+      expect(linkedList.tail?.data).toBe(1);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('0,1');
@@ -429,9 +429,9 @@ describe('LinkedList', () => {
       linkedList.insertAt(1, 2);
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.head?.next?.value).toBe(2);
-      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.head?.next?.data).toBe(2);
+      expect(linkedList.tail?.data).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
@@ -446,9 +446,9 @@ describe('LinkedList', () => {
       linkedList.insertAt(2, 3);
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.head?.next?.next?.value).toBe(3);
-      expect(linkedList.tail?.value).toBe(4);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.head?.next?.next?.data).toBe(3);
+      expect(linkedList.tail?.data).toBe(4);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2,3,4');
@@ -460,8 +460,8 @@ describe('LinkedList', () => {
       linkedList.insertAt(0, 1).insertAt(1, 2);
 
       // Assert
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.tail?.data).toBe(2);
 
       expect(linkedList.toString()).toBe('1,2');
       expect(linkedList.size).toBe(2);
@@ -488,12 +488,12 @@ describe('LinkedList', () => {
       const deletedHead = linkedList.deleteHead();
 
       // Assert
-      expect(deletedHead?.value).toBe(1);
+      expect(deletedHead?.data).toBe(1);
 
-      expect(linkedList.head?.value).toBe(2);
-      expect(linkedList.head?.next?.value).toBe(3);
+      expect(linkedList.head?.data).toBe(2);
+      expect(linkedList.head?.next?.data).toBe(3);
 
-      expect(linkedList.tail?.value).toBe(3);
+      expect(linkedList.tail?.data).toBe(3);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('2,3');
@@ -521,7 +521,7 @@ describe('LinkedList', () => {
       const deletedTail = linkedList.deleteTail();
 
       // Assert
-      expect(deletedTail?.value).toBe(1);
+      expect(deletedTail?.data).toBe(1);
       expect(linkedList.head).toBeNull();
       expect(linkedList.tail).toBeNull();
       expect(linkedList.size).toBe(0);
@@ -535,10 +535,10 @@ describe('LinkedList', () => {
       const deletedTail = linkedList.deleteTail();
 
       // Assert
-      expect(deletedTail?.value).toBe(3);
+      expect(deletedTail?.data).toBe(3);
 
-      expect(linkedList.head?.value).toBe(1);
-      expect(linkedList.tail?.value).toBe(2);
+      expect(linkedList.head?.data).toBe(1);
+      expect(linkedList.tail?.data).toBe(2);
       expect(linkedList.tail?.next).toBeNull();
 
       expect(linkedList.toString()).toBe('1,2');
@@ -607,7 +607,7 @@ describe('LinkedList', () => {
       const foundedNode = linkedList.find(2);
 
       // Assert
-      expect(foundedNode?.value).toBe(2);
+      expect(foundedNode?.data).toBe(2);
     });
 
     it('finds a node by predicate', () => {
@@ -618,7 +618,7 @@ describe('LinkedList', () => {
       const foundedNode = linkedList.find((value) => value > 2);
 
       // Assert
-      expect(foundedNode?.value).toBe(3);
+      expect(foundedNode?.data).toBe(3);
     });
 
     it('returns null if a node is not found by value or predicate', () => {
@@ -635,7 +635,7 @@ describe('LinkedList', () => {
       const foundedNode = linkedList.find((value) => value > 1);
 
       // Assert
-      expect(foundedNode?.value).toBe(2);
+      expect(foundedNode?.data).toBe(2);
     });
 
     it('returns the first node if multiple nodes match the predicate', () => {
@@ -646,7 +646,7 @@ describe('LinkedList', () => {
       const foundedNode = linkedList.find((value) => value > 1);
 
       // Assert
-      expect(foundedNode?.value).toBe(2);
+      expect(foundedNode?.data).toBe(2);
     });
   });
 

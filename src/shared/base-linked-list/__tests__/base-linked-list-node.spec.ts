@@ -9,7 +9,7 @@ describe('BaseLinkedListNode', () => {
     const node = new BaseLinkedListNodeTest<number>(1);
 
     // Assert
-    expect(node.value).toEqual(1);
+    expect(node.data).toEqual(1);
     expect(node.next).toBeNull();
   });
 
@@ -24,8 +24,8 @@ describe('BaseLinkedListNode', () => {
     const node = new BaseLinkedListNodeTest<typeof nodeValue>(nodeValue);
 
     // Assert
-    expect(node.value.value).toEqual(1);
-    expect(node.value.key).toEqual('test');
+    expect(node.data.value).toEqual(1);
+    expect(node.data.key).toEqual('test');
     expect(node.next).toBeNull();
   });
 
@@ -39,8 +39,8 @@ describe('BaseLinkedListNode', () => {
     // Assert
     expect(node1.next).toBeDefined();
     expect(node2.next).toBeNull();
-    expect(node1.value).toEqual(2);
-    expect(node1.next?.value).toEqual(1);
+    expect(node1.data).toEqual(2);
+    expect(node1.next?.data).toEqual(1);
   });
 
   describe('toString', () => {
