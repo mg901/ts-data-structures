@@ -38,5 +38,8 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "lodash.isequal": "^4.5.0"
   }
 }
