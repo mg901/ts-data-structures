@@ -8,15 +8,15 @@ export class Queue<T = any> {
     this.#linkedList = new LinkedList<T>();
   }
 
-  enqueue(value: T): void {
+  enqueue(value: T) {
     this.#linkedList.append(value);
   }
 
-  get size(): number {
+  get size() {
     return this.#linkedList.size;
   }
 
-  get isEmpty(): boolean {
+  get isEmpty() {
     return this.#linkedList.isEmpty;
   }
 
@@ -24,15 +24,15 @@ export class Queue<T = any> {
     return this.#linkedList.toString(callback);
   }
 
-  dequeue(): T | undefined {
+  dequeue() {
     return this.#linkedList.deleteHead()?.data;
   }
 
-  peek(): T | undefined {
+  peek() {
     return this.#linkedList.head?.data;
   }
 
-  clear(): void {
+  clear() {
     this.#linkedList.clear();
   }
 }
