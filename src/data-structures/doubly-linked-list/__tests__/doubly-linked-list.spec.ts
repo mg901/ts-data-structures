@@ -524,6 +524,19 @@ describe('DoublyLinkedList', () => {
       expect(doublyLinkedList.toString()).toBe('2,3');
       expect(doublyLinkedList.size).toBe(2);
     });
+
+    it('removes elements from the end correctly', () => {
+      // Arrange
+      doublyLinkedList.fromArray([1, 2]);
+
+      // Act and Assert
+      expect(doublyLinkedList.deleteHead()?.data).toBe(1);
+      expect(doublyLinkedList.deleteHead()?.data).toBe(2);
+      expect(doublyLinkedList.deleteHead()).toBeNull();
+
+      expect(doublyLinkedList.head).toBeNull();
+      expect(doublyLinkedList.tail).toBeNull();
+    });
   });
 
   describe('deleteTail', () => {
