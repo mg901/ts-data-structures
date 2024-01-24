@@ -80,7 +80,7 @@ export abstract class BaseLinkedList<
 
   find(value: T): Node | null;
   find(predicate: Predicate<T>): Node | null;
-  find(arg: T | Predicate<T>): Node | null {
+  find(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
     let currentNode: Node | null = this._head;
