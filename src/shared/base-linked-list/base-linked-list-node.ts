@@ -1,9 +1,9 @@
 export type Callback<T> = (value: T) => string;
 
 export class BaseLinkedListNode<T = any> {
-  public data: T;
+  data: T;
 
-  public next: BaseLinkedListNode<T> | null;
+  next: BaseLinkedListNode<T> | null;
 
   constructor(data: T, next: BaseLinkedListNode<T> | null = null) {
     this.data = data;

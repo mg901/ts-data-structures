@@ -16,7 +16,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
 
   #size: number = 0;
 
-  constructor(public capacity: number) {
+  constructor(capacity: number) {
     this.#capacity = capacity;
   }
 
