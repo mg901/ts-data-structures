@@ -8,7 +8,7 @@ export class Stack<T = any> {
     this.#linkedList = new LinkedList();
   }
 
-  push(value: T): void {
+  push(value: T) {
     this.#linkedList.prepend(value);
   }
 
@@ -21,14 +21,14 @@ export class Stack<T = any> {
   }
 
   toString(callback?: Callback<T>) {
-    return this.#linkedList.toString(callback as Callback<T>);
+    return this.#linkedList.toString(callback);
   }
 
-  pop(): T | undefined {
+  pop() {
     return this.#linkedList.deleteHead()?.data;
   }
 
-  clear(): void {
+  clear() {
     this.#linkedList.clear();
   }
 }
