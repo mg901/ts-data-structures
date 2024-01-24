@@ -2,7 +2,11 @@ import { type Callback } from '@/shared/base-linked-list';
 import { DoublyLinkedList } from '../doubly-linked-list';
 
 export class Dequeue<T = any> {
-  #list = new DoublyLinkedList<T>();
+  #list: DoublyLinkedList<T>;
+
+  constructor() {
+    this.#list = new DoublyLinkedList<T>();
+  }
 
   get size() {
     return this.#list.size;
