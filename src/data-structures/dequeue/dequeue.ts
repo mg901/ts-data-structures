@@ -31,4 +31,8 @@ export class Dequeue<T = any> {
 
     return this;
   }
+
+  removeRear() {
+    return this.#list.deleteTail();
+  }
 }
