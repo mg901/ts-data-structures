@@ -13,6 +13,7 @@ describe('Dequeue', () => {
     expect(dequeue).not.toBeNull();
     expect(dequeue.size).toBe(0);
     expect(dequeue.toString()).toBe('');
+    expect(dequeue.isEmpty).toBeFalsy();
   });
 
   describe('addFront', () => {
@@ -108,6 +109,15 @@ describe('Dequeue', () => {
 
       // Act and Assert
       expect(dequeue.peekRear()?.data).toBe(2);
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('returns false for a non-empty stack', () => {
+      // Act
+      dequeue.addFront(1);
+      // Assert
+      expect(dequeue.isEmpty).toBeFalsy();
     });
   });
 });

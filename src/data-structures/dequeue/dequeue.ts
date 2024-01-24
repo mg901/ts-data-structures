@@ -12,6 +12,10 @@ export class Dequeue<T = any> {
     return this.#list.size;
   }
 
+  get isEmpty() {
+    return this.#list.isEmpty;
+  }
+
   toString(callback?: Callback<T>) {
     return this.#list.toString(callback);
   }
