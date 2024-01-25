@@ -88,14 +88,12 @@ export abstract class BaseLinkedList<
 
   indexOf(value: T) {
     let count = 0;
-    let currentNode = this._head;
 
-    while (currentNode !== null) {
-      if (this._compare.equal(value, currentNode.data)) {
+    for (const node of this) {
+      if (this._compare.equal(value, node.data)) {
         return count;
       }
 
-      currentNode = currentNode.next as Node;
       count += 1;
     }
 
