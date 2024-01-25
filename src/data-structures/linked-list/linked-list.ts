@@ -39,8 +39,8 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   delete(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: Node<T> | null = null;
-    let prevNode: Node<T> | null = null;
+    let deletedNode: Node | null = null;
+    let prevNode: Node | null = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
@@ -61,7 +61,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return deletedNode;
   }
 
-  #deleteNodeAndUpdateTail(deletedNode: Node<T>, prevNode: Node<T> | null) {
+  #deleteNodeAndUpdateTail(deletedNode: Node, prevNode: Node | null) {
     if (prevNode === null) {
       this._head = deletedNode.next;
     } else {
