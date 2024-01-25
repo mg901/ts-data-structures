@@ -192,12 +192,12 @@ export class HashMap<K = any, V = any> {
   ) {
     for (const bucket of this.#buckets) {
       for (const node of bucket) {
-        const pair = node.data;
+        const { data } = node;
 
         if (thisArg) {
-          callbackFn(pair.value, pair.key, thisArg);
+          callbackFn(data.value, data.key, thisArg);
         } else {
-          callbackFn(pair.value, pair.key, this);
+          callbackFn(data.value, data.key, this);
         }
       }
     }
