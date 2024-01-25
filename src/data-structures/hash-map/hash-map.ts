@@ -71,14 +71,11 @@ export class HashMap<K = any, V = any> {
 
     // Rehash existing key-value pairs into the new buckets
     for (const bucket of this.#buckets) {
-      let currentNode = bucket.head;
+      for (const node of bucket) {
+        const { data } = node;
 
-      while (currentNode !== null) {
-        const pair = currentNode.data;
-        const newIndex = this.#hashCode(pair.key) % this.#buckets.length;
-        newBuckets[newIndex].append(pair);
-
-        currentNode = currentNode.next;
+        const newIndex = this.#hashCode(data.key) % this.#buckets.length;
+        newBuckets[newIndex].append(data);
       }
     }
 
