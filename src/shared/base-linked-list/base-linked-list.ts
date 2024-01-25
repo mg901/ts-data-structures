@@ -77,14 +77,10 @@ export abstract class BaseLinkedList<
   find(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let currentNode: Node | null = this._head;
-
-    while (currentNode) {
-      if (this._isMatch(currentNode.data, arg)) {
-        return currentNode;
+    for (const node of this) {
+      if (this._isMatch(node.data, arg)) {
+        return node;
       }
-
-      currentNode = currentNode.next as Node;
     }
 
     return null;
