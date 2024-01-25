@@ -71,14 +71,11 @@ export class HashMap<K = any, V = any> {
 
     // Rehash existing key-value pairs into the new buckets
     for (const bucket of this.#buckets) {
-      let currentNode = bucket.head;
+      for (const node of bucket) {
+        const { data } = node;
 
-      while (currentNode !== null) {
-        const pair = currentNode.data;
-        const newIndex = this.#hashCode(pair.key) % this.#buckets.length;
-        newBuckets[newIndex].append(pair);
-
-        currentNode = currentNode.next;
+        const newIndex = this.#hashCode(data.key) % this.#buckets.length;
+        newBuckets[newIndex].append(data);
       }
     }
 
@@ -117,39 +114,24 @@ export class HashMap<K = any, V = any> {
 
   *keys() {
     for (const bucket of this.#buckets) {
-      let currentNode = bucket.head;
-
-      while (currentNode !== null) {
-        const pair = currentNode.data;
-
-        yield pair.key;
-        currentNode = currentNode.next;
+      for (const node of bucket) {
+        yield node.data.key;
       }
     }
   }
 
   *values() {
     for (const bucket of this.#buckets) {
-      let currentNode = bucket.head;
-
-      while (currentNode !== null) {
-        const pair = currentNode.data;
-
-        yield pair.value;
-        currentNode = currentNode.next;
+      for (const node of bucket) {
+        yield node.data.value;
       }
     }
   }
 
   *entries() {
     for (const bucket of this.#buckets) {
-      let currentNode = bucket.head;
-
-      while (currentNode !== null) {
-        const pair = currentNode.data;
-
-        yield [pair.key, pair.value];
-        currentNode = currentNode.next;
+      for (const node of bucket) {
+        yield [node.data.key, node.data.value];
       }
     }
   }
@@ -193,21 +175,15 @@ export class HashMap<K = any, V = any> {
     callbackFn: (value: V, key: K, map: HashMap<K, V>) => void,
     thisArg?: any,
   ) {
-    const buckets = this.#buckets;
-
-    for (const bucket of buckets) {
-      let currentNode = bucket.head;
-
-      while (currentNode !== null) {
-        const pair = currentNode.data;
+    for (const bucket of this.#buckets) {
+      for (const node of bucket) {
+        const { data } = node;
 
         if (thisArg) {
-          callbackFn(pair.value, pair.key, thisArg);
+          callbackFn(data.value, data.key, thisArg);
         } else {
-          callbackFn(pair.value, pair.key, this);
+          callbackFn(data.value, data.key, this);
         }
-
-        currentNode = currentNode.next;
       }
     }
   }
