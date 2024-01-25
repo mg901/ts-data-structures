@@ -131,9 +131,7 @@ export class HashMap<K = any, V = any> {
   *entries() {
     for (const bucket of this.#buckets) {
       for (const node of bucket) {
-        const { data } = node;
-
-        yield [data.key, data.value];
+        yield [node.data.key, node.data.value];
       }
     }
   }
