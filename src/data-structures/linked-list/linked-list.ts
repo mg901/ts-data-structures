@@ -45,6 +45,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
         deletedNode = currentNode;
+
         break;
       }
 
@@ -151,15 +152,19 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       this._head = null;
       this._tail = null;
     } else {
-      // If multiple nodes.
-      let currentNode = this._head;
+      // // If multiple nodes.
+      let prevNode: Node | null = null;
 
-      while (currentNode?.next?.next) {
-        currentNode = currentNode.next;
+      for (const currentNode of this) {
+        if (!currentNode.next) {
+          prevNode!.next = null;
+          this._tail = prevNode;
+
+          break;
+        }
+
+        prevNode = currentNode;
       }
-
-      currentNode.next = null;
-      this._tail = currentNode;
     }
 
     this._size -= 1;
