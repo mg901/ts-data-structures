@@ -113,15 +113,7 @@ export abstract class BaseLinkedList<
   }
 
   toString(callback?: Callback<T>) {
-    let nodes = [];
-
-    for (const node of this) {
-      nodes.push(node);
-    }
-
-    return nodes
-      .map((node: Node) => node.toString(callback as Callback<T>))
-      .toString();
+    return Array.from(this, (node) => node.toString(callback)).toString();
   }
 
   // Common methods
