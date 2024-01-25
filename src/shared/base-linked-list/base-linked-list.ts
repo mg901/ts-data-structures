@@ -69,13 +69,7 @@ export abstract class BaseLinkedList<
   }
 
   toArray() {
-    let values = [];
-
-    for (const node of this) {
-      values.push(node.data);
-    }
-
-    return values;
+    return Array.from(this, (node) => node.data);
   }
 
   find(value: T): Node | null;
@@ -83,14 +77,10 @@ export abstract class BaseLinkedList<
   find(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let currentNode: Node | null = this._head;
-
-    while (currentNode) {
-      if (this._isMatch(currentNode.data, arg)) {
-        return currentNode;
+    for (const node of this) {
+      if (this._isMatch(node.data, arg)) {
+        return node;
       }
-
-      currentNode = currentNode.next as Node;
     }
 
     return null;
@@ -98,14 +88,12 @@ export abstract class BaseLinkedList<
 
   indexOf(value: T) {
     let count = 0;
-    let currentNode = this._head;
 
-    while (currentNode !== null) {
-      if (this._compare.equal(value, currentNode.data)) {
+    for (const node of this) {
+      if (this._compare.equal(value, node.data)) {
         return count;
       }
 
-      currentNode = currentNode.next as Node;
       count += 1;
     }
 
@@ -119,15 +107,7 @@ export abstract class BaseLinkedList<
   }
 
   toString(callback?: Callback<T>) {
-    let nodes = [];
-
-    for (const node of this) {
-      nodes.push(node);
-    }
-
-    return nodes
-      .map((node: Node) => node.toString(callback as Callback<T>))
-      .toString();
+    return Array.from(this, (node) => node.toString(callback)).toString();
   }
 
   // Common methods
