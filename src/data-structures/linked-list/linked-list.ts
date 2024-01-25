@@ -62,10 +62,10 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   }
 
   #deleteNodeAndUpdateTail(deletedNode: Node<T>, prevNode: Node<T> | null) {
-    if (prevNode !== null) {
-      prevNode.next = deletedNode.next;
-    } else {
+    if (prevNode === null) {
       this._head = deletedNode.next;
+    } else {
+      prevNode.next = deletedNode.next;
     }
 
     if (deletedNode.next === null) {
