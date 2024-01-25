@@ -69,13 +69,7 @@ export abstract class BaseLinkedList<
   }
 
   toArray() {
-    let values = [];
-
-    for (const node of this) {
-      values.push(node.data);
-    }
-
-    return values;
+    return Array.from(this, (node) => node.data);
   }
 
   find(value: T): Node | null;

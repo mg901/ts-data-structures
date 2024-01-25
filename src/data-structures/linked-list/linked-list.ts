@@ -186,3 +186,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return deletedTail;
   }
 }
+
+const list = new LinkedList<number>();
+
+list.append(1).append('1');
