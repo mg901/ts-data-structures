@@ -140,13 +140,10 @@ export class HashMap<K = any, V = any> {
 
   *entries() {
     for (const bucket of this.#buckets) {
-      let currentNode = bucket.head;
+      for (const node of bucket) {
+        const { data } = node;
 
-      while (currentNode !== null) {
-        const pair = currentNode.data;
-
-        yield [pair.key, pair.value];
-        currentNode = currentNode.next;
+        yield [data.key, data.value];
       }
     }
   }
