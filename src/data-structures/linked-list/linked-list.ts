@@ -39,22 +39,21 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   delete(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: Node | null = null;
+    let deletedNode: Node<T> | null = null;
+    let prevNode: Node<T> | null = null;
 
-    if (this._isMatch(this._head.data, arg)) {
-      deletedNode = this.#deleteHeadAndUpdateTail();
-    } else {
-      let currentNode = this._head;
-
-      while (currentNode.next && !this._isMatch(currentNode.next.data, arg)) {
-        currentNode = currentNode.next;
+    for (const currentNode of this) {
+      if (this._isMatch(currentNode.data, arg)) {
+        deletedNode = currentNode;
+        break;
       }
 
-      deletedNode = this.#deleteNodeAndUpdateTail(currentNode);
+      prevNode = currentNode;
     }
 
     if (deletedNode) {
-      // Clear the reference of the deleted node.
+      this.#deleteNodeAndUpdateTail(deletedNode, prevNode);
+
       deletedNode.next = null;
       this._size -= 1;
     }
@@ -62,34 +61,16 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return deletedNode;
   }
 
-  #deleteHeadAndUpdateTail() {
-    const deletedNode = this._head;
-
-    if (deletedNode?.next) {
-      this._head = deletedNode.next;
+  #deleteNodeAndUpdateTail(deletedNode: Node<T>, prevNode: Node<T> | null) {
+    if (prevNode !== null) {
+      prevNode.next = deletedNode.next;
     } else {
-      this._head = null;
-      this._tail = null;
+      this._head = deletedNode.next;
     }
 
-    return deletedNode;
-  }
-
-  #deleteNodeAndUpdateTail(prevNode: Node<T>) {
-    let deletedNode: Node | null = null;
-
-    // Delete the node from the middle.
-    if (prevNode.next !== null) {
-      deletedNode = prevNode.next;
-      prevNode.next = deletedNode?.next;
-
-      // Update tail if the last node is deleted.
-      if (prevNode.next === null) {
-        this._tail = prevNode;
-      }
+    if (deletedNode.next === null) {
+      this._tail = prevNode;
     }
-
-    return deletedNode;
   }
 
   reverse() {
