@@ -193,21 +193,15 @@ export class HashMap<K = any, V = any> {
     callbackFn: (value: V, key: K, map: HashMap<K, V>) => void,
     thisArg?: any,
   ) {
-    const buckets = this.#buckets;
-
-    for (const bucket of buckets) {
-      let currentNode = bucket.head;
-
-      while (currentNode !== null) {
-        const pair = currentNode.data;
+    for (const bucket of this.#buckets) {
+      for (const node of bucket) {
+        const pair = node.data;
 
         if (thisArg) {
           callbackFn(pair.value, pair.key, thisArg);
         } else {
           callbackFn(pair.value, pair.key, this);
         }
-
-        currentNode = currentNode.next;
       }
     }
   }
