@@ -41,11 +41,14 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   delete(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: Node | null = this._head;
+    let deletedNode: Node | null = null;
 
-    // Search for the node by value.
-    while (deletedNode !== null && !this._isMatch(deletedNode.data, arg)) {
-      deletedNode = deletedNode.next;
+    for (const currentNode of this) {
+      if (this._isMatch(currentNode.data, arg)) {
+        deletedNode = currentNode;
+
+        break;
+      }
     }
 
     if (deletedNode === null) return null;
