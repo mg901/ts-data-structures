@@ -156,14 +156,14 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       let prevNode: Node | null = null;
 
       for (const currentNode of this) {
-        if (!currentNode.next) {
+        if (currentNode.next) {
+          prevNode = currentNode;
+        } else {
           prevNode!.next = null;
           this._tail = prevNode;
 
           break;
         }
-
-        prevNode = currentNode;
       }
     }
 

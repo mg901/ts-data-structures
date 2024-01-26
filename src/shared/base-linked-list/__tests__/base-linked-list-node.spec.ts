@@ -15,13 +15,15 @@ describe('BaseLinkedListNode', () => {
 
   it('creates list node with object as a value', () => {
     // Arrange
-    const nodeValue = {
+    const nodeValueMock = {
       value: 1,
       key: 'test',
     };
 
     // Act
-    const node = new BaseLinkedListNodeTest<typeof nodeValue>(nodeValue);
+    const node = new BaseLinkedListNodeTest<typeof nodeValueMock>(
+      nodeValueMock,
+    );
 
     // Assert
     expect(node.data.value).toEqual(1);
