@@ -51,6 +51,14 @@ export abstract class BaseLinkedList<
     return currentNode;
   }
 
+  fromArray(array: T[]) {
+    array.forEach((value) => {
+      this.append(value);
+    });
+
+    return this;
+  }
+
   *[Symbol.iterator]() {
     let currentNode = this._head;
 
@@ -58,14 +66,6 @@ export abstract class BaseLinkedList<
       yield currentNode;
       currentNode = currentNode.next as Node;
     }
-  }
-
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
-
-    return this;
   }
 
   toArray() {
