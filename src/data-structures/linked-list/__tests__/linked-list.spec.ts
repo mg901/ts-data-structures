@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { describe, beforeEach, it, expect } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { LinkedList } from '../linked-list';
 
 describe('LinkedList', () => {
@@ -77,6 +77,35 @@ describe('LinkedList', () => {
     it('return false for the non-empty list', () => {});
   });
 
+  describe('toString', () => {
+    it('converts the list to the string', () => {
+      // Arrange
+      linkedList.fromArray([1, 2, 3]);
+
+      // Act and Assert
+      expect(linkedList.toString()).toBe('1,2,3');
+    });
+
+    it('converts to list to string with custom callback', () => {
+      // Arrange
+      type NodeValue = {
+        key: string;
+        value: number;
+      };
+
+      const list = new LinkedList<NodeValue>().fromArray([
+        { key: 'one', value: 1 },
+        { key: 'two', value: 2 },
+      ]);
+
+      // Act
+      const received = list.toString((node) => `${node.value}`);
+
+      // Assert
+      expect(received).toBe('1,2');
+    });
+  });
+
   describe('fromArray', () => {
     it('creates an empty list when an empty array is passed', () => {
       // Act
@@ -123,7 +152,7 @@ describe('LinkedList', () => {
   });
 
   describe('toArray', () => {
-    it('returns an empty array for the empty list', () => {
+    it('converts an empty list to an array', () => {
       // Act and Assert
       expect(linkedList.toArray()).toEqual([]);
 
@@ -131,34 +160,17 @@ describe('LinkedList', () => {
       expect(linkedList.tail).toBeNull();
       expect(linkedList.size).toBe(0);
     });
-  });
 
-  describe('toString', () => {
-    it('converts the list to the string', () => {
+    it('converts a list to an array', () => {
       // Arrange
-      linkedList.fromArray([1, 2, 3]);
-
-      // Act and Assert
-      expect(linkedList.toString()).toBe('1,2,3');
-    });
-
-    it('converts to list to string with custom callback', () => {
-      // Arrange
-      type NodeValue = {
-        key: string;
-        value: number;
-      };
-
-      const list = new LinkedList<NodeValue>().fromArray([
-        { key: 'one', value: 1 },
-        { key: 'two', value: 2 },
-      ]);
+      const expected = [1, 2];
+      linkedList.fromArray(expected);
 
       // Act
-      const received = list.toString((node) => `${node.value}`);
+      const received = linkedList.toArray();
 
       // Assert
-      expect(received).toBe('1,2');
+      expect(received).toEqual(expected);
     });
   });
 
@@ -354,9 +366,10 @@ describe('LinkedList', () => {
       linkedList.fromArray([2, 1]).reverse().append(3);
 
       // Assert
-      expect(linkedList.toString()).toBe('1,2,3');
+      expect(linkedList.head?.data).toBe(1);
       expect(linkedList.tail?.data).toBe(3);
-      expect(linkedList.tail?.next).toBeNull();
+
+      expect(linkedList.toString()).toBe('1,2,3');
       expect(linkedList.size).toBe(3);
     });
   });
@@ -533,7 +546,7 @@ describe('LinkedList', () => {
 
     beforeEach(() => {
       // Arrange
-      linkedList.fromArray([1, 2, 3, 3, 4, 5]);
+      linkedList.fromArray([1, 2, 3, 3, 4]);
     });
 
     it('returns -1 for a value not present in the list', () => {
@@ -543,7 +556,7 @@ describe('LinkedList', () => {
 
     it('returns the correct index for a value present in the list', () => {
       // Act and Assert
-      expect(linkedList.indexOf(4)).toBe(4);
+      expect(linkedList.indexOf(2)).toBe(1);
     });
 
     it('returns the index of the first occurrence of the value', () => {
@@ -558,12 +571,15 @@ describe('LinkedList', () => {
 
     it('returns the correct index for the tail value', () => {
       // Act and Assert
-      expect(linkedList.indexOf(5)).toBe(5);
+      expect(linkedList.indexOf(4)).toBe(4);
     });
 
     it('handles custom objects and comparison correctly', () => {
+      type Item = {
+        key: string;
+      };
       // Arrange
-      const list = new LinkedList().fromArray([
+      const list = new LinkedList<Item>().fromArray([
         { key: 'value1' },
         { key: 'value2' },
       ]);
