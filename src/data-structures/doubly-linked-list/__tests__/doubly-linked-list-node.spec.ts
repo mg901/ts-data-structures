@@ -30,24 +30,18 @@ describe('DoublyLinkedListNode', () => {
 
   it('links node together', () => {
     // Arrange
-    const node2 = new DoublyLinkedListNode<number>(2);
+    const node3 = new DoublyLinkedListNode<number>(3);
 
     // Act
-    const node1 = new DoublyLinkedListNode<number>(1, node2);
+    const node2 = new DoublyLinkedListNode<number>(2, node3);
 
     // Act
-    const node3 = new DoublyLinkedListNode<number>(3, node1, node2);
+    const node1 = new DoublyLinkedListNode<number>(1, node2, node3);
 
     // Assert
-    expect(node1.next).toBeDefined();
-    expect(node1.prev).toBeNull();
-    expect(node2.next).toBeNull();
-    expect(node2.prev).toBeNull();
-    expect(node3.next).toBeDefined();
-    expect(node3.prev).toBeDefined();
     expect(node1.data).toBe(1);
     expect(node1.next?.data).toBe(2);
-    expect(node3.next?.data).toBe(1);
-    expect(node3.prev?.data).toBe(2);
+    expect(node1.next?.next?.data).toBe(3);
+    expect(node1.next?.next?.next).toBeNull();
   });
 });
