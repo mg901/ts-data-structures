@@ -1,5 +1,5 @@
-import { BaseLinkedListNode, type Callback } from './base-linked-list-node';
 import { Comparator, CompareFunction } from '../comparator';
+import { BaseLinkedListNode, type Callback } from './base-linked-list-node';
 
 export type Predicate<T = unknown> = (value: T) => boolean;
 
@@ -51,14 +51,6 @@ export abstract class BaseLinkedList<
     return currentNode;
   }
 
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
-
-    return this;
-  }
-
   *[Symbol.iterator]() {
     let currentNode = this._head;
 
@@ -66,6 +58,12 @@ export abstract class BaseLinkedList<
       yield currentNode;
       currentNode = currentNode.next as Node;
     }
+  }
+
+  toString(callback?: Callback<T>) {
+    const array = Array.from(this, (node) => node.toString(callback));
+
+    return array.toString();
   }
 
   toArray() {
@@ -106,12 +104,9 @@ export abstract class BaseLinkedList<
     this._size = 0;
   }
 
-  toString(callback?: Callback<T>) {
-    return Array.from(this, (node) => node.toString(callback)).toString();
-  }
-
   // Common methods
   abstract append(value: T): this;
+  abstract fromArray(array: T[]): this;
   abstract prepend(value: T): this;
   abstract delete(value: T | Predicate<T>): Node | null;
   abstract insertAt(index: number, value: T): this;

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { DoublyLinkedListNode } from '../doubly-linked-list-node';
 
 describe('DoublyLinkedListNode', () => {
@@ -29,6 +29,7 @@ describe('DoublyLinkedListNode', () => {
   });
 
   it('links node together', () => {
+    // Arrange
     const node2 = new DoublyLinkedListNode<number>(2);
 
     // Act
