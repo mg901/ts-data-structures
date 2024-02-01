@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CustomPromise } from './custom-promise';
+import { CustomPromise } from './promise';
 
 describe('CustomPromise', () => {
   it('resolves with value', async () => {
