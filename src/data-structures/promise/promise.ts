@@ -67,7 +67,22 @@ export class CustomPromise<T = any> {
 
   then<U>(onFulfilled: Callback<T, U>, onRejected: Callback<any, U>) {
     return new CustomPromise<U>((resolve, reject) => {
-      const onFulfilledWrapper = (value?: T) => {
+      const handlers = {
+        [STATE.PENDING]: () => {
+          this.#onFulfilledCallbacks.push(onFulfilledWrapper);
+          this.#onRejectedCallbacks.push(onRejectedWrapper);
+        },
+        [STATE.FULFILLED]: () => {
+          queueMicrotask(() => onFulfilledWrapper(this.#value));
+        },
+        [STATE.REJECTED]: () => {
+          queueMicrotask(() => onRejectedWrapper(this.#reason));
+        },
+      };
+
+      handlers[this.#state]();
+
+      function onFulfilledWrapper(value?: T) {
         try {
           if (isFunction(onFulfilled)) {
             const result = onFulfilled(value);
@@ -83,9 +98,9 @@ export class CustomPromise<T = any> {
         } catch (error) {
           reject(error);
         }
-      };
+      }
 
-      const onRejectedWrapper = (reason?: any) => {
+      function onRejectedWrapper(reason?: any) {
         try {
           if (isFunction(onRejected)) {
             const result = onRejected(reason);
@@ -101,22 +116,7 @@ export class CustomPromise<T = any> {
         } catch (error) {
           reject(error);
         }
-      };
-
-      const handlers = {
-        [STATE.PENDING]: () => {
-          this.#onFulfilledCallbacks.push(onFulfilledWrapper);
-          this.#onRejectedCallbacks.push(onRejectedWrapper);
-        },
-        [STATE.FULFILLED]: () => {
-          queueMicrotask(() => onFulfilledWrapper(this.#value));
-        },
-        [STATE.REJECTED]: () => {
-          queueMicrotask(() => onRejectedWrapper(this.#reason));
-        },
-      };
-
-      handlers[this.#state]();
+      }
     });
   }
 }
