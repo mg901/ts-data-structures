@@ -41,6 +41,11 @@ export class HashMap<K = any, V = any> {
     return this.#size;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'HashMap';
+  }
+
   #hashCode(key: K): number {
     const hashString = String(key);
 
