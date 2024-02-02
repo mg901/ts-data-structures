@@ -9,12 +9,12 @@ type FinallyCallback<T> = () => T | PromiseLike<T>;
 type Callback<T = any, U = any> = (value?: T) => U | PromiseLike<U>;
 
 const STATE = {
-  PENDING: 'PENDING',
-  FULFILLED: 'FULFILLED',
-  REJECTED: 'REJECTED',
+  PENDING: 'pending',
+  FULFILLED: 'fulfilled',
+  REJECTED: 'rejected',
 } as const;
 
-type PromiseState = keyof typeof STATE;
+type PromiseState = (typeof STATE)[keyof typeof STATE];
 
 export class CustomPromise<T = any> {
   #state: PromiseState = STATE.PENDING;
