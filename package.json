@@ -22,7 +22,6 @@
     "@typescript-eslint/parser": "^6.19.1",
     "bun-types": "^1.0.25",
     "commitizen": "^4.3.0",
-    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-prettier": "^9.1.0",

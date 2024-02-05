@@ -1,12 +1,10 @@
-type ResolveFn<T> = (value?: T | PromiseLike<T>) => void;
-type ResolveFnValue<T> = Parameters<ResolveFn<T>>[0];
-type RejectFn = (reason?: any) => void;
+type Value<T> = T | PromiseLike<T>;
 
-type Executor<T> = (resolve: ResolveFn<T>, reject: RejectFn) => void;
+type Handler = () => void;
 
-type FinallyCallback<T> = () => T | PromiseLike<T>;
+type OnFulfilled<T, Result> = ((value: T) => Value<Result>) | null;
 
-type Callback<T = any, U = any> = (value?: T) => U | PromiseLike<U>;
+type OnRejected<Result> = ((reason: any) => Value<Result>) | null;
 
 const STATE = {
   PENDING: 'pending',
@@ -14,22 +12,36 @@ const STATE = {
   REJECTED: 'rejected',
 } as const;
 
-type PromiseState = (typeof STATE)[keyof typeof STATE];
+type State = (typeof STATE)[keyof typeof STATE];
 
-export class CustomPromise<T = any> {
-  #state: PromiseState = STATE.PENDING;
+export class CustomPromise<T> {
+  #state: State = STATE.PENDING;
 
-  #value?: T;
+  #value?: Value<T>;
 
-  #reason: any;
+  #onfulfilledHandlers: Handler[] = [];
 
-  #onFulfilledCallbacks: Callback<T, any>[] = [];
+  #onrejectedHandlers: Handler[] = [];
 
-  #onRejectedCallbacks: Callback<any, any>[] = [];
+  static resolve(): CustomPromise<void>;
+  static resolve<U>(value: U): CustomPromise<Awaited<U>>;
+  static resolve<U>(value: U | PromiseLike<U>): CustomPromise<Awaited<U>>;
+  static resolve<U>(value?: U | PromiseLike<U>) {
+    return new CustomPromise((resolve) =>
+      resolve(value as Awaited<U> | PromiseLike<Awaited<U>>),
+    );
+  }
 
-  #finallyCallbacks: FinallyCallback<any>[] = [];
+  static reject = <U = never>(reason: any) => {
+    return new CustomPromise<U>((_, reject) => reject(reason));
+  };
 
-  constructor(executor: Executor<T>) {
+  constructor(
+    executor: (
+      resolve: (value: T | PromiseLike<T>) => void,
+      reject: (reason?: any) => void,
+    ) => void,
+  ) {
     try {
       executor(this.#resolve.bind(this), this.#reject.bind(this));
     } catch (error) {
@@ -37,90 +49,66 @@ export class CustomPromise<T = any> {
     }
   }
 
-  static #isPromise(result: unknown): result is CustomPromise {
-    return result instanceof CustomPromise;
-  }
-
-  #resolve(value?: ResolveFnValue<T>) {
+  #resolve(value: Value<T>) {
     if (this.#state === STATE.PENDING) {
       this.#state = STATE.FULFILLED;
-      this.#value = value as T;
-      this.#onFulfilledCallbacks.forEach((callback) =>
-        queueMicrotask(() => callback(this.#value)),
-      );
-      this.#finallyCallbacks.forEach((callback) => queueMicrotask(callback));
+      this.#value = value;
+
+      this.#onfulfilledHandlers.forEach((handler) => {
+        queueMicrotask(() => handler());
+      });
+
+      this.#onfulfilledHandlers = [];
     }
   }
 
   #reject(reason?: any) {
     if (this.#state === STATE.PENDING) {
       this.#state = STATE.REJECTED;
-      this.#reason = reason;
-      this.#onRejectedCallbacks.forEach((callback) =>
-        queueMicrotask(() => callback(this.#reason)),
-      );
-      this.#finallyCallbacks.forEach((callback) =>
-        queueMicrotask(() => callback),
-      );
+      this.#value = reason;
+
+      this.#onrejectedHandlers.forEach((handler) => {
+        queueMicrotask(() => handler());
+      });
+
+      this.#onrejectedHandlers = [];
     }
   }
 
-  then<U>(onFulfilled: Callback<T, U>, onRejected: Callback<any, U>) {
-    return new CustomPromise<U>((resolve, reject) => {
+  then<TResult1 = T, TResult2 = never>(
+    onfulfilled?: OnFulfilled<T, TResult1>,
+    onrejected?: OnRejected<TResult2>,
+  ) {
+    return new CustomPromise<TResult1 | TResult2>((resolve, reject) => {
+      const executeHandler = (
+        handler: typeof onfulfilled | typeof onrejected,
+      ) => {
+        try {
+          if (typeof handler === 'function') {
+            const result = handler(this.#value as T);
+            if (result instanceof CustomPromise) {
+              result.then(resolve, reject);
+            } else {
+              resolve(result);
+            }
+          } else {
+            reject(this.#value);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+
       const handlers = {
         [STATE.PENDING]: () => {
-          this.#onFulfilledCallbacks.push(onFulfilledWrapper);
-          this.#onRejectedCallbacks.push(onRejectedWrapper);
+          this.#onfulfilledHandlers.push(() => executeHandler(onfulfilled));
+          this.#onrejectedHandlers.push(() => executeHandler(onrejected));
         },
-        [STATE.FULFILLED]: () => {
-          queueMicrotask(() => onFulfilledWrapper(this.#value));
-        },
-        [STATE.REJECTED]: () => {
-          queueMicrotask(() => onRejectedWrapper(this.#reason));
-        },
+        [STATE.FULFILLED]: () => executeHandler(onfulfilled),
+        [STATE.REJECTED]: () => executeHandler(onrejected),
       };
 
       handlers[this.#state]();
-
-      function onFulfilledWrapper(value?: T) {
-        try {
-          if (isFunction(onFulfilled)) {
-            const result = onFulfilled(value);
-
-            if (CustomPromise.#isPromise(result)) {
-              result.then(resolve, reject);
-            }
-
-            resolve(result);
-          } else {
-            resolve(value as U);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      }
-
-      function onRejectedWrapper(reason?: any) {
-        try {
-          if (isFunction(onRejected)) {
-            const result = onRejected(reason);
-
-            if (CustomPromise.#isPromise(result)) {
-              result.then(resolve, reject);
-            }
-
-            resolve(result);
-          } else {
-            reject(reason);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      }
     });
   }
-}
-
-function isFunction(callback: unknown): callback is Callback {
-  return typeof callback === 'function';
 }
