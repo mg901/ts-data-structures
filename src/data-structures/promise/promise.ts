@@ -1,12 +1,8 @@
-type ValueOf<T> = T[keyof T];
+import { ValuesType } from 'utility-types';
 
 type Value<T> = T | PromiseLike<T>;
 
 type Handler = () => void;
-
-type OnFulfilled<T, Result> = ((value: T) => Value<Result>) | null;
-
-type OnRejected<Result> = ((reason: any) => Value<Result>) | null;
 
 const STATE = {
   PENDING: 'pending',
@@ -14,7 +10,7 @@ const STATE = {
   REJECTED: 'rejected',
 } as const;
 
-type State = ValueOf<typeof STATE>;
+type State = ValuesType<typeof STATE>;
 
 export class CustomPromise<T = any> {
   #state: State = STATE.PENDING;
@@ -25,6 +21,11 @@ export class CustomPromise<T = any> {
 
   #onrejectedHandlers: Handler[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  static reject = <T = never>(reason: any) => {
+    return new CustomPromise<T>((_, reject) => reject(reason));
+  };
+
   static resolve(): CustomPromise<void>;
   static resolve<T>(value: T): CustomPromise<Awaited<T>>;
   static resolve<T>(value: T | PromiseLike<T>): CustomPromise<Awaited<T>>;
@@ -33,10 +34,6 @@ export class CustomPromise<T = any> {
       resolve(value as Awaited<T> | PromiseLike<Awaited<T>>),
     );
   }
-
-  static reject = <U = never>(reason: any) => {
-    return new CustomPromise<U>((_, reject) => reject(reason));
-  };
 
   constructor(
     executor: (
@@ -78,8 +75,8 @@ export class CustomPromise<T = any> {
   }
 
   then<TResult1 = T, TResult2 = never>(
-    onfulfilled?: OnFulfilled<T, TResult1>,
-    onrejected?: OnRejected<TResult2>,
+    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
     return new CustomPromise<TResult1 | TResult2>((resolve, reject) => {
       const executeHandler = (
@@ -112,5 +109,11 @@ export class CustomPromise<T = any> {
 
       handlers[this.#state]();
     });
+  }
+
+  catch<TResult = never>(
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
+  ) {
+    return this.then(null, onrejected);
   }
 }
