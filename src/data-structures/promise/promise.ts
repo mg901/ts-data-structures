@@ -1,3 +1,5 @@
+type ValueOf<T> = T[keyof T];
+
 type Value<T> = T | PromiseLike<T>;
 
 type Handler = () => void;
@@ -12,9 +14,9 @@ const STATE = {
   REJECTED: 'rejected',
 } as const;
 
-type State = (typeof STATE)[keyof typeof STATE];
+type State = ValueOf<typeof STATE>;
 
-export class CustomPromise<T> {
+export class CustomPromise<T = any> {
   #state: State = STATE.PENDING;
 
   #value?: Value<T>;
@@ -24,11 +26,11 @@ export class CustomPromise<T> {
   #onrejectedHandlers: Handler[] = [];
 
   static resolve(): CustomPromise<void>;
-  static resolve<U>(value: U): CustomPromise<Awaited<U>>;
-  static resolve<U>(value: U | PromiseLike<U>): CustomPromise<Awaited<U>>;
-  static resolve<U>(value?: U | PromiseLike<U>) {
+  static resolve<T>(value: T): CustomPromise<Awaited<T>>;
+  static resolve<T>(value: T | PromiseLike<T>): CustomPromise<Awaited<T>>;
+  static resolve<T>(value?: T | PromiseLike<T>) {
     return new CustomPromise((resolve) =>
-      resolve(value as Awaited<U> | PromiseLike<Awaited<U>>),
+      resolve(value as Awaited<T> | PromiseLike<Awaited<T>>),
     );
   }
 

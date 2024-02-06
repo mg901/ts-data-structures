@@ -11,7 +11,7 @@ jobs:
 
       - run: bun install
       - run: bun lint
-      - run: bun test
+      - run: bun test:unit
 
       - uses: actions/checkout@master
       - uses: codecov/codecov-action@v4

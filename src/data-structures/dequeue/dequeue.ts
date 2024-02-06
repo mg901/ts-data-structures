@@ -1,5 +1,5 @@
 import { type Callback } from '@/shared/base-linked-list';
-import { DoublyLinkedList } from '../doubly-linked-list';
+import { DoublyLinkedList } from '../doubly-linked-list/doubly-linked-list';
 
 export class Dequeue<T = any> {
   #list: DoublyLinkedList<T>;
