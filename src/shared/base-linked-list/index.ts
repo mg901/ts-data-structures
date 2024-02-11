@@ -1,5 +1,5 @@
-import { BaseLinkedListNode, type Callback } from './base-linked-list-node';
-import { Comparator, CompareFunction } from './comparator';
+import { Comparator, CompareFunction } from '../comparator';
+import { BaseLinkedListNode, type Callback } from './node';
 
 export type Predicate<T = unknown> = (value: T) => boolean;
 

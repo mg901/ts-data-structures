@@ -1,5 +1,5 @@
-import { describe, beforeEach, it, expect } from 'vitest';
-import { Dequeue } from './dequeue';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { Dequeue } from './index';
 
 describe('Dequeue', () => {
   let dequeue: Dequeue<number>;

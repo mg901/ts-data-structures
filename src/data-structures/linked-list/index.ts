@@ -1,5 +1,5 @@
 import { BaseLinkedList, type Predicate } from '@/shared/base-linked-list';
-import { BaseLinkedListNode as Node } from '@/shared/base-linked-list-node';
+import { BaseLinkedListNode as Node } from '@/shared/base-linked-list/node';
 
 export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   append(value: T): this {
