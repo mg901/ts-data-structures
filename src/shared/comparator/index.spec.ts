@@ -1,6 +1,6 @@
 import { describe, expect, test as it } from 'vitest';
-import { Comparator } from './comparator';
-import type { CompareFunction } from './comparator';
+import { Comparator } from '.';
+import type { CompareFunction } from '.';
 
 describe('Comparator', () => {
   it('compares values using default comparison function', () => {
