@@ -13,12 +13,17 @@ describe('CustomPromise', () => {
   let VALUE: string;
   let REASON: string;
   let NESTED: string;
+  let resolvedPromise: CustomPromise<string>;
+  let rejectedPromise: CustomPromise<never>;
 
   // Arrange
   beforeAll(() => {
     VALUE = 'fulfilled';
     REASON = 'rejected';
     NESTED = 'nested';
+
+    resolvedPromise = CustomPromise.resolve(VALUE);
+    rejectedPromise = CustomPromise.reject(REASON);
   });
 
   describe('executor', () => {
@@ -54,21 +59,15 @@ describe('CustomPromise', () => {
 
   describe('resolve', () => {
     it('resolves with value', async () => {
-      // Act
-      const promise = CustomPromise.resolve(VALUE);
-
-      // Assert
-      await expect(promise).resolves.toBe(VALUE);
+      // Act and Assert
+      await expect(resolvedPromise).resolves.toBe(VALUE);
     });
   });
 
   describe('reject', () => {
     it('rejects with reason', async () => {
-      // Act
-      const promise = CustomPromise.reject(REASON);
-
-      // Assert
-      await expect(promise).rejects.toThrow(REASON);
+      // Act and Assert
+      await expect(rejectedPromise).rejects.toThrow(REASON);
     });
   });
 
@@ -105,12 +104,11 @@ describe('CustomPromise', () => {
 
     it('chains multiple thens', async () => {
       // Arrange
-      const promise = CustomPromise.resolve(VALUE);
       const onFulfilled1 = vi.fn((result: string) => result.toUpperCase());
       const onFulfilled2 = vi.fn((result: string) => result.repeat(2));
 
       // Act
-      await promise.then(onFulfilled1).then(onFulfilled2);
+      await resolvedPromise.then(onFulfilled1).then(onFulfilled2);
 
       // Assert
       expect(onFulfilled1).toHaveBeenCalledWith(VALUE);
@@ -155,34 +153,30 @@ describe('CustomPromise', () => {
   });
 
   describe('finally', () => {
-    let onFinallyHandler: Mock<any, any>;
-    let resolvedPromise: CustomPromise<string>;
-    let rejectedPromise: CustomPromise<never>;
+    let onFinallyMock: Mock<any, any>;
 
     // Arrange
     beforeEach(() => {
-      onFinallyHandler = vi.fn();
-      resolvedPromise = CustomPromise.resolve(VALUE);
-      rejectedPromise = CustomPromise.reject(REASON);
+      onFinallyMock = vi.fn();
     });
 
     it('executes the finally handler after fulfillment', async () => {
       // Act
-      await resolvedPromise.finally(onFinallyHandler);
+      await resolvedPromise.finally(onFinallyMock);
 
       // Assert
-      expect(onFinallyHandler).toHaveBeenCalled();
+      expect(onFinallyMock).toHaveBeenCalled();
     });
 
     it('executes the finally handler after rejection', async () => {
       try {
         // Act
-        await rejectedPromise.finally(onFinallyHandler);
+        await rejectedPromise.finally(onFinallyMock);
       } catch (error) {
         /* empty */
       }
 
-      expect(onFinallyHandler).toHaveBeenCalled();
+      expect(onFinallyMock).toHaveBeenCalled();
     });
   });
 });
