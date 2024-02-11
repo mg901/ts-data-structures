@@ -7,6 +7,7 @@
     "commit": "cz",
     "test:lint": "eslint . --fix --ext .ts",
     "test:unit": "bun vitest run",
+    "test:unit:coverage": "bun vitest run --coverage",
     "test:unit:watch": "bun vitest",
     "ts:check": "tsc",
     "clean:dist": "rm -rf dist",
