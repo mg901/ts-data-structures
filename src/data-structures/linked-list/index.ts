@@ -2,7 +2,7 @@ import { BaseLinkedList, type Predicate } from '@/shared/base-linked-list';
 import { BaseLinkedListNode as Node } from '@/shared/base-linked-list/node';
 
 export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
-  append(value: T): this {
+  append(value: T) {
     const newNode = new Node(value);
 
     if (this._head === null) {
@@ -26,7 +26,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  prepend(value: T): this {
+  prepend(value: T) {
     const newNode = new Node(value);
 
     if (this._head === null) {

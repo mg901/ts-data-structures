@@ -1,3 +1,4 @@
+import isFunction from 'lodash.isfunction';
 import { Comparator, CompareFunction } from '../comparator';
 import { BaseLinkedListNode, type Callback } from './node';
 
@@ -113,8 +114,4 @@ export abstract class BaseLinkedList<
   abstract reverse(): this;
   abstract deleteHead(): Node | null;
   abstract deleteTail(): Node | null;
-}
-
-function isFunction(a: unknown): a is Predicate {
-  return typeof a === 'function';
 }

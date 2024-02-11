@@ -27,7 +27,7 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  prepend(value: T): this {
+  prepend(value: T) {
     const newNode = new Node(value);
 
     if (this._head === null) {

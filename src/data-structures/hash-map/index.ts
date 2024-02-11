@@ -46,7 +46,7 @@ export class HashMap<K = any, V = any> {
     return 'HashMap';
   }
 
-  #hashCode(key: K): number {
+  #hashCode(key: K) {
     const hashString = String(key);
 
     // The choice of 31 is a common practice in hash functions due to its properties.
@@ -66,7 +66,7 @@ export class HashMap<K = any, V = any> {
     return hash;
   }
 
-  #resizeIfNeeded(): void {
+  #resizeIfNeeded() {
     const RESIZE_THRESHOLD = 0.7;
     const loadFactor = this.#size / this.#buckets.length;
     if (loadFactor < RESIZE_THRESHOLD) return;
@@ -88,13 +88,13 @@ export class HashMap<K = any, V = any> {
     this.#capacity = newCapacity;
   }
 
-  #findBucketByKey(key: K): LinkedList<KeyValuePair<K, V>> | undefined {
+  #findBucketByKey(key: K) {
     const index = this.#hashCode(key);
 
-    return this.#buckets[index];
+    return this.#buckets[index] as LinkedList<KeyValuePair<K, V>> | undefined;
   }
 
-  set(key: K, value: V): this {
+  set(key: K, value: V) {
     this.#resizeIfNeeded();
 
     const hash = this.#hashCode(key);
@@ -159,7 +159,7 @@ export class HashMap<K = any, V = any> {
     return Boolean(node);
   }
 
-  delete(key: K): boolean {
+  delete(key: K) {
     const hash = this.#hashCode(key);
     const bucket = this.#buckets[hash];
 
