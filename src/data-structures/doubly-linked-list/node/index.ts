@@ -1,4 +1,4 @@
-import { BaseLinkedListNode } from '@/shared/base-linked-list';
+import { BaseLinkedListNode } from '@/shared/base-linked-list/node';
 
 export class DoublyLinkedListNode<T = any> extends BaseLinkedListNode<T> {
   constructor(

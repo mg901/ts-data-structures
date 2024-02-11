@@ -1,7 +1,6 @@
 {
   "name": "js-data-structures-implementation",
   "type": "module",
-  "exports": "./src/index.ts",
   "scripts": {
     "start": "bun run src/index.ts",
     "commit": "cz",

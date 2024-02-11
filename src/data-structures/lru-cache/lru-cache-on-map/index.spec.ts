@@ -1,12 +1,12 @@
-import { describe, beforeEach, it, expect } from 'vitest';
-import { LRUCache } from '../lru-cache';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { LRUCacheOnMap } from './index';
 
-describe('LRUCache', () => {
-  let cache: LRUCache<string, number>;
+describe('LRUCacheOnMap', () => {
+  let cache: LRUCacheOnMap<string, number>;
 
   // Arrange
   beforeEach(() => {
-    cache = new LRUCache<string, number>(2);
+    cache = new LRUCacheOnMap<string, number>(2);
 
     cache.put('one', 1);
     cache.put('two', 2);
