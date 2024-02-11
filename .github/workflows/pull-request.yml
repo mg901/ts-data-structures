@@ -10,13 +10,14 @@ jobs:
       - uses: oven-sh/setup-bun@v1
 
       - run: bun install
-      - run: bun lint
-      - run: bun test
+
+      - name: Linting
+        run: bun test:lint
+
+      - name: Unit Testing
+        run: bun test:unit:coverage
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-      # - name: Coveralls
-      #   uses: coverallsapp/github-action@v2.2.3

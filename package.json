@@ -5,13 +5,14 @@
   "scripts": {
     "start": "bun run src/index.ts",
     "commit": "cz",
-    "lint": "eslint . --fix --ext .ts",
+    "test:lint": "eslint . --fix --ext .ts",
+    "test:unit": "bun vitest run",
+    "test:unit:coverage": "bun vitest run --coverage",
+    "test:unit:watch": "bun vitest",
     "ts:check": "tsc",
-    "clean": "rm -rf dist",
+    "clean:dist": "rm -rf dist",
     "prettify": "npx prettier . --write --ignore-unknown",
-    "quality": "bun ts:check && bun clean && bun lint",
-    "test": "bun vitest run",
-    "test:watch": "bun vitest",
+    "quality": "bun ts:check && bun test:lint && bun clean:dist",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -20,6 +21,7 @@
     "@types/lodash.isequal": "^4.5.8",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
+    "@vitest/coverage-v8": "^1.2.2",
     "bun-types": "^1.0.25",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
