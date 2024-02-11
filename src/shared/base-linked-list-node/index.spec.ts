@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { BaseLinkedListNode } from '../base-linked-list-node';
+import { describe, expect, it } from 'vitest';
+import { BaseLinkedListNode } from './index';
 
 class BaseLinkedListNodeTest<T> extends BaseLinkedListNode<T> {}
 
