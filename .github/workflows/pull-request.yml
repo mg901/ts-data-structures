@@ -10,8 +10,12 @@ jobs:
       - uses: oven-sh/setup-bun@v1
 
       - run: bun install
-      - run: bun lint
-      - run: bun test:unit
+
+      - name: Linting
+        run: bun test:lint
+
+      - name: Unit Testing
+        run: bun test:unit:coverage
 
       - uses: actions/checkout@master
       - uses: codecov/codecov-action@v4
