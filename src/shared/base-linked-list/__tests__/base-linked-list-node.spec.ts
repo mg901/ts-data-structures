@@ -1,55 +1,33 @@
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { BaseLinkedListNode } from '../base-linked-list-node';
 
-class BaseLinkedListNodeTest<T> extends BaseLinkedListNode<T> {}
-
 describe('BaseLinkedListNode', () => {
-  it('creates list node with value', () => {
-    // Act
-    const node = new BaseLinkedListNodeTest<number>(1);
+  let node: BaseLinkedListNode<number>;
 
+  beforeEach(() => {
+    node = new BaseLinkedListNode<number>(1);
+  });
+
+  it('creates initial state correctly', () => {
     // Assert
+    expect(node).toBeDefined();
     expect(node.data).toEqual(1);
     expect(node.next).toBeNull();
   });
 
-  it('creates list node with object as a value', () => {
-    // Arrange
-    const nodeValueMock = {
-      value: 1,
-      key: 'test',
-    };
-
-    // Act
-    const node = new BaseLinkedListNodeTest<typeof nodeValueMock>(
-      nodeValueMock,
-    );
-
-    // Assert
-    expect(node.data.value).toEqual(1);
-    expect(node.data.key).toEqual('test');
-    expect(node.next).toBeNull();
-  });
-
   it('links nodes together', () => {
-    // Arrange
-    const node2 = new BaseLinkedListNodeTest<number>(1);
-
     // Act
-    const node1 = new BaseLinkedListNodeTest<number>(2, node2);
+    const node0 = new BaseLinkedListNode<number>(0, node);
 
     // Assert
-    expect(node1.next).toBeDefined();
-    expect(node2.next).toBeNull();
-    expect(node1.data).toEqual(2);
-    expect(node1.next?.data).toEqual(1);
+    expect(node0.next).toBeDefined();
+    expect(node.next).toBeNull();
+    expect(node0.data).toEqual(0);
+    expect(node0.next?.data).toEqual(1);
   });
 
   describe('toString', () => {
     it('converts node to string', () => {
-      // Arrange
-      const node = new BaseLinkedListNodeTest<number>(1);
-
       // Act and Assert
       expect(node.toString()).toEqual('1');
     });
@@ -61,7 +39,7 @@ describe('BaseLinkedListNode', () => {
         key: 'test',
       };
 
-      const list = new BaseLinkedListNodeTest<typeof nodeValue>(nodeValue);
+      const list = new BaseLinkedListNode<typeof nodeValue>(nodeValue);
       const toStringCallback = (x: typeof nodeValue) =>
         `value: ${x.value}, key: ${x.key}`;
 

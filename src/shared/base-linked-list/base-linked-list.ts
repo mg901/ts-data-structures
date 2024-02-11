@@ -1,3 +1,4 @@
+import isFunction from 'lodash.isfunction';
 import { Comparator, CompareFunction } from '../comparator';
 import { BaseLinkedListNode, type Callback } from './base-linked-list-node';
 
@@ -66,6 +67,14 @@ export abstract class BaseLinkedList<
     return array.toString();
   }
 
+  fromArray(array: T[]) {
+    array.forEach((value) => {
+      this.append(value);
+    });
+
+    return this;
+  }
+
   toArray() {
     return Array.from(this, (node) => node.data);
   }
@@ -106,15 +115,10 @@ export abstract class BaseLinkedList<
 
   // Common methods
   abstract append(value: T): this;
-  abstract fromArray(array: T[]): this;
   abstract prepend(value: T): this;
   abstract delete(value: T | Predicate<T>): Node | null;
   abstract insertAt(index: number, value: T): this;
   abstract reverse(): this;
   abstract deleteHead(): Node | null;
   abstract deleteTail(): Node | null;
-}
-
-function isFunction(a: unknown): a is Predicate {
-  return typeof a === 'function';
 }

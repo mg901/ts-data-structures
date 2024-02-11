@@ -1,5 +1,5 @@
-import { describe, beforeEach, it, expect } from 'vitest';
-import { Stack } from './stack';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { Stack } from './index';
 
 describe('Stack', () => {
   let stack: Stack<number>;

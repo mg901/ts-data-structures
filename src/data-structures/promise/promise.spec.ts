@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { CustomPromise } from './promise';
+import { CustomPromise } from './index';
 
 describe('CustomPromise', () => {
   let VALUE: string;
@@ -24,7 +24,7 @@ describe('CustomPromise', () => {
 
       // Assert
       await expect(promise).resolves.toEqual(value);
-      // expect(executor).toHaveBeenCalledOnce();
+      expect(executor).toHaveBeenCalledOnce();
     });
 
     it('handles executor function throwing error', async () => {
@@ -40,7 +40,7 @@ describe('CustomPromise', () => {
       // Assert
       await expect(promise).rejects.toThrow(reason);
       expect(executor).toHaveBeenCalled();
-      // expect(executor).toHaveBeenCalledOnce();
+      expect(executor).toHaveBeenCalledOnce();
     });
   });
 

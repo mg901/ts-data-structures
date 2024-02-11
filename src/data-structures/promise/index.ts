@@ -1,8 +1,9 @@
+import isFunction from 'lodash.isfunction';
 import { ValuesType } from 'utility-types';
 
 type Value<T> = T | PromiseLike<T>;
 
-type Handler = () => void;
+type WrappedHandler = () => void;
 
 const STATE = {
   PENDING: 'pending',
@@ -17,9 +18,9 @@ export class CustomPromise<T = any> {
 
   #value?: Value<T>;
 
-  #onfulfilledHandlers: Handler[] = [];
+  #onfulfilledHandlers: WrappedHandler[] = [];
 
-  #onrejectedHandlers: Handler[] = [];
+  #onrejectedHandlers: WrappedHandler[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
   static reject = <T = never>(reason: any) => {
@@ -79,11 +80,11 @@ export class CustomPromise<T = any> {
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
     return new CustomPromise<TResult1 | TResult2>((resolve, reject) => {
-      const executeHandler = (
-        handler: typeof onfulfilled | typeof onrejected,
-      ) => {
+      type Handler = typeof onfulfilled | typeof onrejected;
+
+      const executeHandler = (handler: Handler) => {
         try {
-          if (typeof handler === 'function') {
+          if (isFunction(handler)) {
             const result = handler(this.#value as T);
             if (result instanceof CustomPromise) {
               result.then(resolve, reject);

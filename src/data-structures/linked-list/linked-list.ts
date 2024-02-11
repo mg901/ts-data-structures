@@ -18,14 +18,6 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
-
-    return this;
-  }
-
   prepend(value: T): this {
     const newNode = new Node(value);
 
