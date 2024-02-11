@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { BaseLinkedListNode } from '../base-linked-list-node';
+import { BaseLinkedListNode } from './index';
 
 describe('BaseLinkedListNode', () => {
   let node: BaseLinkedListNode<number>;

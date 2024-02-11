@@ -1,4 +1,4 @@
-import { DoublyLinkedListNode as Node } from '@/data-structures/doubly-linked-list/doubly-linked-list-node';
+import { DoublyLinkedListNode as Node } from '@/data-structures/doubly-linked-list/node';
 
 type NodeValue<K = any, V = any> = {
   key: K;

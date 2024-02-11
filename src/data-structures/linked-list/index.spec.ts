@@ -1,6 +1,5 @@
-/* eslint-disable no-restricted-syntax */
 import { beforeEach, describe, expect, it } from 'vitest';
-import { LinkedList } from './linked-list';
+import { LinkedList } from './index';
 
 describe('LinkedList', () => {
   let linkedList: LinkedList<number>;

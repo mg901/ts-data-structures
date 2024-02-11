@@ -1,5 +1,5 @@
-import { type Callback } from '@/shared/base-linked-list';
 import { LinkedList } from '@/data-structures/linked-list';
+import { type Callback } from '@/shared/base-linked-list/node';
 
 export class Stack<T = any> {
   #linkedList: LinkedList;
@@ -9,7 +9,7 @@ export class Stack<T = any> {
   }
 
   push(value: T) {
-    this.#linkedList.prepend(value);
+    this.#linkedList.append(value);
   }
 
   get isEmpty() {
@@ -25,7 +25,7 @@ export class Stack<T = any> {
   }
 
   pop() {
-    return this.#linkedList.deleteHead()?.data;
+    return this.#linkedList.deleteTail()?.data;
   }
 
   clear() {

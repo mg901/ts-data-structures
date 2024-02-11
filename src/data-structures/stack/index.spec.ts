@@ -33,7 +33,7 @@ describe('Stack', () => {
       stack.push(30);
 
       // Assert
-      expect(stack.toString()).toBe('30,20,10');
+      expect(stack.toString()).toBe('10,20,30');
       expect(stack.size).toBe(3);
     });
   });
@@ -73,7 +73,7 @@ describe('Stack', () => {
 
       // Assert
       expect(poppedElement).toBe(21);
-      expect(stack.toString()).toBe('14,7');
+      expect(stack.toString()).toBe('7,14');
       expect(stack.size).toBe(2);
     });
 
