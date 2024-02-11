@@ -5,13 +5,13 @@
   "scripts": {
     "start": "bun run src/index.ts",
     "commit": "cz",
-    "lint": "eslint . --fix --ext .ts",
+    "test:lint": "eslint . --fix --ext .ts",
+    "test:unit": "bun vitest run",
+    "test:unit:watch": "bun vitest",
     "ts:check": "tsc",
-    "clean": "rm -rf dist",
+    "clean:dist": "rm -rf dist",
     "prettify": "npx prettier . --write --ignore-unknown",
-    "quality": "bun ts:check && bun clean && bun lint",
-    "test": "bun vitest run",
-    "test:watch": "bun vitest",
+    "quality": "bun ts:check && bun test:lint && bun clean:dist",
     "prepare": "husky install"
   },
   "devDependencies": {
