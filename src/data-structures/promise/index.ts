@@ -117,4 +117,23 @@ export class CustomPromise<T = any> {
   ) {
     return this.then(null, onrejected);
   }
+
+  finally(onfinally?: (() => void) | undefined | null) {
+    return this.then(
+      (value) => {
+        if (isFunction(onfinally)) {
+          onfinally();
+        }
+
+        return value;
+      },
+      (reason) => {
+        if (isFunction(onfinally)) {
+          onfinally();
+        }
+
+        return reason;
+      },
+    );
+  }
 }

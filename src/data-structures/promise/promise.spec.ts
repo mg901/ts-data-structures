@@ -1,4 +1,12 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import {
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type Mock,
+} from 'vitest';
 import { CustomPromise } from './index';
 
 describe('CustomPromise', () => {
@@ -143,6 +151,38 @@ describe('CustomPromise', () => {
         expect(onRejected).toHaveBeenCalledOnce();
         expect(error).toBe(NESTED);
       });
+    });
+  });
+
+  describe('finally', () => {
+    let onFinallyHandler: Mock<any, any>;
+    let resolvedPromise: CustomPromise<string>;
+    let rejectedPromise: CustomPromise<never>;
+
+    // Arrange
+    beforeEach(() => {
+      onFinallyHandler = vi.fn();
+      resolvedPromise = CustomPromise.resolve(VALUE);
+      rejectedPromise = CustomPromise.reject(REASON);
+    });
+
+    it('executes the finally handler after fulfillment', async () => {
+      // Act
+      await resolvedPromise.finally(onFinallyHandler);
+
+      // Assert
+      expect(onFinallyHandler).toHaveBeenCalled();
+    });
+
+    it('executes the finally handler after rejection', async () => {
+      try {
+        // Act
+        await rejectedPromise.finally(onFinallyHandler);
+      } catch (error) {
+        /* empty */
+      }
+
+      expect(onFinallyHandler).toHaveBeenCalled();
     });
   });
 });
