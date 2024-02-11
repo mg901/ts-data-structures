@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { DoublyLinkedList } from '../doubly-linked-list';
+import { DoublyLinkedList } from './index';
 
 describe('DoublyLinkedList', () => {
   let doublyLinkedList: DoublyLinkedList<number>;
