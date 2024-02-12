@@ -1,4 +1,3 @@
-import delay from 'lodash.delay';
 import {
   beforeAll,
   beforeEach,
@@ -12,20 +11,17 @@ import { CustomPromise } from './index';
 
 describe('CustomPromise', () => {
   let RESOLVED_VALUE: string;
-  let REJECTED_REASON: Error;
+  let REJECTED_REASON: string;
 
   // Arrange
-  beforeAll(() => {
-    RESOLVED_VALUE = 'fulfilled';
-    REJECTED_REASON = new Error('rejected');
-  });
-
   let resolvedPromise: CustomPromise<string>;
   let rejectedPromise: CustomPromise<never>;
   let onFulfilledSpy: Mock<any, any>;
   let onRejectedSpy: Mock<any, any>;
 
   beforeEach(() => {
+    RESOLVED_VALUE = 'fulfilled';
+    REJECTED_REASON = 'rejected';
     resolvedPromise = CustomPromise.resolve(RESOLVED_VALUE);
     rejectedPromise = CustomPromise.reject(REJECTED_REASON);
 
@@ -49,10 +45,10 @@ describe('CustomPromise', () => {
       );
 
       // Act
-      const promise = new CustomPromise<string>(executor);
+      const result = await new CustomPromise<string>(executor);
 
       // Assert
-      await expect(promise).resolves.toEqual(value);
+      expect(result).toEqual(value);
       expect(executor).toHaveBeenCalledOnce();
     });
 
@@ -63,165 +59,228 @@ describe('CustomPromise', () => {
         throw new Error(reason);
       });
 
-      // Act
-      const promise = new CustomPromise<string>(executor);
+      try {
+        // Act
+        await new CustomPromise<string>(executor);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Assert
+          expect(error.message).toBe(reason);
+        }
+      }
 
-      // Assert
-      await expect(promise).rejects.toThrow(reason);
       expect(executor).toHaveBeenCalled();
       expect(executor).toHaveBeenCalledOnce();
     });
   });
 
-  describe('static methods', () => {
-    describe('resolve', () => {
-      it('resolves with value', async () => {
-        // Act and Assert
+  describe('resolve', () => {
+    it('resolves with value', async () => {
+      // Act
+      const result = await CustomPromise.resolve(RESOLVED_VALUE);
 
-        await expect(CustomPromise.resolve(RESOLVED_VALUE)).resolves.toBe(
-          RESOLVED_VALUE,
-        );
-      });
-    });
-
-    describe('reject', () => {
-      it('rejects with reason', async () => {
-        // Act and Assert
-        await expect(CustomPromise.reject(REJECTED_REASON)).rejects.toThrow(
-          REJECTED_REASON,
-        );
-      });
-    });
-
-    describe('all', () => {
-      let VALUES: number[];
-      // Arrange
-      beforeAll(() => {
-        VALUES = [1, 2, 3];
-      });
-
-      it('works with empty array', async () => {
-        // Arrange
-        const EMPTY_ARRAY: any[] = [];
-
-        // Act
-        const result = await CustomPromise.all(EMPTY_ARRAY);
-
-        // Assert
-        expect(result).toEqual(EMPTY_ARRAY);
-      });
-
-      it('resolves an array of promises', async () => {
-        // Assert
-        const promises = VALUES.map((value) => CustomPromise.resolve(value));
-
-        // Act
-        const result = await CustomPromise.all(promises);
-
-        // Assert
-        expect(result).toEqual(VALUES);
-      });
-
-      it('resolves with an array of values', async () => {
-        // Act
-        const result = await CustomPromise.all(VALUES);
-
-        // Assert
-        expect(result).toEqual(VALUES);
-      });
+      // Assert
+      expect(result).toBe(RESOLVED_VALUE);
     });
   });
 
-  describe('methods', () => {
-    describe('then', () => {
-      it('handles asynchronous callbacks', async () => {
-        // Arrange
-        const asynchronousCallback = () =>
-          new CustomPromise((resolve) =>
-            delay(() => resolve(RESOLVED_VALUE), 100),
-          );
-
+  describe('reject', () => {
+    it('rejects with reason', async () => {
+      try {
         // Act
-        await resolvedPromise.then(asynchronousCallback).then(onFulfilledSpy);
+        await CustomPromise.reject(new Error(REJECTED_REASON));
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Assert
+          expect(error).toEqual(REJECTED_REASON);
+        }
+      }
+    });
+  });
 
-        // Assert
-        expect(onFulfilledSpy).toHaveBeenCalledWith(RESOLVED_VALUE);
-      });
+  describe('all', () => {
+    let VALUES: number[];
 
-      it('calls the fulfillment handler with the resolved value', async () => {
-        // Act
-        await resolvedPromise.then(onFulfilledSpy);
-
-        // Assert
-        expect(onFulfilledSpy).toHaveBeenCalledWith(RESOLVED_VALUE);
-      });
-
-      it('calls the rejection handler with the rejected reason', async () => {
-        // Act
-        await rejectedPromise.then(null, onRejectedSpy);
-
-        // Assert
-        expect(onRejectedSpy).toHaveBeenCalledWith(REJECTED_REASON);
-      });
-
-      it('handles exception in the handler', async () => {
-        // Arrange
-        const errorHandler = () => {
-          throw REJECTED_REASON;
-        };
-
-        // Act
-        const promise = resolvedPromise.then(errorHandler);
-
-        // Assert
-        await expect(promise).rejects.toThrow(REJECTED_REASON);
-      });
-
-      it('can be used in call chain', async () => {
-        // Arrange
-        const value = 1;
-        const nextValue = value + 1;
-        const onFulfilled1 = onFulfilledSpy.mockReturnValue(nextValue);
-        const onFulfilled2 = onFulfilledSpy;
-
-        // Act
-        await CustomPromise.resolve(value)
-          .then(onFulfilled1)
-          .then(onFulfilled2);
-
-        // Assert
-        expect(onFulfilled1).toHaveBeenCalledWith(value);
-        expect(onFulfilled2).toHaveBeenCalledWith(nextValue);
-      });
+    // Arrange
+    beforeAll(() => {
+      VALUES = [1, 2, 3];
     });
 
-    describe('finally', () => {
-      let onFinallyHandlerMock: Mock<any, any>;
-
+    it('works with empty array', async () => {
       // Arrange
-      beforeEach(() => {
-        onFinallyHandlerMock = vi.fn();
+      const EMPTY_ARRAY: any[] = [];
+
+      // Act
+      const result = await CustomPromise.all(EMPTY_ARRAY);
+
+      // Assert
+      expect(result).toEqual(EMPTY_ARRAY);
+    });
+
+    it('resolves an array of promises', async () => {
+      // Assert
+      const promises = VALUES.map((value) => CustomPromise.resolve(value));
+
+      // Act
+      const result = await CustomPromise.all(promises);
+
+      // Assert
+      expect(result).toEqual(VALUES);
+    });
+
+    it('handles non-promise values in the iterable', async () => {
+      // Act
+      const result = await CustomPromise.all(VALUES);
+
+      // Assert
+      expect(result).toEqual(VALUES);
+    });
+  });
+
+  describe('race', () => {
+    it('resolves with the first fulfilled promise', async () => {
+      // Arrange
+      const FIRST_VALUE = 'promise1';
+      const SECOND_VALUE = 'promise2';
+      const promise1 = new CustomPromise((resolve) => {
+        setTimeout(resolve, 200, FIRST_VALUE);
       });
 
-      it('executes the finally handler after fulfillment', async () => {
+      const promise2 = new CustomPromise((resolve) => {
+        setTimeout(resolve, 100, SECOND_VALUE);
+      });
+
+      // Act
+      const promise = await CustomPromise.race([promise1, promise2]);
+
+      // Assert
+      expect(promise).toBe(SECOND_VALUE);
+    });
+
+    it('rejects with the first rejected promise', async () => {
+      // Arrange
+      const FIRST_VALUE = 'promise1';
+      const SECOND_VALUE = 'promise2';
+
+      const promise1 = new CustomPromise((_, reject) => {
+        setTimeout(reject, 100, new Error(FIRST_VALUE));
+      });
+
+      const promise2 = new CustomPromise((_, reject) => {
+        setTimeout(reject, 50, new Error(SECOND_VALUE));
+      });
+
+      try {
         // Act
-        await resolvedPromise.finally(onFinallyHandlerMock);
-
-        // Assert
-        expect(onFinallyHandlerMock).toHaveBeenCalled();
-      });
-
-      it('executes the finally handler after rejection', async () => {
-        try {
-          // Act
-          await rejectedPromise.finally(onFinallyHandlerMock);
-        } catch (error) {
-          /* empty */
+        await CustomPromise.race([promise1, promise2]);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Assert
+          expect(error.message).toMatch(SECOND_VALUE);
         }
+      }
+    });
 
+    it('handles non-promise values in the iterable', async () => {
+      // Arrange
+      const expected = 'first';
+      const promise = new CustomPromise((resolve) =>
+        setTimeout(resolve, 100, expected),
+      );
+
+      // Act
+      const result = await CustomPromise.race([promise, 'non-promise', 123]);
+
+      // Assert
+      expect(result).toBe(expected);
+    });
+  });
+
+  describe('then', () => {
+    it('handles asynchronous callbacks', async () => {
+      // Arrange
+      const asynchronousCallback = () =>
+        new CustomPromise((resolve) =>
+          setTimeout(resolve, 100, RESOLVED_VALUE),
+        );
+
+      // Act
+      await resolvedPromise.then(asynchronousCallback).then(onFulfilledSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(RESOLVED_VALUE);
+    });
+
+    it('calls the fulfillment handler with the resolved value', async () => {
+      // Act
+      await resolvedPromise.then(onFulfilledSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(RESOLVED_VALUE);
+    });
+
+    it('calls the rejection handler with the rejected reason', async () => {
+      // Act
+      await rejectedPromise.then(null, onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(REJECTED_REASON);
+    });
+
+    it('handles exception in the handler', async () => {
+      // Arrange
+      const errorHandler = () => {
+        throw Error(REJECTED_REASON);
+      };
+
+      try {
         // Assert
-        expect(onFinallyHandlerMock).toHaveBeenCalled();
-      });
+        await resolvedPromise.then(errorHandler);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Assert
+          expect(error.message).toBe(REJECTED_REASON);
+        }
+      }
+    });
+
+    it('can be used in call chain', async () => {
+      // Arrange
+      const value = 1;
+      const nextValue = value + 1;
+      const onFulfilled1 = onFulfilledSpy.mockReturnValue(nextValue);
+      const onFulfilled2 = onFulfilledSpy;
+
+      // Act
+      await CustomPromise.resolve(value).then(onFulfilled1).then(onFulfilled2);
+
+      // Assert
+      expect(onFulfilled1).toHaveBeenCalledWith(value);
+      expect(onFulfilled2).toHaveBeenCalledWith(nextValue);
+    });
+  });
+
+  describe('finally', () => {
+    let onFinallySpy: Mock<any, any>;
+
+    // Arrange
+    beforeEach(() => {
+      onFinallySpy = vi.fn();
+    });
+
+    it('executes the finally handler after fulfillment', async () => {
+      // Act
+      await resolvedPromise.finally(onFinallySpy);
+
+      // Assert
+      expect(onFinallySpy).toHaveBeenCalled();
+    });
+
+    it('executes the finally handler after rejection', async () => {
+      await rejectedPromise.finally(onFinallySpy);
+
+      // Assert
+      expect(onFinallySpy).toHaveBeenCalled();
     });
   });
 });

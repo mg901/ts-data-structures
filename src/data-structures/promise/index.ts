@@ -48,21 +48,31 @@ export class CustomPromise<T = any> {
       const promises = Array.from(values);
 
       promises
-        .reduce(
+        .reduce<CustomPromise<Awaited<T>[]>>(
           (accumulator, promise) =>
             accumulator.then((results) =>
               CustomPromise.resolve(promise).then((value) =>
                 results.concat(value),
               ),
             ),
-          CustomPromise.resolve([] as Awaited<T>[]),
+          CustomPromise.resolve([]),
         )
-        .then((results) => {
-          resolve(results);
-        })
-        .catch((error) => {
-          reject(error);
-        });
+        .then(
+          (results) => {
+            resolve(results);
+          },
+          (error) => {
+            reject(error);
+          },
+        );
+    });
+  }
+
+  static race<T>(values: Iterable<T | PromiseLike<T>>) {
+    return new CustomPromise<Awaited<T>>((resolve, reject) => {
+      for (const value of values) {
+        CustomPromise.resolve(value).then(resolve).catch(reject);
+      }
     });
   }
 
