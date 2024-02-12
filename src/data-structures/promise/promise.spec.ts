@@ -183,13 +183,13 @@ describe('CustomPromise', () => {
 
     it('handles non-promise values in the iterable', async () => {
       // Arrange
-      const expected = 'first';
+      const expected = 'non-promise';
       const promise = new CustomPromise((resolve) =>
-        setTimeout(resolve, 100, expected),
+        setTimeout(resolve, 100, 'first'),
       );
 
       // Act
-      const result = await CustomPromise.race([promise, 'non-promise', 123]);
+      const result = await CustomPromise.race([promise, expected, 123]);
 
       // Assert
       expect(result).toBe(expected);
