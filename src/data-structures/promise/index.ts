@@ -49,8 +49,8 @@ export class CustomPromise<T = any> {
 
       promises
         .reduce(
-          (acc, promise) =>
-            acc.then((results) =>
+          (accumulator, promise) =>
+            accumulator.then((results) =>
               CustomPromise.resolve(promise).then((value) =>
                 results.concat(value),
               ),
