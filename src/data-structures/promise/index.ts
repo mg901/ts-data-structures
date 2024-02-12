@@ -1,10 +1,6 @@
 import isFunction from 'lodash.isfunction';
 import { ValuesType } from 'utility-types';
 
-type Value<T> = T | PromiseLike<T>;
-
-type WrappedHandler = () => void;
-
 const STATE = {
   PENDING: 'pending',
   FULFILLED: 'fulfilled',
@@ -13,27 +9,61 @@ const STATE = {
 
 type State = ValuesType<typeof STATE>;
 
+type Value<T> = T | PromiseLike<T>;
+
+type Callback = () => void;
+
 export class CustomPromise<T = any> {
   #state: State = STATE.PENDING;
 
   #value?: Value<T>;
 
-  #onfulfilledHandlers: WrappedHandler[] = [];
+  #onfulfilledCallbacks: Callback[] = [];
 
-  #onrejectedHandlers: WrappedHandler[] = [];
-
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  static reject = <T = never>(reason: any) => {
-    return new CustomPromise<T>((_, reject) => reject(reason));
-  };
+  #onrejectedCallbacks: Callback[] = [];
 
   static resolve(): CustomPromise<void>;
   static resolve<T>(value: T): CustomPromise<Awaited<T>>;
   static resolve<T>(value: T | PromiseLike<T>): CustomPromise<Awaited<T>>;
   static resolve<T>(value?: T | PromiseLike<T>) {
-    return new CustomPromise((resolve) =>
-      resolve(value as Awaited<T> | PromiseLike<Awaited<T>>),
+    if (isCustomPromise(value)) {
+      return value;
+    }
+
+    return new CustomPromise<Awaited<T>>((resolve) =>
+      resolve(value as Awaited<T>),
     );
+  }
+
+  static reject<T = never>(reason?: any) {
+    if (isCustomPromise(reason)) {
+      return reason as T;
+    }
+
+    return new CustomPromise<T>((_, reject) => reject(reason));
+  }
+
+  static all<T>(values: Iterable<T | PromiseLike<T>>) {
+    return new CustomPromise<Awaited<T>[]>((resolve, reject) => {
+      const promises = Array.from(values);
+
+      promises
+        .reduce(
+          (acc, promise) =>
+            acc.then((results) =>
+              CustomPromise.resolve(promise).then((value) =>
+                results.concat(value),
+              ),
+            ),
+          CustomPromise.resolve([] as Awaited<T>[]),
+        )
+        .then((results) => {
+          resolve(results);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 
   constructor(
@@ -54,11 +84,11 @@ export class CustomPromise<T = any> {
       this.#state = STATE.FULFILLED;
       this.#value = value;
 
-      this.#onfulfilledHandlers.forEach((handler) => {
-        queueMicrotask(() => handler());
+      this.#onfulfilledCallbacks.forEach((callback) => {
+        queueMicrotask(() => callback());
       });
 
-      this.#onfulfilledHandlers = [];
+      this.#onfulfilledCallbacks = [];
     }
   }
 
@@ -67,11 +97,11 @@ export class CustomPromise<T = any> {
       this.#state = STATE.REJECTED;
       this.#value = reason;
 
-      this.#onrejectedHandlers.forEach((handler) => {
-        queueMicrotask(() => handler());
+      this.#onrejectedCallbacks.forEach((callback) => {
+        queueMicrotask(() => callback());
       });
 
-      this.#onrejectedHandlers = [];
+      this.#onrejectedCallbacks = [];
     }
   }
 
@@ -86,7 +116,8 @@ export class CustomPromise<T = any> {
         try {
           if (isFunction(handler)) {
             const result = handler(this.#value as T);
-            if (result instanceof CustomPromise) {
+
+            if (isCustomPromise(result)) {
               result.then(resolve, reject);
             } else {
               resolve(result);
@@ -101,8 +132,8 @@ export class CustomPromise<T = any> {
 
       const handlers = {
         [STATE.PENDING]: () => {
-          this.#onfulfilledHandlers.push(() => executeHandler(onfulfilled));
-          this.#onrejectedHandlers.push(() => executeHandler(onrejected));
+          this.#onfulfilledCallbacks.push(() => executeHandler(onfulfilled));
+          this.#onrejectedCallbacks.push(() => executeHandler(onrejected));
         },
         [STATE.FULFILLED]: () => executeHandler(onfulfilled),
         [STATE.REJECTED]: () => executeHandler(onrejected),
@@ -136,4 +167,8 @@ export class CustomPromise<T = any> {
       },
     );
   }
+}
+
+function isCustomPromise(value: any): value is CustomPromise {
+  return value instanceof CustomPromise;
 }
