@@ -92,7 +92,7 @@ describe('CustomPromise', () => {
       } catch (error: unknown) {
         if (error instanceof Error) {
           // Assert
-          expect(error).toEqual(REJECTED_REASON);
+          expect(error.message).toBe(REJECTED_REASON);
         }
       }
     });
