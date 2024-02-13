@@ -13,6 +13,20 @@ type Value<T> = T | PromiseLike<T>;
 
 type Callback = () => void;
 
+interface PromiseFulfilledResult<T> {
+  status: typeof STATE.FULFILLED;
+  value: T;
+}
+
+interface PromiseRejectedResult {
+  status: typeof STATE.REJECTED;
+  reason: any;
+}
+
+type PromiseSettledResult<T> =
+  | PromiseFulfilledResult<T>
+  | PromiseRejectedResult;
+
 export class CustomPromise<T = any> {
   #state: State = STATE.PENDING;
 
@@ -44,6 +58,8 @@ export class CustomPromise<T = any> {
   }
 
   static all<T>(values: Iterable<T | PromiseLike<T>>) {
+    assertIterable(values);
+
     return new CustomPromise<Awaited<T>[]>((resolve, reject) => {
       const promises = Array.from(values);
 
@@ -68,12 +84,65 @@ export class CustomPromise<T = any> {
     });
   }
 
-  static race<T>(values: Iterable<T | PromiseLike<T>>) {
+  static race<T>(values: Iterable<T | PromiseLike<T>> = []) {
+    assertIterable(values);
+
     return new CustomPromise<Awaited<T>>((resolve, reject) => {
       for (const value of values) {
-        CustomPromise.resolve(value).then(resolve).catch(reject);
+        CustomPromise.resolve(value).then(resolve, reject);
       }
     });
+  }
+
+  static any<T extends readonly unknown[] | []>(
+    values: T,
+  ): CustomPromise<Awaited<T[number]>>;
+  static any<T>(
+    values: Iterable<T | PromiseLike<T>>,
+  ): CustomPromise<Awaited<T>>;
+  static any<T>(values: Iterable<T | PromiseLike<T>>) {
+    assertIterable(values);
+
+    const promises = Array.from(values);
+    let errors: Error[] = [];
+
+    return new CustomPromise<Awaited<T>>((resolve, reject) => {
+      for (const promise of promises) {
+        CustomPromise.resolve(promise).then(resolve, (error: Error) => {
+          errors.push(error);
+          if (errors.length === promises.length) {
+            reject(new AggregateError('All promises were rejected'));
+          }
+        });
+      }
+    });
+  }
+
+  static allSettled<T extends readonly unknown[] | []>(
+    values: T,
+  ): CustomPromise<{
+    -readonly [P in keyof T]: PromiseSettledResult<Awaited<T[P]>>;
+  }>;
+  static allSettled<T>(
+    values: Iterable<T | PromiseLike<T>>,
+  ): CustomPromise<PromiseSettledResult<Awaited<T>>[]>;
+  static allSettled<T>(values: Iterable<T | PromiseLike<T>> = []) {
+    assertIterable(values);
+
+    return CustomPromise.all<PromiseSettledResult<Awaited<T>>>(
+      Array.from(values).map((promise) =>
+        CustomPromise.resolve(promise).then(
+          (value) => ({
+            status: STATE.FULFILLED,
+            value,
+          }),
+          (error) => ({
+            status: STATE.REJECTED,
+            reason: error,
+          }),
+        ),
+      ),
+    );
   }
 
   constructor(
@@ -182,3 +251,11 @@ export class CustomPromise<T = any> {
 function isCustomPromise(value: any): value is CustomPromise {
   return value instanceof CustomPromise;
 }
+
+const assertIterable = (value: any) => {
+  if (!value[Symbol.iterator]) {
+    throw new TypeError(
+      `${typeof value} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+    );
+  }
+};

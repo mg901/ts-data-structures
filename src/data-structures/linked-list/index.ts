@@ -108,7 +108,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     const isInvalidIndex = index < 0 || index > this._size;
 
     if (isInvalidIndex) {
-      throw new Error(
+      throw new RangeError(
         'Index should be greater than or equal to 0 and less than or equal to the list length.',
       );
     }
