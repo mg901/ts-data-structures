@@ -379,6 +379,7 @@ describe('LinkedList', () => {
       const received = () => linkedList.insertAt(-1, 1);
 
       // Assert
+      expect(received).toThrow(RangeError);
       expect(received).toThrow(
         'Index should be greater than or equal to 0 and less than or equal to the list length.',
       );
@@ -389,6 +390,7 @@ describe('LinkedList', () => {
       const received = () => linkedList.insertAt(10, 1);
 
       // Assert
+      expect(received).toThrow(RangeError);
       expect(received).toThrow(
         'Index should be greater than or equal to 0 and less than or equal to the list length.',
       );

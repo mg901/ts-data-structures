@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { HashMap } from './index';
 
 describe('HashMap', () => {
@@ -245,19 +245,24 @@ describe('HashMap', () => {
   });
 
   describe('forEach', () => {
+    let callbackSpy: Mock<any, any>;
+
+    // Arrange
+    beforeEach(() => {
+      callbackSpy = vi.fn();
+    });
+
     it('iterates over each the key-value pairs', () => {
       // Arrange
       hashMap.set('one', 1);
       hashMap.set('two', 2);
       hashMap.set('three', 3);
 
-      const callbackFn = vi.fn();
-
       // Act
-      hashMap.forEach(callbackFn);
+      hashMap.forEach(callbackSpy);
 
       // Assert
-      expect(callbackFn).toHaveBeenCalledTimes(3);
+      expect(callbackSpy).toHaveBeenCalledTimes(3);
     });
 
     it('uses the provided thisArg as the context if provided', () => {
@@ -265,26 +270,23 @@ describe('HashMap', () => {
       hashMap.set('one', 1);
 
       const thisArg = { customContext: true };
-      const callbackFn = vi.fn();
 
       // Act
-      hashMap.forEach(callbackFn, thisArg);
+      hashMap.forEach(callbackSpy, thisArg);
 
       // Assert
-      expect(callbackFn.mock.calls[0][2]).toBe(thisArg);
+      expect(callbackSpy.mock.calls[0][2]).toBe(thisArg);
     });
 
     it('uses the HashMap as the context if thisArg is not provided', () => {
       // Arrange
       hashMap.set('one', 1);
 
-      const callbackFn = vi.fn();
-
       // Act
-      hashMap.forEach(callbackFn);
+      hashMap.forEach(callbackSpy);
 
       // Assert
-      expect(callbackFn.mock.calls[0][2]).toBe(hashMap);
+      expect(callbackSpy.mock.calls[0][2]).toBe(hashMap);
     });
   });
 

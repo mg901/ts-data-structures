@@ -37,7 +37,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
     return newNode;
   }
 
-  #deleteByReference(node: Node): void {
+  #deleteByReference(node: Node) {
     if (this.#head === this.#tail) {
       this.#head = null;
       this.#tail = null;
@@ -65,7 +65,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
     return node.data.value;
   }
 
-  put(key: Key, value: Value): void {
+  put(key: Key, value: Value) {
     if (Object.hasOwn(this.#nodeMap, key)) {
       const node = this.#nodeMap[key];
       this.#deleteByReference(node!);

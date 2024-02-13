@@ -33,7 +33,7 @@ export class BinaryTreeNode<T = any> {
     return this.leftHeight - this.rightHeight;
   }
 
-  setValue(value: T): this {
+  setValue(value: T) {
     this.value = value;
 
     return this;

@@ -17,7 +17,7 @@ export class LRUCacheOnMap<Key = any, Value = any> {
     return value;
   }
 
-  put(key: Key, value: Value): void {
+  put(key: Key, value: Value) {
     if (this.#cache.has(key)) {
       this.#cache.delete(key);
     }
