@@ -28,6 +28,7 @@ jobs:
         with:
           flags: unittests # optional
           name: codecov-umbrella
+          fail_ci_if_error: true
           verbose: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
