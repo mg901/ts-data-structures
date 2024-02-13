@@ -23,7 +23,7 @@ describe('CustomPromise', () => {
   let onFulfilledSpy: Mock<any, any>;
   let onRejectedSpy: Mock<any, any>;
 
-  beforeEach(() => {
+  beforeAll(() => {
     PROMISE_STATE = {
       PENDING: 'pending',
       FULFILLED: 'fulfilled',
@@ -32,6 +32,9 @@ describe('CustomPromise', () => {
 
     FULFILLED_VALUE = 'Hooray';
     REJECTED_REASON = 'Oops';
+  });
+
+  beforeEach(() => {
     resolvedPromise = new CustomPromise((resolve) => {
       resolve(FULFILLED_VALUE);
     });
@@ -201,24 +204,62 @@ describe('CustomPromise', () => {
   });
 
   describe('resolve', () => {
-    it('resolves with value', async () => {
+    it('resolves with non-promise value', async () => {
+      // Arrange
+      const NON_PROMISE_VALUE = 'nested value';
+
       // Act
-      const result = await CustomPromise.resolve(FULFILLED_VALUE);
+      const result = await CustomPromise.resolve(NON_PROMISE_VALUE);
 
       // Assert
-      expect(result).toBe(FULFILLED_VALUE);
+      expect(result).toBe(NON_PROMISE_VALUE);
+    });
+
+    it('resolve with nested promise ', async () => {
+      // Arrange
+      const NESTED_VALUE = 'nested value';
+      const nestedPromise = new CustomPromise((resolve) => {
+        setTimeout(resolve, 50, NESTED_VALUE);
+      });
+
+      // Act
+      const result = await CustomPromise.resolve(nestedPromise);
+
+      // Assert
+      expect(result).toBe(NESTED_VALUE);
     });
   });
 
   describe('reject', () => {
-    it('rejects with reason', async () => {
+    it('rejects with non-promise reason', async () => {
+      // Arrange
+      const NESTED_REASON = 'nested reason';
+
       try {
         // Act
-        await CustomPromise.reject(new Error(REJECTED_REASON));
+        await CustomPromise.reject(new Error(NESTED_REASON));
       } catch (error: unknown) {
         if (error instanceof Error) {
           // Assert
-          expect(error.message).toBe(REJECTED_REASON);
+          expect(error.message).toBe(NESTED_REASON);
+        }
+      }
+    });
+
+    it('rejects with rested promise reason', async () => {
+      // Arrange
+      const NESTED_REASON = 'nested reason';
+      const nestedPromise = new CustomPromise((resolve) => {
+        setTimeout(resolve, 50, new Error(NESTED_REASON));
+      });
+
+      try {
+        // Act
+        await CustomPromise.reject(nestedPromise);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Assert
+          expect(error.message).toBe(NESTED_REASON);
         }
       }
     });
