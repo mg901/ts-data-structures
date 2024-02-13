@@ -26,9 +26,10 @@ jobs:
       - uses: actions/checkout@master
       - uses: codecov/codecov-action@v4
         with:
-          flags: unittests # optional
-          name: codecov-umbrella
           fail_ci_if_error: true
+          flags: unittests
+          name: codecov-umbrella
+
           verbose: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
