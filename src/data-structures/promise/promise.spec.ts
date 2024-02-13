@@ -108,6 +108,7 @@ describe('CustomPromise', () => {
 
       // Assert
       expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
     });
 
     it('calls the fulfillment handler with the resolved value', async () => {
@@ -121,25 +122,14 @@ describe('CustomPromise', () => {
 
       // Assert
       expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
-    });
-
-    it('calls the rejection handler with the rejected reason', async () => {
-      // Arrange
-      const promise = new CustomPromise((_, reject) => {
-        reject(new Error(REJECTED_REASON));
-      });
-
-      // Act
-      await promise.then(null, onRejectedSpy);
-
-      // Assert
-      expect(onRejectedSpy).toHaveBeenCalledWith(new Error(REJECTED_REASON));
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
     });
 
     it('handles exception in the handler', async () => {
       // Arrange
+      const EXPECTED_REASON = 'first';
       const promise = new CustomPromise((_, reject) => {
-        reject(new Error('first'));
+        reject(new Error(EXPECTED_REASON));
       });
 
       const errorHandler = () => {
@@ -152,9 +142,47 @@ describe('CustomPromise', () => {
       } catch (error: unknown) {
         if (error instanceof Error) {
           // Assert
-          expect(error.message).toBe('first');
+          expect(error.message).toBe(EXPECTED_REASON);
         }
       }
+    });
+
+    it('calls the rejection handler if the onfulfilled handler throws an error', async () => {
+      // Arrange
+      const promise = new CustomPromise((resolve) => {
+        resolve('value');
+      });
+
+      const EXPECTED_REASON = 'handler error';
+      const onRejectedSpy2 = vi.fn();
+
+      const errorHandler = () => {
+        throw new Error(EXPECTED_REASON);
+      };
+
+      try {
+        await promise
+          // Act
+          .then(errorHandler, onRejectedSpy)
+          .then(null, onRejectedSpy2);
+      } catch {
+        // Assert
+        expect(onRejectedSpy2).toHaveBeenCalledWith(Error(EXPECTED_REASON));
+        expect(onRejectedSpy2).toHaveBeenCalledOnce();
+      }
+    });
+
+    it('call the rejection handler if the promise is rejected', async () => {
+      // Arrange
+      const EXPECTED_REASON = 'expected reason';
+      const promise = new CustomPromise((_, reject) => {
+        reject(new Error(EXPECTED_REASON));
+      });
+
+      await promise.then(null, onRejectedSpy);
+
+      expect(onRejectedSpy).toHaveBeenCalledWith(Error(EXPECTED_REASON));
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
     });
 
     it('can be used in call chain', async () => {
