@@ -71,9 +71,7 @@ export class CustomPromise<T = any> {
     return new CustomPromise<Awaited<T>[]>((resolve, reject) => {
       CustomPromise.#handleNonIterable(reject, values);
 
-      const promises = Array.from(values);
-
-      promises
+      Array.from(values)
         .reduce<CustomPromise<Awaited<T>[]>>(
           (accumulator, promise) =>
             accumulator.then((results) =>
@@ -210,8 +208,10 @@ export class CustomPromise<T = any> {
             } else {
               resolve(result);
             }
-          } else {
+          } else if (this.#state === STATE.FULFILLED) {
             resolve(this.#value as TResult1 | TResult2);
+          } else {
+            reject(this.#value);
           }
         } catch (error) {
           reject(error);

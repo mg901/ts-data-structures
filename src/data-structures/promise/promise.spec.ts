@@ -315,6 +315,20 @@ describe('CustomPromise', () => {
       // Assert
       expect(received).toEqual(VALUES);
     });
+
+    it('rejects if any of the promises rejects', async () => {
+      // Act
+      const expected = 'error';
+
+      await CustomPromise.all([
+        CustomPromise.resolve(1),
+        CustomPromise.reject(Error(expected)),
+        CustomPromise.resolve(2),
+      ]).catch(onRejectedSpy);
+
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
+      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+    });
   });
 
   describe('race', () => {
