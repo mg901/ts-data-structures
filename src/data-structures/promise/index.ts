@@ -210,10 +210,8 @@ export class CustomPromise<T = any> {
             } else {
               resolve(result);
             }
-          } else if (this.#state === STATE.FULFILLED) {
-            resolve(this.#value as TResult1);
           } else {
-            reject(this.#value);
+            resolve(this.#value as TResult1 | TResult2);
           }
         } catch (error) {
           reject(error);

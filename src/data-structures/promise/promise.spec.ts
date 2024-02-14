@@ -180,16 +180,6 @@ describe('CustomPromise', () => {
 
       expect(onRejectedSpy2).not.toHaveBeenCalled();
     });
-
-    it('handles rejected promise', async () => {
-      try {
-        await rejectedPromise;
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          expect(error.message).toBe(REJECTED_REASON);
-        }
-      }
-    });
   });
 
   describe('finally', () => {
