@@ -144,33 +144,41 @@ describe('CustomPromise', () => {
     it('handles error thrown in the fulfillment handler of a resolved promise', async () => {
       // Arrange
       const expected = 'handle error';
+      const onRejectedSpy1 = vi.fn();
+      const onRejectedSpy2 = vi.fn();
 
       await resolvedPromise
         // Act
         .then(() => {
           throw Error(expected);
-        })
-        .then(null, onRejectedSpy);
+        }, onRejectedSpy1)
+        .then(null, onRejectedSpy2);
 
       // Assert
-      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
-      expect(onRejectedSpy).toHaveBeenCalledOnce();
+      expect(onRejectedSpy1).not.toHaveBeenCalled();
+
+      expect(onRejectedSpy2).toHaveBeenCalledWith(Error(expected));
+      expect(onRejectedSpy2).toHaveBeenCalledOnce();
     });
 
-    it('handles error thrown in the fulfillment handler of a resolved promise', async () => {
+    it('handles error thrown in the fulfillment handler of a rejected promise', async () => {
       // Arrange
       const expected = 'handle error';
+      const onRejectedSpy1 = vi.fn();
+      const onRejectedSpy2 = vi.fn();
 
-      await CustomPromise.reject(new Error(expected))
+      await rejectedPromise
         // Act
         .then(() => {
           throw Error(expected);
-        })
-        .then(null, onRejectedSpy);
+        }, onRejectedSpy1)
+        .then(null, onRejectedSpy2);
 
       // Assert
-      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
-      expect(onRejectedSpy).toHaveBeenCalledOnce();
+      expect(onRejectedSpy1).toHaveBeenCalledWith(Error(REJECTED_REASON));
+      expect(onRejectedSpy1).toHaveBeenCalledOnce();
+
+      expect(onRejectedSpy2).not.toHaveBeenCalled();
     });
 
     // it('handles asynchronous callbacks', async () => {
