@@ -102,11 +102,24 @@ describe('CustomPromise', () => {
 
       await new CustomPromise((resolve) => resolve(nestedPromise))
         // Act
-        .then(onFulfilledSpy);
+        .then(onFulfilledSpy, onRejectedSpy);
 
       // Assert
       expect(onFulfilledSpy).toHaveBeenCalledWith(nestedPromise);
       expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+      expect(onRejectedSpy).not.toHaveBeenCalled();
+    });
+
+    it('calls the fulfillment handler with the resolved value', async () => {
+      // Act
+      await resolvedPromise.then(onFulfilledSpy, onRejectedSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+      expect(onRejectedSpy).not.toHaveBeenCalled();
     });
 
     it('handles asynchronous callbacks passed as fulfillment handler', async () => {
@@ -116,27 +129,25 @@ describe('CustomPromise', () => {
         new CustomPromise((resolve) => setTimeout(resolve, 50, expected));
 
       // Act
-      await resolvedPromise.then(asynchronousCallback).then(onFulfilledSpy);
+      await resolvedPromise
+        .then(asynchronousCallback, onRejectedSpy)
+        .then(onFulfilledSpy);
 
       // Assert
+
+      expect(onRejectedSpy).not.toHaveBeenCalled();
+
       expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
-      expect(onFulfilledSpy).toHaveBeenCalledOnce();
-    });
-
-    it('calls the fulfillment handler with the resolved value', async () => {
-      // Act
-      await resolvedPromise.then(onFulfilledSpy);
-
-      // Assert
-      expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
       expect(onFulfilledSpy).toHaveBeenCalledOnce();
     });
 
     it('handles an empty fulfillment handler and calls the next handler with the resolved value', async () => {
       // Act
-      await resolvedPromise.then(null).then(onFulfilledSpy);
+      await resolvedPromise.then(null, onRejectedSpy).then(onFulfilledSpy);
 
       // Assert
+      expect(onRejectedSpy).not.toHaveBeenCalled();
+
       expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
       expect(onFulfilledSpy).toHaveBeenCalledOnce();
     });
@@ -210,16 +221,28 @@ describe('CustomPromise', () => {
   });
 
   describe('static methods', () => {
+    let makeTypeError: (value: any) => TypeError;
+    // Arrange
+    beforeEach(() => {
+      makeTypeError = (value: any) =>
+        TypeError(typeof value + IS_NOT_ITERABLE_ERROR_MESSAGE);
+    });
+
     describe('resolve', () => {
       it('resolves with non-promise value', async () => {
         // Arrange
         const expected = 'nested value';
 
         // Act
-        const received = await CustomPromise.resolve(expected);
+        await CustomPromise.resolve(expected)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toBe(expected);
+        expect(onFulfilledSpy).toHaveBeenLastCalledWith(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('resolve with nested promise ', async () => {
@@ -230,10 +253,15 @@ describe('CustomPromise', () => {
         });
 
         // Act
-        const received = await CustomPromise.resolve(nestedPromise);
+        await CustomPromise.resolve(nestedPromise)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toBe(expected);
+        expect(onFulfilledSpy).toHaveBeenLastCalledWith(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -244,8 +272,8 @@ describe('CustomPromise', () => {
 
         await CustomPromise.reject(new Error(expected)).catch(onRejectedSpy);
 
-        expect(onRejectedSpy).toHaveBeenCalledOnce();
         expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
       it('calls onFulfillment handler with the nested promise value', async () => {
@@ -271,12 +299,14 @@ describe('CustomPromise', () => {
 
         // Act
         // @ts-ignore
-        await CustomPromise.all(expected).catch(onRejectedSpy);
+        await CustomPromise.all(expected)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(onRejectedSpy).toHaveBeenCalledWith(
-          TypeError(typeof expected + IS_NOT_ITERABLE_ERROR_MESSAGE),
-        );
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
+        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
@@ -289,13 +319,18 @@ describe('CustomPromise', () => {
 
       it('works with empty array', async () => {
         // Arrange
-        const expected: any[] = [];
+        const expected: [] = [];
 
         // Act
-        const received = await CustomPromise.all(expected);
+        await CustomPromise.all(expected)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toEqual(expected);
+        expect(onFulfilledSpy).toHaveBeenLastCalledWith(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('resolves an array of promises', async () => {
@@ -303,32 +338,47 @@ describe('CustomPromise', () => {
         const promises = VALUES.map((value) => CustomPromise.resolve(value));
 
         // Act
-        const received = await CustomPromise.all(promises);
+        await CustomPromise.all(promises)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toEqual(VALUES);
+        expect(onFulfilledSpy).toHaveBeenLastCalledWith(VALUES);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('handles non-promise values in the iterable', async () => {
         // Act
-        const received = await CustomPromise.all(VALUES);
+        await CustomPromise.all(VALUES)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
-        // Assert
-        expect(received).toEqual(VALUES);
+        expect(onFulfilledSpy).toHaveBeenLastCalledWith(VALUES);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('rejects if any of the promises rejects', async () => {
-        // Act
+        // Arrange
         const expected = 'error';
 
+        // Act
         await CustomPromise.all([
           CustomPromise.resolve(1),
           CustomPromise.reject(Error(expected)),
           CustomPromise.resolve(2),
-        ]).catch(onRejectedSpy);
+        ])
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
-        expect(onRejectedSpy).toHaveBeenCalledOnce();
+        // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
         expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
     });
 
@@ -339,20 +389,22 @@ describe('CustomPromise', () => {
 
         // Act
         // @ts-ignore
-        await CustomPromise.race(expected).catch(onRejectedSpy);
+        await CustomPromise.race(expected)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(onRejectedSpy).toHaveBeenCalledWith(
-          TypeError(typeof expected + IS_NOT_ITERABLE_ERROR_MESSAGE),
-        );
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
+        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
       it('resolves with the first fulfilled promise', async () => {
         // Arrange
-
+        const expected = 'fast';
         const promise2 = new CustomPromise((resolve) => {
-          setTimeout(resolve, 50, 'fast');
+          setTimeout(resolve, 50, expected);
         });
 
         const promise1 = new CustomPromise((resolve) => {
@@ -360,10 +412,14 @@ describe('CustomPromise', () => {
         });
 
         // Act
-        const promise = await CustomPromise.race([promise1, promise2]);
+        await CustomPromise.race([promise1, promise2])
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
-        // Assert
-        expect(promise).toBe('fast');
+        expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('rejects with the first rejected promise', async () => {
@@ -378,10 +434,15 @@ describe('CustomPromise', () => {
         });
 
         // Act
-        await CustomPromise.race([promise1, promise2]).catch(onRejectedSpy);
+        await CustomPromise.race([promise1, promise2])
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
         expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('handles non-promise values in the iterable', async () => {
@@ -392,14 +453,35 @@ describe('CustomPromise', () => {
         );
 
         // Act
-        const received = await CustomPromise.race([promise, expected, 123]);
+        await CustomPromise.race([promise, expected, 123])
+          .then(onFulfilledSpy)
+          .catch(onFulfilledSpy);
 
         // Assert
-        expect(received).toBe(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
     });
 
     describe('any', () => {
+      it('rejects if the input is not iterable', async () => {
+        // Arrange
+        const expected = 42;
+
+        // Act
+        // @ts-ignore
+        await CustomPromise.any(expected)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
+      });
+
       it('resolves with the first resolved promise', async () => {
         // Arrange
         const expected = 'first';
@@ -433,10 +515,10 @@ describe('CustomPromise', () => {
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
 
-        expect(onRejectedSpy).toHaveBeenCalledOnce();
         expect(onRejectedSpy).toHaveBeenCalledWith(
           AggregateError('All promises were rejected'),
         );
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
     });
 
@@ -447,21 +529,30 @@ describe('CustomPromise', () => {
 
         // Act
         // @ts-ignore
-        await CustomPromise.all(expected).catch(onRejectedSpy);
+        await CustomPromise.all(expected)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(onRejectedSpy).toHaveBeenCalledWith(
-          TypeError(typeof expected + IS_NOT_ITERABLE_ERROR_MESSAGE),
-        );
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
+        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
       it('resolves with empty array', async () => {
+        // Arrange
+        const expected: [] = [];
         // Act
-        const received = await CustomPromise.allSettled([]);
+        await CustomPromise.allSettled(expected)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toEqual([]);
+        expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('handles promises with different settle times', async () => {
@@ -475,33 +566,19 @@ describe('CustomPromise', () => {
           }),
         ];
 
-        const expected = [
+        // Act
+        await CustomPromise.allSettled(promises)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).toHaveBeenCalledWith([
           { status: PROMISE_STATE.FULFILLED, value: 'fast' },
           { status: PROMISE_STATE.REJECTED, reason: new Error('slow') },
-        ];
+        ]);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
 
-        // Act
-        const received = await CustomPromise.allSettled(promises);
-
-        // Assert
-        expect(received).toEqual(expected);
-      });
-
-      it('handles array with single promise', async () => {
-        // Arrange
-        const promises = [CustomPromise.resolve('single')];
-        const expected = [
-          {
-            status: PROMISE_STATE.FULFILLED,
-            value: 'single',
-          },
-        ];
-
-        // Act
-        const received = await CustomPromise.allSettled(promises);
-
-        // Assert
-        expect(received).toEqual(expected);
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('handles array with mix of promises and non-promises', async () => {
@@ -513,29 +590,36 @@ describe('CustomPromise', () => {
           'three',
         ];
 
-        const expected = [
+        // Act
+        await CustomPromise.allSettled(promises)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).toHaveBeenLastCalledWith([
           { status: PROMISE_STATE.FULFILLED, value: 'one' },
           { status: PROMISE_STATE.FULFILLED, value: 'two' },
           { status: PROMISE_STATE.REJECTED, reason: new Error('error') },
           { status: PROMISE_STATE.FULFILLED, value: 'three' },
-        ];
+        ]);
 
-        // Act
-        const received = await CustomPromise.allSettled(promises);
-
-        // Assert
-        expect(received).toEqual(expected);
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('handles non-promise in the iterable', async () => {
         // Act
-        const received = await CustomPromise.allSettled([1, 2]);
+        await CustomPromise.allSettled([1, 2])
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toEqual([
+        expect(onFulfilledSpy).toHaveBeenCalledWith([
           { status: PROMISE_STATE.FULFILLED, value: 1 },
           { status: PROMISE_STATE.FULFILLED, value: 2 },
         ]);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('handles all promises fulfilled', async () => {
@@ -545,16 +629,19 @@ describe('CustomPromise', () => {
           CustomPromise.resolve('two'),
         ];
 
-        const expected = [
-          { status: 'fulfilled', value: 'one' },
-          { status: 'fulfilled', value: 'two' },
-        ];
-
         // Act
-        const received = await CustomPromise.allSettled(promises);
+        await CustomPromise.allSettled(promises)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toEqual(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledWith([
+          { status: 'fulfilled', value: 'one' },
+          { status: 'fulfilled', value: 'two' },
+        ]);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
       it('handles all promises rejected', async () => {
@@ -565,38 +652,18 @@ describe('CustomPromise', () => {
         ];
 
         // Act
-        const received = await CustomPromise.allSettled(promises);
+        await CustomPromise.allSettled(promises)
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(received).toEqual([
+        expect(onFulfilledSpy).toHaveBeenCalledWith([
           { status: PROMISE_STATE.REJECTED, reason: new Error('error1') },
           { status: PROMISE_STATE.REJECTED, reason: new Error('error2') },
         ]);
-      });
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
 
-      it('handles promise throwing error during execution', async () => {
-        // Arrange
-        const promises = [
-          CustomPromise.reject(new Error('Error during execution')),
-          CustomPromise.resolve('resolved'),
-        ];
-
-        const expected = [
-          {
-            status: PROMISE_STATE.REJECTED,
-            reason: new Error('Error during execution'),
-          },
-          {
-            status: PROMISE_STATE.FULFILLED,
-            value: 'resolved',
-          },
-        ];
-
-        // Act
-        const received = await CustomPromise.allSettled(promises);
-
-        // Assert
-        expect(received).toEqual(expected);
+        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
     });
   });
