@@ -16,12 +16,13 @@ describe('CustomPromise', () => {
   >;
   let FULFILLED_VALUE: string;
   let REJECTED_REASON: string;
+  let IS_NOT_ITERABLE_ERROR_MESSAGE: string;
 
   // Arrange
   let resolvedPromise: CustomPromise<string>;
   let rejectedPromise: CustomPromise<never>;
   let onFulfilledSpy: Mock<any, any>;
-  // let onRejectedSpy: Mock<any, any>;
+  let onRejectedSpy: Mock<any, any>;
 
   beforeAll(() => {
     PROMISE_STATE = {
@@ -32,6 +33,8 @@ describe('CustomPromise', () => {
 
     FULFILLED_VALUE = 'Hooray';
     REJECTED_REASON = 'Oops';
+    IS_NOT_ITERABLE_ERROR_MESSAGE =
+      ' is not iterable (cannot read property Symbol(Symbol.iterator))';
   });
 
   beforeEach(() => {
@@ -44,7 +47,7 @@ describe('CustomPromise', () => {
     });
 
     onFulfilledSpy = vi.fn();
-    // onRejectedSpy = vi.fn();
+    onRejectedSpy = vi.fn();
   });
 
   describe('executor', () => {
@@ -57,24 +60,24 @@ describe('CustomPromise', () => {
 
     it('handles executor function', async () => {
       // Arrange
-      const value = 'executor';
+      const expected = 'executor';
       const executor = executorSpy.mockImplementation((resolve) =>
-        resolve(value),
+        resolve(expected),
       );
 
       // Act
-      const result = await new CustomPromise<string>(executor);
+      const received = await new CustomPromise<string>(executor);
 
       // Assert
-      expect(result).toEqual(value);
+      expect(received).toEqual(expected);
       expect(executor).toHaveBeenCalledOnce();
     });
 
     it('handles executor function throwing error', async () => {
       // Arrange
-      const reason = 'executor error';
+      const expected = 'executor error';
       const executor = executorSpy.mockImplementation(() => {
-        throw new Error(reason);
+        throw new Error(expected);
       });
 
       try {
@@ -83,7 +86,7 @@ describe('CustomPromise', () => {
       } catch (error: unknown) {
         if (error instanceof Error) {
           // Assert
-          expect(error.message).toBe(reason);
+          expect(error.message).toBe(expected);
         }
       }
 
@@ -93,17 +96,81 @@ describe('CustomPromise', () => {
   });
 
   describe('then', () => {
-    it('calls the fulfillment handler with a promise', async () => {
+    it('calls the fulfillment handler with a nested promise', async () => {
       // Arrange
-      const EXPECTED_VALUE = 1;
+      const nestedPromise = new CustomPromise((resolve) => resolve(1));
 
-      await new CustomPromise((resolve) => resolve(EXPECTED_VALUE))
+      await new CustomPromise((resolve) => resolve(nestedPromise))
         // Act
-        .then((value) => new CustomPromise((resolve) => resolve(value)))
         .then(onFulfilledSpy);
 
       // Assert
-      expect(onFulfilledSpy).toHaveBeenCalledWith(EXPECTED_VALUE);
+      expect(onFulfilledSpy).toHaveBeenCalledWith(nestedPromise);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    });
+
+    it('handles asynchronous callbacks passed as fulfillment handler', async () => {
+      // Arrange
+      const expected = 'expected';
+      const asynchronousCallback = () =>
+        new CustomPromise((resolve) => setTimeout(resolve, 50, expected));
+
+      // Act
+      await resolvedPromise.then(asynchronousCallback).then(onFulfilledSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    });
+
+    it('calls the fulfillment handler with the resolved value', async () => {
+      // Act
+      await resolvedPromise.then(onFulfilledSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    });
+
+    it('handles an empty fulfillment handler and calls the next handler with the resolved value', async () => {
+      // Act
+      await resolvedPromise.then(null).then(onFulfilledSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    });
+
+    it('handles error thrown in the fulfillment handler of a resolved promise', async () => {
+      // Arrange
+      const expected = 'handle error';
+
+      await resolvedPromise
+        // Act
+        .then(() => {
+          throw Error(expected);
+        })
+        .then(null, onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
+    });
+
+    it('handles error thrown in the fulfillment handler of a resolved promise', async () => {
+      // Arrange
+      const expected = 'handle error';
+
+      await CustomPromise.reject(new Error(expected))
+        // Act
+        .then(() => {
+          throw Error(expected);
+        })
+        .then(null, onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
     });
 
     // it('handles asynchronous callbacks', async () => {
@@ -215,6 +282,17 @@ describe('CustomPromise', () => {
     // });
   });
 
+  // describe('catch', () => {
+  //   it('handles rejected promise', async () => {
+  //     // Act
+  //     await rejectedPromise.catch(onRejectedSpy);
+
+  //     // Assert
+  //     expect(onRejectedSpy).toHaveBeenCalledWith(Error(REJECTED_REASON));
+  //     expect(onRejectedSpy).toHaveBeenCalledOnce();
+  //   });
+  // });
+
   describe('finally', () => {
     let onFinallySpy: Mock<any, any>;
 
@@ -223,96 +301,93 @@ describe('CustomPromise', () => {
       onFinallySpy = vi.fn();
     });
 
-    it('executes the finally handler after fulfillment', async () => {
+    it('calls the finally handler after fulfillment', async () => {
       // Act
       await resolvedPromise.finally(onFinallySpy);
 
       // Assert
       expect(onFinallySpy).toHaveBeenCalled();
+      expect(onFinallySpy).toHaveBeenCalledOnce();
     });
 
-    it('executes the finally handler after rejection', async () => {
+    it('calls the finally handler after rejection', async () => {
+      // Act
       await rejectedPromise.finally(onFinallySpy);
 
       // Assert
       expect(onFinallySpy).toHaveBeenCalled();
+      expect(onFinallySpy).toHaveBeenCalledOnce();
     });
   });
 
   describe('resolve', () => {
     it('resolves with non-promise value', async () => {
       // Arrange
-      const NON_PROMISE_VALUE = 'nested value';
+      const expected = 'nested value';
 
       // Act
-      const result = await CustomPromise.resolve(NON_PROMISE_VALUE);
+      const received = await CustomPromise.resolve(expected);
 
       // Assert
-      expect(result).toBe(NON_PROMISE_VALUE);
+      expect(received).toBe(expected);
     });
 
     it('resolve with nested promise ', async () => {
       // Arrange
-      const NESTED_VALUE = 'nested value';
+      const expected = 'nested value';
       const nestedPromise = new CustomPromise((resolve) => {
-        setTimeout(resolve, 50, NESTED_VALUE);
+        setTimeout(resolve, 50, expected);
       });
 
       // Act
-      const result = await CustomPromise.resolve(nestedPromise);
+      const received = await CustomPromise.resolve(nestedPromise);
 
       // Assert
-      expect(result).toBe(NESTED_VALUE);
+      expect(received).toBe(expected);
     });
   });
 
   describe('reject', () => {
-    it('rejects with non-promise reason', async () => {
+    it('calls onFulfillment handler with the rejected value', async () => {
       // Arrange
-      const NESTED_REASON = 'nested reason';
+      const expected = 'nested reason';
 
-      try {
-        // Act
-        await CustomPromise.reject(new Error(NESTED_REASON));
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          // Assert
-          expect(error.message).toBe(NESTED_REASON);
-        }
-      }
+      await CustomPromise.reject(new Error(expected)).catch(onRejectedSpy);
+
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
+      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
     });
 
-    it('rejects with rested promise reason', async () => {
+    it('calls onFulfillment handler with the nested promise value', async () => {
       // Arrange
-      const NESTED_REASON = 'nested reason';
-      const nestedPromise = new CustomPromise((resolve) => {
-        setTimeout(resolve, 50, new Error(NESTED_REASON));
+      const expected = 'nested reason';
+      const nestedPromise = new CustomPromise((_, reject) => {
+        setTimeout(reject, 50, new Error(expected));
       });
 
-      try {
-        // Act
-        await CustomPromise.reject(nestedPromise);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          // Assert
-          expect(error.message).toBe(NESTED_REASON);
-        }
-      }
+      // Act
+      await CustomPromise.reject(nestedPromise).catch(onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
     });
   });
 
   describe('all', () => {
     it('rejects if the input is not iterable', async () => {
-      try {
-        // @ts-ignore
-        await CustomPromise.all(42);
-      } catch (error: unknown) {
-        if (error instanceof TypeError) {
-          expect(error.message).toBe(
-            'number is not iterable (cannot read property Symbol(Symbol.iterator))',
-          );
-        }
-      }
+      // Arrange
+      const expected = 42;
+
+      // Act
+      // @ts-ignore
+      await CustomPromise.all(expected).catch(onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(
+        TypeError(typeof expected + IS_NOT_ITERABLE_ERROR_MESSAGE),
+      );
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
     });
 
     let VALUES: number[];
@@ -324,13 +399,13 @@ describe('CustomPromise', () => {
 
     it('works with empty array', async () => {
       // Arrange
-      const EMPTY_ARRAY: any[] = [];
+      const expected: any[] = [];
 
       // Act
-      const result = await CustomPromise.all(EMPTY_ARRAY);
+      const received = await CustomPromise.all(expected);
 
       // Assert
-      expect(result).toEqual(EMPTY_ARRAY);
+      expect(received).toEqual(expected);
     });
 
     it('resolves an array of promises', async () => {
@@ -338,44 +413,46 @@ describe('CustomPromise', () => {
       const promises = VALUES.map((value) => CustomPromise.resolve(value));
 
       // Act
-      const result = await CustomPromise.all(promises);
+      const received = await CustomPromise.all(promises);
 
       // Assert
-      expect(result).toEqual(VALUES);
+      expect(received).toEqual(VALUES);
     });
 
     it('handles non-promise values in the iterable', async () => {
       // Act
-      const result = await CustomPromise.all(VALUES);
+      const received = await CustomPromise.all(VALUES);
 
       // Assert
-      expect(result).toEqual(VALUES);
+      expect(received).toEqual(VALUES);
     });
   });
 
   describe('race', () => {
     it('rejects if the input is not iterable', async () => {
-      try {
-        // @ts-ignore
-        await CustomPromise.all(42);
-      } catch (error: unknown) {
-        if (error instanceof TypeError) {
-          expect(error.message).toBe(
-            'number is not iterable (cannot read property Symbol(Symbol.iterator))',
-          );
-        }
-      }
+      // Arrange
+      const expected = 42;
+
+      // Act
+      // @ts-ignore
+      await CustomPromise.race(expected).catch(onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(
+        TypeError(typeof expected + IS_NOT_ITERABLE_ERROR_MESSAGE),
+      );
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
     });
 
     it('resolves with the first fulfilled promise', async () => {
       // Arrange
 
-      const promise1 = new CustomPromise((resolve) => {
-        setTimeout(resolve, 100, 'slow');
-      });
-
       const promise2 = new CustomPromise((resolve) => {
         setTimeout(resolve, 50, 'fast');
+      });
+
+      const promise1 = new CustomPromise((resolve) => {
+        setTimeout(resolve, 100, 'slow');
       });
 
       // Act
@@ -387,23 +464,20 @@ describe('CustomPromise', () => {
 
     it('rejects with the first rejected promise', async () => {
       // Arrange
-      const promise1 = new CustomPromise((_, reject) => {
-        setTimeout(reject, 100, new Error('slow'));
-      });
-
+      const expected = 'fast';
       const promise2 = new CustomPromise((_, reject) => {
         setTimeout(reject, 50, new Error('fast'));
       });
 
-      try {
-        // Act
-        await CustomPromise.race([promise1, promise2]);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          // Assert
-          expect(error.message).toBe('fast');
-        }
-      }
+      const promise1 = new CustomPromise((_, reject) => {
+        setTimeout(reject, 100, new Error(expected));
+      });
+
+      // Act
+      await CustomPromise.race([promise1, promise2]).catch(onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
     });
 
     it('handles non-promise values in the iterable', async () => {
@@ -414,35 +488,35 @@ describe('CustomPromise', () => {
       );
 
       // Act
-      const result = await CustomPromise.race([promise, expected, 123]);
+      const received = await CustomPromise.race([promise, expected, 123]);
 
       // Assert
-      expect(result).toBe(expected);
+      expect(received).toBe(expected);
     });
   });
 
   describe('allSettled', async () => {
     it('rejects if the input is not iterable', async () => {
-      try {
-        // Act
-        // @ts-ignore
-        await CustomPromise.all(42);
-      } catch (error: unknown) {
-        if (error instanceof TypeError) {
-          // Assert
-          expect(error.message).toBe(
-            'number is not iterable (cannot read property Symbol(Symbol.iterator))',
-          );
-        }
-      }
+      // Arrange
+      const expected = 42;
+
+      // Act
+      // @ts-ignore
+      await CustomPromise.all(expected).catch(onRejectedSpy);
+
+      // Assert
+      expect(onRejectedSpy).toHaveBeenCalledWith(
+        TypeError(typeof expected + IS_NOT_ITERABLE_ERROR_MESSAGE),
+      );
+      expect(onRejectedSpy).toHaveBeenCalledOnce();
     });
 
     it('resolves with empty array', async () => {
       // Act
-      const result = await CustomPromise.allSettled([]);
+      const received = await CustomPromise.allSettled([]);
 
       // Assert
-      expect(result).toEqual([]);
+      expect(received).toEqual([]);
     });
 
     it('handles promises with different settle times', async () => {
@@ -462,10 +536,10 @@ describe('CustomPromise', () => {
       ];
 
       // Act
-      const result = await CustomPromise.allSettled(promises);
+      const received = await CustomPromise.allSettled(promises);
 
       // Assert
-      expect(result).toEqual(expected);
+      expect(received).toEqual(expected);
     });
 
     it('handles array with single promise', async () => {
@@ -479,10 +553,10 @@ describe('CustomPromise', () => {
       ];
 
       // Act
-      const result = await CustomPromise.allSettled(promises);
+      const received = await CustomPromise.allSettled(promises);
 
       // Assert
-      expect(result).toEqual(expected);
+      expect(received).toEqual(expected);
     });
 
     it('handles array with mix of promises and non-promises', async () => {
@@ -502,18 +576,18 @@ describe('CustomPromise', () => {
       ];
 
       // Act
-      const result = await CustomPromise.allSettled(promises);
+      const received = await CustomPromise.allSettled(promises);
 
       // Assert
-      expect(result).toEqual(expected);
+      expect(received).toEqual(expected);
     });
 
     it('handles non-promise in the iterable', async () => {
       // Act
-      const result = await CustomPromise.allSettled([1, 2]);
+      const received = await CustomPromise.allSettled([1, 2]);
 
       // Assert
-      expect(result).toEqual([
+      expect(received).toEqual([
         { status: PROMISE_STATE.FULFILLED, value: 1 },
         { status: PROMISE_STATE.FULFILLED, value: 2 },
       ]);
@@ -532,10 +606,10 @@ describe('CustomPromise', () => {
       ];
 
       // Act
-      const result = await CustomPromise.allSettled(promises);
+      const received = await CustomPromise.allSettled(promises);
 
       // Assert
-      expect(result).toEqual(expected);
+      expect(received).toEqual(expected);
     });
 
     it('handles all promises rejected', async () => {
@@ -546,8 +620,10 @@ describe('CustomPromise', () => {
       ];
 
       // Act
-      const result = await CustomPromise.allSettled(promises);
-      expect(result).toEqual([
+      const received = await CustomPromise.allSettled(promises);
+
+      // Assert
+      expect(received).toEqual([
         { status: PROMISE_STATE.REJECTED, reason: new Error('error1') },
         { status: PROMISE_STATE.REJECTED, reason: new Error('error2') },
       ]);
@@ -572,10 +648,10 @@ describe('CustomPromise', () => {
       ];
 
       // Act
-      const result = await CustomPromise.allSettled(promises);
+      const received = await CustomPromise.allSettled(promises);
 
       // Assert
-      expect(result).toEqual(expected);
+      expect(received).toEqual(expected);
     });
   });
 });
