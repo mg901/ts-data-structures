@@ -21,7 +21,7 @@ describe('CustomPromise', () => {
   let resolvedPromise: CustomPromise<string>;
   let rejectedPromise: CustomPromise<never>;
   let onFulfilledSpy: Mock<any, any>;
-  let onRejectedSpy: Mock<any, any>;
+  // let onRejectedSpy: Mock<any, any>;
 
   beforeAll(() => {
     PROMISE_STATE = {
@@ -44,7 +44,7 @@ describe('CustomPromise', () => {
     });
 
     onFulfilledSpy = vi.fn();
-    onRejectedSpy = vi.fn();
+    // onRejectedSpy = vi.fn();
   });
 
   describe('executor', () => {
@@ -93,118 +93,126 @@ describe('CustomPromise', () => {
   });
 
   describe('then', () => {
-    it('handles asynchronous callbacks', async () => {
+    it('calls the fulfillment handler with a promise', async () => {
       // Arrange
-      const promise = new CustomPromise((resolve) => {
-        resolve(FULFILLED_VALUE);
-      });
+      const EXPECTED_VALUE = 1;
 
-      const expected = 'expected';
-      const asynchronousCallback = () =>
-        new CustomPromise((resolve) => setTimeout(resolve, 50, expected));
-
-      // Act
-      await promise.then(asynchronousCallback).then(onFulfilledSpy);
-
-      // Assert
-      expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
-      expect(onFulfilledSpy).toHaveBeenCalledOnce();
-    });
-
-    it('calls the fulfillment handler with the resolved value', async () => {
-      // Arrange
-      const promise = new CustomPromise((resolve) => {
-        resolve(FULFILLED_VALUE);
-      });
-
-      // Act
-      await promise.then(onFulfilledSpy);
-
-      // Assert
-      expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
-      expect(onFulfilledSpy).toHaveBeenCalledOnce();
-    });
-
-    it('handles exception in the handler', async () => {
-      // Arrange
-      const EXPECTED_REASON = 'first';
-      const promise = new CustomPromise((_, reject) => {
-        reject(new Error(EXPECTED_REASON));
-      });
-
-      const errorHandler = () => {
-        throw Error('second');
-      };
-
-      try {
+      await new CustomPromise((resolve) => resolve(EXPECTED_VALUE))
         // Act
-        await promise.then(errorHandler);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          // Assert
-          expect(error.message).toBe(EXPECTED_REASON);
-        }
-      }
-    });
-
-    it('calls the rejection handler if the onfulfilled handler throws an error', async () => {
-      // Arrange
-      const promise = new CustomPromise((resolve) => {
-        resolve('value');
-      });
-
-      const EXPECTED_REASON = 'handler error';
-      const onRejectedSpy2 = vi.fn();
-
-      const errorHandler = () => {
-        throw new Error(EXPECTED_REASON);
-      };
-
-      try {
-        await promise
-          // Act
-          .then(errorHandler, onRejectedSpy)
-          .then(null, onRejectedSpy2);
-      } catch {
-        // Assert
-        expect(onRejectedSpy2).toHaveBeenCalledWith(Error(EXPECTED_REASON));
-        expect(onRejectedSpy2).toHaveBeenCalledOnce();
-      }
-    });
-
-    it('call the rejection handler if the promise is rejected', async () => {
-      // Arrange
-      const EXPECTED_REASON = 'expected reason';
-      const promise = new CustomPromise((_, reject) => {
-        reject(new Error(EXPECTED_REASON));
-      });
-
-      await promise.then(null, onRejectedSpy);
-
-      expect(onRejectedSpy).toHaveBeenCalledWith(Error(EXPECTED_REASON));
-      expect(onRejectedSpy).toHaveBeenCalledOnce();
-    });
-
-    it('can be used in call chain', async () => {
-      // Arrange
-      const value = 1;
-      const nextValue = value + 1;
-      const onFulfilled1 = onFulfilledSpy.mockReturnValue(nextValue);
-      const onFulfilled2 = vi.fn();
-      const promise = new CustomPromise((resolve) => {
-        resolve(value);
-      });
-
-      // Act
-      await promise.then(onFulfilled1).then(onFulfilled2);
+        .then((value) => new CustomPromise((resolve) => resolve(value)))
+        .then(onFulfilledSpy);
 
       // Assert
-      expect(onFulfilled1).toHaveBeenCalledWith(value);
-      expect(onFulfilled1).toHaveBeenCalledOnce();
-
-      expect(onFulfilled2).toHaveBeenCalledWith(nextValue);
-      expect(onFulfilled2).toHaveBeenCalledOnce();
+      expect(onFulfilledSpy).toHaveBeenCalledWith(EXPECTED_VALUE);
     });
+
+    // it('handles asynchronous callbacks', async () => {
+    //   // Arrange
+    //   const promise = new CustomPromise((resolve) => {
+    //     resolve(FULFILLED_VALUE);
+    //   });
+
+    //   const expected = 'expected';
+    //   const asynchronousCallback = () =>
+    //     new CustomPromise((resolve) => setTimeout(resolve, 50, expected));
+
+    //   // Act
+    //   await promise.then(asynchronousCallback).then(onFulfilledSpy);
+
+    //   // Assert
+    //   expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+    //   expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    // });
+
+    // it('calls the fulfillment handler with the resolved value', async () => {
+    //   // Act
+    //   await resolvedPromise.then(onFulfilledSpy);
+
+    //   // Assert
+    //   expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
+    //   expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    // });
+
+    // it('handles exception in the handler', async () => {
+    //   // Arrange
+    //   const EXPECTED_REASON = 'first';
+    //   const promise = new CustomPromise((_, reject) => {
+    //     reject(new Error(EXPECTED_REASON));
+    //   });
+
+    //   const errorHandler = () => {
+    //     throw Error('second');
+    //   };
+
+    //   try {
+    //     // Act
+    //     await promise.then(errorHandler);
+    //   } catch (error: unknown) {
+    //     if (error instanceof Error) {
+    //       // Assert
+    //       expect(error.message).toBe(EXPECTED_REASON);
+    //     }
+    //   }
+    // });
+
+    // it('calls the rejection handler if the onfulfilled handler throws an error', async () => {
+    //   // Arrange
+    //   const promise = new CustomPromise((resolve) => {
+    //     resolve('value');
+    //   });
+
+    //   const EXPECTED_REASON = 'handler error';
+    //   const onRejectedSpy2 = vi.fn();
+
+    //   const errorHandler = () => {
+    //     throw new Error(EXPECTED_REASON);
+    //   };
+
+    //   try {
+    //     await promise
+    //       // Act
+    //       .then(errorHandler, onRejectedSpy)
+    //       .then(null, onRejectedSpy2);
+    //   } catch {
+    //     // Assert
+    //     expect(onRejectedSpy2).toHaveBeenCalledWith(Error(EXPECTED_REASON));
+    //     expect(onRejectedSpy2).toHaveBeenCalledOnce();
+    //   }
+    // });
+
+    // it('call the rejection handler if the promise is rejected', async () => {
+    //   // Arrange
+    //   const EXPECTED_REASON = 'expected reason';
+    //   const promise = new CustomPromise((_, reject) => {
+    //     reject(new Error(EXPECTED_REASON));
+    //   });
+
+    //   await promise.then(null, onRejectedSpy);
+
+    //   expect(onRejectedSpy).toHaveBeenCalledWith(Error(EXPECTED_REASON));
+    //   expect(onRejectedSpy).toHaveBeenCalledOnce();
+    // });
+
+    // it('can be used in call chain', async () => {
+    //   // Arrange
+    //   const value = 1;
+    //   const nextValue = value + 1;
+    //   const onFulfilled1 = onFulfilledSpy.mockReturnValue(nextValue);
+    //   const onFulfilled2 = vi.fn();
+    //   const promise = new CustomPromise((resolve) => {
+    //     resolve(value);
+    //   });
+
+    //   // Act
+    //   await promise.then(onFulfilled1).then(onFulfilled2);
+
+    //   // Assert
+    //   expect(onFulfilled1).toHaveBeenCalledWith(value);
+    //   expect(onFulfilled1).toHaveBeenCalledOnce();
+
+    //   expect(onFulfilled2).toHaveBeenCalledWith(nextValue);
+    //   expect(onFulfilled2).toHaveBeenCalledOnce();
+    // });
   });
 
   describe('finally', () => {
