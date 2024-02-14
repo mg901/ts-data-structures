@@ -36,6 +36,16 @@ export class CustomPromise<T = any> {
 
   #onrejectedCallbacks: Callback[] = [];
 
+  static #handleNonIterable(reject: (reason: any) => void, values: any): void {
+    if (!values[Symbol.iterator]) {
+      reject(
+        new TypeError(
+          `${typeof values} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+        ),
+      );
+    }
+  }
+
   static resolve(): CustomPromise<void>;
   static resolve<T>(value: T): CustomPromise<Awaited<T>>;
   static resolve<T>(value: T | PromiseLike<T>): CustomPromise<Awaited<T>>;
@@ -58,12 +68,10 @@ export class CustomPromise<T = any> {
   }
 
   static all<T>(values: Iterable<T | PromiseLike<T>>) {
-    assertIterable(values);
-
     return new CustomPromise<Awaited<T>[]>((resolve, reject) => {
-      const promises = Array.from(values);
+      CustomPromise.#handleNonIterable(reject, values);
 
-      promises
+      Array.from(values)
         .reduce<CustomPromise<Awaited<T>[]>>(
           (accumulator, promise) =>
             accumulator.then((results) =>
@@ -85,9 +93,9 @@ export class CustomPromise<T = any> {
   }
 
   static race<T>(values: Iterable<T | PromiseLike<T>> = []) {
-    assertIterable(values);
-
     return new CustomPromise<Awaited<T>>((resolve, reject) => {
+      CustomPromise.#handleNonIterable(reject, values);
+
       for (const value of values) {
         CustomPromise.resolve(value).then(resolve, reject);
       }
@@ -101,15 +109,16 @@ export class CustomPromise<T = any> {
     values: Iterable<T | PromiseLike<T>>,
   ): CustomPromise<Awaited<T>>;
   static any<T>(values: Iterable<T | PromiseLike<T>>) {
-    assertIterable(values);
-
     const promises = Array.from(values);
     let errors: Error[] = [];
 
     return new CustomPromise<Awaited<T>>((resolve, reject) => {
+      CustomPromise.#handleNonIterable(reject, values);
+
       for (const promise of promises) {
         CustomPromise.resolve(promise).then(resolve, (error: Error) => {
           errors.push(error);
+
           if (errors.length === promises.length) {
             reject(new AggregateError('All promises were rejected'));
           }
@@ -127,8 +136,6 @@ export class CustomPromise<T = any> {
     values: Iterable<T | PromiseLike<T>>,
   ): CustomPromise<PromiseSettledResult<Awaited<T>>[]>;
   static allSettled<T>(values: Iterable<T | PromiseLike<T>> = []) {
-    assertIterable(values);
-
     return CustomPromise.all<PromiseSettledResult<Awaited<T>>>(
       Array.from(values).map((promise) =>
         CustomPromise.resolve(promise).then(
@@ -201,6 +208,8 @@ export class CustomPromise<T = any> {
             } else {
               resolve(result);
             }
+          } else if (this.#state === STATE.FULFILLED) {
+            resolve(this.#value as TResult1 | TResult2);
           } else {
             reject(this.#value);
           }
@@ -251,11 +260,3 @@ export class CustomPromise<T = any> {
 function isCustomPromise(value: any): value is CustomPromise {
   return value instanceof CustomPromise;
 }
-
-const assertIterable = (value: any) => {
-  if (!value[Symbol.iterator]) {
-    throw new TypeError(
-      `${typeof value} is not iterable (cannot read property Symbol(Symbol.iterator))`,
-    );
-  }
-};
