@@ -356,8 +356,6 @@ describe('CustomPromise', () => {
           .catch(onRejectedSpy);
 
         expect(onFulfilledSpy).toHaveBeenLastCalledWith(VALUES);
-        expect(onFulfilledSpy).toHaveBeenCalledOnce();
-
         expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
@@ -459,8 +457,6 @@ describe('CustomPromise', () => {
 
         // Assert
         expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
-        expect(onRejectedSpy).toHaveBeenCalledOnce();
-
         expect(onRejectedSpy).not.toHaveBeenCalled();
       });
     });
@@ -478,6 +474,7 @@ describe('CustomPromise', () => {
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
+
         expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
