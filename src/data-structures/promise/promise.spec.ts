@@ -442,7 +442,7 @@ describe('CustomPromise', () => {
         expect(onFulfilledSpy).not.toHaveBeenCalled();
 
         expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
-        expect(onRejectedSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
       it('handles non-promise values in the iterable', async () => {
