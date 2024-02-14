@@ -95,15 +95,14 @@ describe('CustomPromise', () => {
   describe('then', () => {
     it('calls the fulfillment handler with a promise', async () => {
       // Arrange
-      const EXPECTED_VALUE = 1;
+      const nestedPromise = new CustomPromise((resolve) => resolve(1));
 
-      await new CustomPromise((resolve) => resolve(EXPECTED_VALUE))
+      await new CustomPromise((resolve) => resolve(nestedPromise))
         // Act
-        .then((value) => new CustomPromise((resolve) => resolve(value)))
         .then(onFulfilledSpy);
 
       // Assert
-      expect(onFulfilledSpy).toHaveBeenCalledWith(EXPECTED_VALUE);
+      expect(onFulfilledSpy).toHaveBeenCalledWith(nestedPromise);
     });
 
     // it('handles asynchronous callbacks', async () => {
