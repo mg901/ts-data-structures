@@ -212,7 +212,7 @@ export class CustomPromise<T = any> {
           } else if (this.#state === STATE.FULFILLED) {
             resolve(this.#value as TResult1);
           } else {
-            resolve(this.#value as TResult1 | TResult2);
+            reject(this.#value);
           }
         } catch (error) {
           reject(error);
