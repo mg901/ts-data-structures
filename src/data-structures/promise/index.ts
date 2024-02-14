@@ -202,7 +202,7 @@ export class CustomPromise<T = any> {
               resolve(result);
             }
           } else {
-            reject(this.#value);
+            resolve(this.#value as TResult1 | TResult2);
           }
         } catch (error) {
           reject(error);
