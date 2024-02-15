@@ -16,6 +16,14 @@ describe('LinkedList', () => {
     expect(linkedList.size).toBe(0);
   });
 
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      expect(Object.prototype.toString.call(new LinkedList())).toBe(
+        '[object LinkedList]',
+      );
+    });
+  });
+
   describe('append', () => {
     it('appends node to the empty list', () => {
       // Act

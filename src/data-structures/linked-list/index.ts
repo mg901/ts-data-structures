@@ -2,6 +2,11 @@ import { LinkedListNode } from '@/data-structures/linked-list/node';
 import { BaseLinkedList, type Predicate } from '@/shared/base-linked-list';
 
 export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'LinkedList';
+  }
+
   append(value: T) {
     const newNode = new LinkedListNode(value);
 
