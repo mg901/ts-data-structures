@@ -20,6 +20,11 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
     this.#capacity = capacity;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'LRUCache';
+  }
+
   #push<K = any, V = any>(key: K, value: V) {
     const newNode = new DoublyLinkedListNode({ key, value });
 

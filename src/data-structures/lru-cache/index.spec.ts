@@ -12,6 +12,15 @@ describe('LRUCache', () => {
     cache.put('two', 2);
   });
 
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new LRUCache(6))).toBe(
+        '[object LRUCache]',
+      );
+    });
+  });
+
   it('stores and retrieve values', () => {
     // Assert
     expect(cache.get('one')).toBe(1);
