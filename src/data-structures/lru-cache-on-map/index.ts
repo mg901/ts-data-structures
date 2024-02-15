@@ -1,10 +1,15 @@
-export class LRUCacheOnMap<Key = any, Value = any> {
+export class LRUCache<Key = any, Value = any> {
   #capacity: number;
 
   #cache = new Map<Key, Value>();
 
   constructor(capacity: number) {
     this.#capacity = capacity;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'LRUCache';
   }
 
   get(key: Key): Value | -1 {

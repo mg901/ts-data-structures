@@ -1,15 +1,24 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { LRUCacheOnMap } from './index';
+import { LRUCache } from './index';
 
 describe('LRUCacheOnMap', () => {
-  let cache: LRUCacheOnMap<string, number>;
+  let cache: LRUCache<string, number>;
 
   // Arrange
   beforeEach(() => {
-    cache = new LRUCacheOnMap<string, number>(2);
+    cache = new LRUCache<string, number>(2);
 
     cache.put('one', 1);
     cache.put('two', 2);
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new LRUCache(6))).toBe(
+        '[object LRUCache]',
+      );
+    });
   });
 
   it('stores and retrieve values', () => {
