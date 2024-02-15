@@ -8,16 +8,17 @@ export class Dequeue<T = any> {
     this.#list = new DoublyLinkedList<T>();
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'Dequeue';
+  }
+
   get size() {
     return this.#list.size;
   }
 
   get isEmpty() {
     return this.#list.isEmpty;
-  }
-
-  toString(callback?: Callback<T>) {
-    return this.#list.toString(callback);
   }
 
   addFront(value: T) {
@@ -46,5 +47,9 @@ export class Dequeue<T = any> {
 
   peekRear() {
     return this.#list.tail;
+  }
+
+  toString(callback?: Callback<T>) {
+    return this.#list.toString(callback);
   }
 }

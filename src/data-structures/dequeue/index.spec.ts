@@ -16,6 +16,24 @@ describe('Dequeue', () => {
     expect(dequeue.isEmpty).toBeTruthy();
   });
 
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      expect(Object.prototype.toString.call(new Dequeue())).toBe(
+        '[object Dequeue]',
+      );
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('returns false for a non-empty stack', () => {
+      // Act
+      dequeue.addFront(1);
+
+      // Assert
+      expect(dequeue.isEmpty).toBeFalsy();
+    });
+  });
+
   describe('addFront', () => {
     it('adds elements to the front in the correct order', () => {
       // Act
@@ -109,16 +127,6 @@ describe('Dequeue', () => {
 
       // Act and Assert
       expect(dequeue.peekRear()?.data).toBe(2);
-    });
-  });
-
-  describe('isEmpty', () => {
-    it('returns false for a non-empty stack', () => {
-      // Act
-      dequeue.addFront(1);
-
-      // Assert
-      expect(dequeue.isEmpty).toBeFalsy();
     });
   });
 });
