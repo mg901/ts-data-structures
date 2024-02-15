@@ -11,35 +11,16 @@ describe('Queue', () => {
 
   it('returns the initial state of the queue correctly', () => {
     // Act and Assert
-    expect(queue).not.toBeNull();
+    expect(queue).toBeDefined();
     expect(queue.isEmpty).toBeTruthy();
     expect(queue.size).toBe(0);
   });
 
-  describe('size', () => {
-    it('returns the number of elements in the queue', () => {
-      // Arrange
-      queue.enqueue(10);
-      queue.enqueue(20);
-      queue.enqueue(30);
-
-      // Act and Assert
-      expect(queue.size).toBe(3);
-    });
-  });
-
-  describe('isEmpty', () => {
-    it('returns true for an empty queue', () => {
-      // Act and Assert
-      expect(queue.isEmpty).toBeTruthy();
-    });
-
-    it('returns false for an non-empty queue', () => {
-      // Arrange
-      queue.enqueue(30);
-
-      // Assert
-      expect(queue.isEmpty).toBeFalsy();
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      expect(Object.prototype.toString.call(new Queue())).toBe(
+        '[object Queue]',
+      );
     });
   });
 
@@ -54,9 +35,7 @@ describe('Queue', () => {
 
     it('add multiple elements to the queue with ', () => {
       // Act
-      queue.enqueue(10);
-      queue.enqueue(20);
-      queue.enqueue(30);
+      queue.enqueue(10).enqueue(20).enqueue(30);
 
       // Assert
       expect(queue.toString()).toBe('10,20,30');
@@ -85,9 +64,7 @@ describe('Queue', () => {
   describe('dequeue', () => {
     it('removes and returns the front element from the queue', () => {
       // Arrange
-      queue.enqueue(10);
-      queue.enqueue(20);
-      queue.enqueue(30);
+      queue.enqueue(10).enqueue(20).enqueue(30);
 
       // Act
       const removedElement = queue.dequeue();
@@ -111,8 +88,7 @@ describe('Queue', () => {
   describe('peek', () => {
     it('returns the front element without removing it', () => {
       // Arrange
-      queue.enqueue(10);
-      queue.enqueue(15);
+      queue.enqueue(10).enqueue(15);
 
       // Act
       const frontElement = queue.peek();
@@ -144,14 +120,6 @@ describe('Queue', () => {
       // Assert
       expect(queue.isEmpty).toBeTruthy();
       expect(queue.size).toBe(0);
-    });
-  });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      expect(Object.prototype.toString.call(new Queue())).toBe(
-        '[object Queue]',
-      );
     });
   });
 });
