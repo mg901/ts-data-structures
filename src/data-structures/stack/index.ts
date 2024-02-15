@@ -2,14 +2,11 @@ import { LinkedList } from '@/data-structures/linked-list';
 import { type Callback } from '@/shared/node';
 
 export class Stack<T = any> {
-  #linkedList: LinkedList;
+  #linkedList = new LinkedList<T>();
 
-  constructor() {
-    this.#linkedList = new LinkedList();
-  }
-
-  push(value: T) {
-    this.#linkedList.append(value);
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'Stack';
   }
 
   get isEmpty() {
@@ -20,8 +17,10 @@ export class Stack<T = any> {
     return this.#linkedList.size;
   }
 
-  toString(callback?: Callback<T>) {
-    return this.#linkedList.toString(callback);
+  push(value: T) {
+    this.#linkedList.append(value);
+
+    return this;
   }
 
   pop() {
@@ -30,5 +29,9 @@ export class Stack<T = any> {
 
   clear() {
     this.#linkedList.clear();
+  }
+
+  toString(callback?: Callback<T>) {
+    return this.#linkedList.toString(callback);
   }
 }
