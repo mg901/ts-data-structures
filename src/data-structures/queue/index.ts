@@ -4,10 +4,9 @@ import { type Callback } from '@/shared/node';
 export class Queue<T = any> {
   #linkedList = new LinkedList<T>();
 
-  *[Symbol.iterator]() {
-    for (const node of this.#linkedList) {
-      yield node.data;
-    }
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'Queue';
   }
 
   get size() {
@@ -24,6 +23,12 @@ export class Queue<T = any> {
     return this;
   }
 
+  *[Symbol.iterator]() {
+    for (const node of this.#linkedList) {
+      yield node.data;
+    }
+  }
+
   dequeue() {
     return this.#linkedList.deleteHead()?.data;
   }
@@ -38,10 +43,5 @@ export class Queue<T = any> {
 
   toString(callback?: Callback<T>) {
     return this.#linkedList.toString(callback);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'Queue';
   }
 }
