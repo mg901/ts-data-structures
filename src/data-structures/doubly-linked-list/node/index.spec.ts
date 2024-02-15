@@ -10,20 +10,6 @@ describe('DoublyLinkedListNode', () => {
     expect(doublyList.prev).toBeNull();
   });
 
-  it('creates list node with object with value', () => {
-    // Arrange
-    const expectedValue = {
-      value: 1,
-      key: 'test',
-    };
-
-    // Act
-    const list = new DoublyLinkedListNode<typeof expectedValue>(expectedValue);
-
-    // Assert
-    expect(list.prev).toBeNull();
-  });
-
   it('links node together', () => {
     // Arrange
     const node2 = new DoublyLinkedListNode<number>(2);
