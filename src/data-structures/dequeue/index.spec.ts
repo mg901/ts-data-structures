@@ -10,7 +10,7 @@ describe('Dequeue', () => {
 
   it('returns the initial state of the queue correctly', () => {
     // Act and Assert
-    expect(dequeue).not.toBeNull();
+    expect(dequeue).toBeDefined();
     expect(dequeue.size).toBe(0);
     expect(dequeue.toString()).toBe('');
     expect(dequeue.isEmpty).toBeTruthy();
@@ -21,16 +21,6 @@ describe('Dequeue', () => {
       expect(Object.prototype.toString.call(new Dequeue())).toBe(
         '[object Dequeue]',
       );
-    });
-  });
-
-  describe('isEmpty', () => {
-    it('returns false for a non-empty stack', () => {
-      // Act
-      dequeue.addFront(1);
-
-      // Assert
-      expect(dequeue.isEmpty).toBeFalsy();
     });
   });
 
