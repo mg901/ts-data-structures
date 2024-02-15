@@ -9,6 +9,15 @@ describe('DoublyLinkedList', () => {
     doublyLinkedList = new DoublyLinkedList<number>();
   });
 
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new DoublyLinkedList())).toBe(
+        '[object DoublyLinkedList]',
+      );
+    });
+  });
+
   it('returns the initial state correctly', () => {
     // Act and Assert
     expect(doublyLinkedList.head).toBeNull();
