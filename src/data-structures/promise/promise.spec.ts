@@ -7,9 +7,9 @@ import {
   vi,
   type Mock,
 } from 'vitest';
-import { CustomPromise } from './index';
+import { MyPromise } from './index';
 
-describe('CustomPromise', () => {
+describe('MyPromise', () => {
   let PROMISE_STATE: Record<
     'PENDING' | 'FULFILLED' | 'REJECTED',
     'pending' | 'fulfilled' | 'rejected'
@@ -19,8 +19,8 @@ describe('CustomPromise', () => {
   let IS_NOT_ITERABLE_ERROR_MESSAGE: string;
 
   // Arrange
-  let resolvedPromise: CustomPromise<string>;
-  let rejectedPromise: CustomPromise<never>;
+  let resolvedPromise: MyPromise<string>;
+  let rejectedPromise: MyPromise<never>;
   let onFulfilledSpy: Mock<any, any>;
   let onRejectedSpy: Mock<any, any>;
 
@@ -38,11 +38,11 @@ describe('CustomPromise', () => {
   });
 
   beforeEach(() => {
-    resolvedPromise = new CustomPromise((resolve) => {
+    resolvedPromise = new MyPromise((resolve) => {
       resolve(FULFILLED_VALUE);
     });
 
-    rejectedPromise = new CustomPromise((_, reject) => {
+    rejectedPromise = new MyPromise((_, reject) => {
       reject(new Error(REJECTED_REASON));
     });
 
@@ -66,7 +66,7 @@ describe('CustomPromise', () => {
       );
 
       // Act
-      const received = await new CustomPromise<string>(executor);
+      const received = await new MyPromise<string>(executor);
 
       // Assert
       expect(received).toEqual(expected);
@@ -82,7 +82,7 @@ describe('CustomPromise', () => {
 
       try {
         // Act
-        await new CustomPromise<string>(executor);
+        await new MyPromise<string>(executor);
       } catch (error: unknown) {
         if (error instanceof Error) {
           // Assert
@@ -98,9 +98,9 @@ describe('CustomPromise', () => {
   describe('then', () => {
     it('calls the fulfillment handler with a nested promise', async () => {
       // Arrange
-      const nestedPromise = new CustomPromise((resolve) => resolve(1));
+      const nestedPromise = new MyPromise((resolve) => resolve(1));
 
-      await new CustomPromise((resolve) => resolve(nestedPromise))
+      await new MyPromise((resolve) => resolve(nestedPromise))
         // Act
         .then(onFulfilledSpy, onRejectedSpy);
 
@@ -126,7 +126,7 @@ describe('CustomPromise', () => {
       // Arrange
       const expected = 'expected';
       const asynchronousCallback = () =>
-        new CustomPromise((resolve) => setTimeout(resolve, 50, expected));
+        new MyPromise((resolve) => setTimeout(resolve, 50, expected));
 
       // Act
       await resolvedPromise
@@ -234,7 +234,7 @@ describe('CustomPromise', () => {
         const expected = 'nested value';
 
         // Act
-        await CustomPromise.resolve(expected)
+        await MyPromise.resolve(expected)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -248,12 +248,12 @@ describe('CustomPromise', () => {
       it('resolve with nested promise ', async () => {
         // Arrange
         const expected = 'nested value';
-        const nestedPromise = new CustomPromise((resolve) => {
+        const nestedPromise = new MyPromise((resolve) => {
           setTimeout(resolve, 50, expected);
         });
 
         // Act
-        await CustomPromise.resolve(nestedPromise)
+        await MyPromise.resolve(nestedPromise)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -270,7 +270,7 @@ describe('CustomPromise', () => {
         // Arrange
         const expected = 'nested reason';
 
-        await CustomPromise.reject(new Error(expected)).catch(onRejectedSpy);
+        await MyPromise.reject(new Error(expected)).catch(onRejectedSpy);
 
         expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
@@ -279,12 +279,12 @@ describe('CustomPromise', () => {
       it('calls onFulfillment handler with the nested promise value', async () => {
         // Arrange
         const expected = 'nested reason';
-        const nestedPromise = new CustomPromise((_, reject) => {
+        const nestedPromise = new MyPromise((_, reject) => {
           setTimeout(reject, 50, new Error(expected));
         });
 
         // Act
-        await CustomPromise.reject(nestedPromise).catch(onRejectedSpy);
+        await MyPromise.reject(nestedPromise).catch(onRejectedSpy);
 
         // Assert
         expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
@@ -299,9 +299,7 @@ describe('CustomPromise', () => {
 
         // Act
         // @ts-ignore
-        await CustomPromise.all(expected)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        await MyPromise.all(expected).then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
@@ -322,9 +320,7 @@ describe('CustomPromise', () => {
         const expected: [] = [];
 
         // Act
-        await CustomPromise.all(expected)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        await MyPromise.all(expected).then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).toHaveBeenLastCalledWith(expected);
@@ -335,12 +331,10 @@ describe('CustomPromise', () => {
 
       it('resolves an array of promises', async () => {
         // Assert
-        const promises = VALUES.map((value) => CustomPromise.resolve(value));
+        const promises = VALUES.map((value) => MyPromise.resolve(value));
 
         // Act
-        await CustomPromise.all(promises)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        await MyPromise.all(promises).then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).toHaveBeenLastCalledWith(VALUES);
@@ -351,9 +345,7 @@ describe('CustomPromise', () => {
 
       it('handles non-promise values in the iterable', async () => {
         // Act
-        await CustomPromise.all(VALUES)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        await MyPromise.all(VALUES).then(onFulfilledSpy).catch(onRejectedSpy);
 
         expect(onFulfilledSpy).toHaveBeenLastCalledWith(VALUES);
         expect(onRejectedSpy).not.toHaveBeenCalled();
@@ -364,10 +356,10 @@ describe('CustomPromise', () => {
         const expected = 'error';
 
         // Act
-        await CustomPromise.all([
-          CustomPromise.resolve(1),
-          CustomPromise.reject(Error(expected)),
-          CustomPromise.resolve(2),
+        await MyPromise.all([
+          MyPromise.resolve(1),
+          MyPromise.reject(Error(expected)),
+          MyPromise.resolve(2),
         ])
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
@@ -387,7 +379,7 @@ describe('CustomPromise', () => {
 
         // Act
         // @ts-ignore
-        await CustomPromise.race(expected)
+        await MyPromise.race(expected)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -401,16 +393,16 @@ describe('CustomPromise', () => {
       it('resolves with the first fulfilled promise', async () => {
         // Arrange
         const expected = 'fast';
-        const promise2 = new CustomPromise((resolve) => {
+        const promise2 = new MyPromise((resolve) => {
           setTimeout(resolve, 50, expected);
         });
 
-        const promise1 = new CustomPromise((resolve) => {
+        const promise1 = new MyPromise((resolve) => {
           setTimeout(resolve, 100, 'slow');
         });
 
         // Act
-        await CustomPromise.race([promise1, promise2])
+        await MyPromise.race([promise1, promise2])
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -423,16 +415,16 @@ describe('CustomPromise', () => {
       it('rejects with the first rejected promise', async () => {
         // Arrange
         const expected = 'fast';
-        const promise2 = new CustomPromise((_, reject) => {
+        const promise2 = new MyPromise((_, reject) => {
           setTimeout(reject, 50, new Error('fast'));
         });
 
-        const promise1 = new CustomPromise((_, reject) => {
+        const promise1 = new MyPromise((_, reject) => {
           setTimeout(reject, 100, new Error(expected));
         });
 
         // Act
-        await CustomPromise.race([promise1, promise2])
+        await MyPromise.race([promise1, promise2])
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -446,12 +438,12 @@ describe('CustomPromise', () => {
       it('handles non-promise values in the iterable', async () => {
         // Arrange
         const expected = 'non-promise';
-        const promise = new CustomPromise((resolve) =>
+        const promise = new MyPromise((resolve) =>
           setTimeout(resolve, 100, 'first'),
         );
 
         // Act
-        await CustomPromise.race([promise, expected, 123])
+        await MyPromise.race([promise, expected, 123])
           .then(onFulfilledSpy)
           .catch(onFulfilledSpy);
 
@@ -468,9 +460,7 @@ describe('CustomPromise', () => {
 
         // Act
         // @ts-ignore
-        await CustomPromise.any(expected)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        await MyPromise.any(expected).then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
@@ -484,10 +474,10 @@ describe('CustomPromise', () => {
         const expected = 'first';
 
         // Act
-        await CustomPromise.any([
-          new CustomPromise((resolve) => setTimeout(resolve, 70, 'third')),
-          new CustomPromise((resolve) => setTimeout(resolve, 50, expected)),
-          new CustomPromise((resolve) => setTimeout(resolve, 60, 'second')),
+        await MyPromise.any([
+          new MyPromise((resolve) => setTimeout(resolve, 70, 'third')),
+          new MyPromise((resolve) => setTimeout(resolve, 50, expected)),
+          new MyPromise((resolve) => setTimeout(resolve, 60, 'second')),
         ])
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
@@ -501,10 +491,10 @@ describe('CustomPromise', () => {
 
       it('rejects if all promises were rejected', async () => {
         // Act
-        await CustomPromise.any([
-          CustomPromise.reject(1),
-          CustomPromise.reject(2),
-          CustomPromise.reject(3),
+        await MyPromise.any([
+          MyPromise.reject(1),
+          MyPromise.reject(2),
+          MyPromise.reject(3),
         ])
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
@@ -526,9 +516,7 @@ describe('CustomPromise', () => {
 
         // Act
         // @ts-ignore
-        await CustomPromise.all(expected)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        await MyPromise.all(expected).then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
@@ -541,7 +529,7 @@ describe('CustomPromise', () => {
         // Arrange
         const expected: [] = [];
         // Act
-        await CustomPromise.allSettled(expected)
+        await MyPromise.allSettled(expected)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -555,16 +543,16 @@ describe('CustomPromise', () => {
       it('handles promises with different settle times', async () => {
         // Arrange
         const promises = [
-          new CustomPromise((resolve) => {
+          new MyPromise((resolve) => {
             setTimeout(resolve, 50, 'fast');
           }),
-          new CustomPromise((_, reject) => {
+          new MyPromise((_, reject) => {
             setTimeout(reject, 100, new Error('slow'));
           }),
         ];
 
         // Act
-        await CustomPromise.allSettled(promises)
+        await MyPromise.allSettled(promises)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -581,14 +569,14 @@ describe('CustomPromise', () => {
       it('handles array with mix of promises and non-promises', async () => {
         // Arrange
         const promises = [
-          CustomPromise.resolve('one'),
+          MyPromise.resolve('one'),
           'two',
-          CustomPromise.reject(new Error('error')),
+          MyPromise.reject(new Error('error')),
           'three',
         ];
 
         // Act
-        await CustomPromise.allSettled(promises)
+        await MyPromise.allSettled(promises)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -605,7 +593,7 @@ describe('CustomPromise', () => {
 
       it('handles non-promise in the iterable', async () => {
         // Act
-        await CustomPromise.allSettled([1, 2])
+        await MyPromise.allSettled([1, 2])
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -621,13 +609,10 @@ describe('CustomPromise', () => {
 
       it('handles all promises fulfilled', async () => {
         // Arrange
-        const promises = [
-          CustomPromise.resolve('one'),
-          CustomPromise.resolve('two'),
-        ];
+        const promises = [MyPromise.resolve('one'), MyPromise.resolve('two')];
 
         // Act
-        await CustomPromise.allSettled(promises)
+        await MyPromise.allSettled(promises)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -644,12 +629,12 @@ describe('CustomPromise', () => {
       it('handles all promises rejected', async () => {
         // Arrange
         const promises = [
-          CustomPromise.reject(new Error('error1')),
-          CustomPromise.reject(new Error('error2')),
+          MyPromise.reject(new Error('error1')),
+          MyPromise.reject(new Error('error2')),
         ];
 
         // Act
-        await CustomPromise.allSettled(promises)
+        await MyPromise.allSettled(promises)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
