@@ -8,8 +8,10 @@ export class Queue<T = any> {
     this.#linkedList = new LinkedList<T>();
   }
 
-  enqueue(value: T) {
-    this.#linkedList.append(value);
+  *[Symbol.iterator]() {
+    for (const node of this.#linkedList) {
+      yield node.data;
+    }
   }
 
   get size() {
@@ -20,8 +22,10 @@ export class Queue<T = any> {
     return this.#linkedList.isEmpty;
   }
 
-  toString(callback?: Callback<T>) {
-    return this.#linkedList.toString(callback);
+  enqueue(value: T) {
+    this.#linkedList.append(value);
+
+    return this;
   }
 
   dequeue() {
@@ -34,5 +38,9 @@ export class Queue<T = any> {
 
   clear() {
     this.#linkedList.clear();
+  }
+
+  toString(callback?: Callback<T>) {
+    return this.#linkedList.toString(callback);
   }
 }

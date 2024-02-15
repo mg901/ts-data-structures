@@ -1,3 +1,4 @@
+import { Queue } from '@/data-structures/queue';
 import isFunction from 'lodash.isfunction';
 import { ValuesType } from 'utility-types';
 
@@ -27,14 +28,14 @@ type PromiseSettledResult<T> =
   | PromiseFulfilledResult<T>
   | PromiseRejectedResult;
 
-export class CustomPromise<T = any> {
+export class MyPromise<T = any> {
   #state: State = STATE.PENDING;
 
   #value?: Value<T>;
 
-  #onfulfilledCallbacks: Callback[] = [];
+  #onfulfilledCallbacks: Queue<Callback> = new Queue();
 
-  #onrejectedCallbacks: Callback[] = [];
+  #onrejectedCallbacks: Queue<Callback> = new Queue();
 
   static #handleNonIterable(reject: (reason: any) => void, values: any): void {
     if (!values[Symbol.iterator]) {
@@ -46,40 +47,36 @@ export class CustomPromise<T = any> {
     }
   }
 
-  static resolve(): CustomPromise<void>;
-  static resolve<T>(value: T): CustomPromise<Awaited<T>>;
-  static resolve<T>(value: T | PromiseLike<T>): CustomPromise<Awaited<T>>;
+  static resolve(): MyPromise<void>;
+  static resolve<T>(value: T): MyPromise<Awaited<T>>;
+  static resolve<T>(value: T | PromiseLike<T>): MyPromise<Awaited<T>>;
   static resolve<T>(value?: T | PromiseLike<T>) {
-    if (isCustomPromise(value)) {
+    if (isMyPromise(value)) {
       return value;
     }
 
-    return new CustomPromise<Awaited<T>>((resolve) =>
-      resolve(value as Awaited<T>),
-    );
+    return new MyPromise<Awaited<T>>((resolve) => resolve(value as Awaited<T>));
   }
 
   static reject<T = never>(reason?: any) {
-    if (isCustomPromise(reason)) {
+    if (isMyPromise(reason)) {
       return reason as T;
     }
 
-    return new CustomPromise<T>((_, reject) => reject(reason));
+    return new MyPromise<T>((_, reject) => reject(reason));
   }
 
   static all<T>(values: Iterable<T | PromiseLike<T>>) {
-    return new CustomPromise<Awaited<T>[]>((resolve, reject) => {
-      CustomPromise.#handleNonIterable(reject, values);
+    return new MyPromise<Awaited<T>[]>((resolve, reject) => {
+      MyPromise.#handleNonIterable(reject, values);
 
       Array.from(values)
-        .reduce<CustomPromise<Awaited<T>[]>>(
+        .reduce<MyPromise<Awaited<T>[]>>(
           (accumulator, promise) =>
             accumulator.then((results) =>
-              CustomPromise.resolve(promise).then((value) =>
-                results.concat(value),
-              ),
+              MyPromise.resolve(promise).then((value) => results.concat(value)),
             ),
-          CustomPromise.resolve([]),
+          MyPromise.resolve([]),
         )
         .then(
           (results) => {
@@ -93,30 +90,28 @@ export class CustomPromise<T = any> {
   }
 
   static race<T>(values: Iterable<T | PromiseLike<T>> = []) {
-    return new CustomPromise<Awaited<T>>((resolve, reject) => {
-      CustomPromise.#handleNonIterable(reject, values);
+    return new MyPromise<Awaited<T>>((resolve, reject) => {
+      MyPromise.#handleNonIterable(reject, values);
 
       for (const value of values) {
-        CustomPromise.resolve(value).then(resolve, reject);
+        MyPromise.resolve(value).then(resolve, reject);
       }
     });
   }
 
   static any<T extends readonly unknown[] | []>(
     values: T,
-  ): CustomPromise<Awaited<T[number]>>;
-  static any<T>(
-    values: Iterable<T | PromiseLike<T>>,
-  ): CustomPromise<Awaited<T>>;
+  ): MyPromise<Awaited<T[number]>>;
+  static any<T>(values: Iterable<T | PromiseLike<T>>): MyPromise<Awaited<T>>;
   static any<T>(values: Iterable<T | PromiseLike<T>>) {
     const promises = Array.from(values);
     let errors: Error[] = [];
 
-    return new CustomPromise<Awaited<T>>((resolve, reject) => {
-      CustomPromise.#handleNonIterable(reject, values);
+    return new MyPromise<Awaited<T>>((resolve, reject) => {
+      MyPromise.#handleNonIterable(reject, values);
 
       for (const promise of promises) {
-        CustomPromise.resolve(promise).then(resolve, (error: Error) => {
+        MyPromise.resolve(promise).then(resolve, (error: Error) => {
           errors.push(error);
 
           if (errors.length === promises.length) {
@@ -129,16 +124,16 @@ export class CustomPromise<T = any> {
 
   static allSettled<T extends readonly unknown[] | []>(
     values: T,
-  ): CustomPromise<{
+  ): MyPromise<{
     -readonly [P in keyof T]: PromiseSettledResult<Awaited<T[P]>>;
   }>;
   static allSettled<T>(
     values: Iterable<T | PromiseLike<T>>,
-  ): CustomPromise<PromiseSettledResult<Awaited<T>>[]>;
+  ): MyPromise<PromiseSettledResult<Awaited<T>>[]>;
   static allSettled<T>(values: Iterable<T | PromiseLike<T>> = []) {
-    return CustomPromise.all<PromiseSettledResult<Awaited<T>>>(
+    return MyPromise.all<PromiseSettledResult<Awaited<T>>>(
       Array.from(values).map((promise) =>
-        CustomPromise.resolve(promise).then(
+        MyPromise.resolve(promise).then(
           (value) => ({
             status: STATE.FULFILLED,
             value,
@@ -150,6 +145,14 @@ export class CustomPromise<T = any> {
         ),
       ),
     );
+  }
+
+  static #processCallbackQueue(queue: Queue<Callback>) {
+    for (const callback of queue) {
+      queueMicrotask(() => callback());
+    }
+
+    queue.clear();
   }
 
   constructor(
@@ -170,11 +173,7 @@ export class CustomPromise<T = any> {
       this.#state = STATE.FULFILLED;
       this.#value = value;
 
-      this.#onfulfilledCallbacks.forEach((callback) => {
-        queueMicrotask(() => callback());
-      });
-
-      this.#onfulfilledCallbacks = [];
+      MyPromise.#processCallbackQueue(this.#onfulfilledCallbacks);
     }
   }
 
@@ -183,11 +182,7 @@ export class CustomPromise<T = any> {
       this.#state = STATE.REJECTED;
       this.#value = reason;
 
-      this.#onrejectedCallbacks.forEach((callback) => {
-        queueMicrotask(() => callback());
-      });
-
-      this.#onrejectedCallbacks = [];
+      MyPromise.#processCallbackQueue(this.#onrejectedCallbacks);
     }
   }
 
@@ -195,7 +190,7 @@ export class CustomPromise<T = any> {
     onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
-    return new CustomPromise<TResult1 | TResult2>((resolve, reject) => {
+    return new MyPromise<TResult1 | TResult2>((resolve, reject) => {
       type Handler = typeof onfulfilled | typeof onrejected;
 
       const executeHandler = (handler: Handler) => {
@@ -203,7 +198,7 @@ export class CustomPromise<T = any> {
           if (isFunction(handler)) {
             const result = handler(this.#value as T);
 
-            if (isCustomPromise(result)) {
+            if (isMyPromise(result)) {
               result.then(resolve, reject);
             } else {
               resolve(result);
@@ -220,8 +215,8 @@ export class CustomPromise<T = any> {
 
       const handlers = {
         [STATE.PENDING]: () => {
-          this.#onfulfilledCallbacks.push(() => executeHandler(onfulfilled));
-          this.#onrejectedCallbacks.push(() => executeHandler(onrejected));
+          this.#onfulfilledCallbacks.enqueue(() => executeHandler(onfulfilled));
+          this.#onrejectedCallbacks.enqueue(() => executeHandler(onrejected));
         },
         [STATE.FULFILLED]: () => executeHandler(onfulfilled),
         [STATE.REJECTED]: () => executeHandler(onrejected),
@@ -257,6 +252,6 @@ export class CustomPromise<T = any> {
   }
 }
 
-function isCustomPromise(value: any): value is CustomPromise {
-  return value instanceof CustomPromise;
+function isMyPromise(value: any): value is MyPromise {
+  return value instanceof MyPromise;
 }

@@ -16,6 +16,33 @@ describe('Queue', () => {
     expect(queue.size).toBe(0);
   });
 
+  describe('size', () => {
+    it('returns the number of elements in the queue', () => {
+      // Arrange
+      queue.enqueue(10);
+      queue.enqueue(20);
+      queue.enqueue(30);
+
+      // Act and Assert
+      expect(queue.size).toBe(3);
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('returns true for an empty queue', () => {
+      // Act and Assert
+      expect(queue.isEmpty).toBeTruthy();
+    });
+
+    it('returns false for an non-empty queue', () => {
+      // Arrange
+      queue.enqueue(30);
+
+      // Assert
+      expect(queue.isEmpty).toBeFalsy();
+    });
+  });
+
   describe('enqueue', () => {
     it('adds an element to the queue', () => {
       // Act
@@ -37,30 +64,21 @@ describe('Queue', () => {
     });
   });
 
-  describe('isEmpty', () => {
-    it('returns true for an empty queue', () => {
-      // Act and Assert
-      expect(queue.isEmpty).toBeTruthy();
-    });
-
-    it('returns false for an non-empty queue', () => {
+  describe('Iterator', () => {
+    it('iterates through the elements', () => {
       // Arrange
-      queue.enqueue(30);
+      queue.enqueue(1).enqueue(2).enqueue(3);
+
+      // Act
+      const received = Array.from(queue, (item) => item);
 
       // Assert
-      expect(queue.isEmpty).toBeFalsy();
+      expect(received).toEqual([1, 2, 3]);
     });
-  });
 
-  describe('size', () => {
-    it('returns the number of elements in the queue', () => {
-      // Arrange
-      queue.enqueue(10);
-      queue.enqueue(20);
-      queue.enqueue(30);
-
+    it('handles an empty list', () => {
       // Act and Assert
-      expect(queue.size).toBe(3);
+      expect(Array.from(queue)).toEqual([]);
     });
   });
 
