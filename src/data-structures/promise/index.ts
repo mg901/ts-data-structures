@@ -8,8 +8,6 @@ const STATE = {
   REJECTED: 'rejected',
 } as const;
 
-type State = ValuesType<typeof STATE>;
-
 type Value<T> = T | PromiseLike<T>;
 
 type Callback = () => void;
@@ -29,23 +27,13 @@ type PromiseSettledResult<T> =
   | PromiseRejectedResult;
 
 export class MyPromise<T = any> {
-  #state: State = STATE.PENDING;
+  #state: ValuesType<typeof STATE> = STATE.PENDING;
 
   #value?: Value<T>;
 
-  #onfulfilledCallbacks: Queue<Callback> = new Queue();
+  #onfulfilledCallbacks = new Queue<Callback>();
 
-  #onrejectedCallbacks: Queue<Callback> = new Queue();
-
-  static #handleNonIterable(reject: (reason: any) => void, values: any): void {
-    if (!values[Symbol.iterator]) {
-      reject(
-        new TypeError(
-          `${typeof values} is not iterable (cannot read property Symbol(Symbol.iterator))`,
-        ),
-      );
-    }
-  }
+  #onrejectedCallbacks = new Queue<Callback>();
 
   static resolve(): MyPromise<void>;
   static resolve<T>(value: T): MyPromise<Awaited<T>>;
@@ -68,7 +56,7 @@ export class MyPromise<T = any> {
 
   static all<T>(values: Iterable<T | PromiseLike<T>>) {
     return new MyPromise<Awaited<T>[]>((resolve, reject) => {
-      MyPromise.#handleNonIterable(reject, values);
+      handleNonIterable(reject, values);
 
       Array.from(values)
         .reduce<MyPromise<Awaited<T>[]>>(
@@ -91,7 +79,7 @@ export class MyPromise<T = any> {
 
   static race<T>(values: Iterable<T | PromiseLike<T>> = []) {
     return new MyPromise<Awaited<T>>((resolve, reject) => {
-      MyPromise.#handleNonIterable(reject, values);
+      handleNonIterable(reject, values);
 
       for (const value of values) {
         MyPromise.resolve(value).then(resolve, reject);
@@ -108,7 +96,7 @@ export class MyPromise<T = any> {
     let errors: Error[] = [];
 
     return new MyPromise<Awaited<T>>((resolve, reject) => {
-      MyPromise.#handleNonIterable(reject, values);
+      handleNonIterable(reject, values);
 
       for (const promise of promises) {
         MyPromise.resolve(promise).then(resolve, (error: Error) => {
@@ -147,14 +135,6 @@ export class MyPromise<T = any> {
     );
   }
 
-  static #processCallbackQueue(queue: Queue<Callback>) {
-    for (const callback of queue) {
-      queueMicrotask(() => callback());
-    }
-
-    queue.clear();
-  }
-
   constructor(
     executor: (
       resolve: (value: T | PromiseLike<T>) => void,
@@ -173,7 +153,7 @@ export class MyPromise<T = any> {
       this.#state = STATE.FULFILLED;
       this.#value = value;
 
-      MyPromise.#processCallbackQueue(this.#onfulfilledCallbacks);
+      processCallbackQueue(this.#onfulfilledCallbacks);
     }
   }
 
@@ -182,7 +162,7 @@ export class MyPromise<T = any> {
       this.#state = STATE.REJECTED;
       this.#value = reason;
 
-      MyPromise.#processCallbackQueue(this.#onrejectedCallbacks);
+      processCallbackQueue(this.#onrejectedCallbacks);
     }
   }
 
@@ -252,6 +232,24 @@ export class MyPromise<T = any> {
   }
 }
 
+function handleNonIterable(reject: (reason: any) => void, values: any): void {
+  if (!values[Symbol.iterator]) {
+    reject(
+      new TypeError(
+        `${typeof values} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+      ),
+    );
+  }
+}
+
 function isMyPromise(value: any): value is MyPromise {
   return value instanceof MyPromise;
+}
+
+function processCallbackQueue(queue: Queue<Callback>) {
+  for (const callback of queue) {
+    queueMicrotask(() => callback());
+  }
+
+  queue.clear();
 }
