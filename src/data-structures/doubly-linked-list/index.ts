@@ -2,6 +2,11 @@ import { BaseLinkedList, Predicate } from '@/shared/base-linked-list';
 import { DoublyLinkedListNode as Node } from './node';
 
 export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'DoublyLinkedList';
+  }
+
   append(value: T) {
     const newNode = new Node(value);
 

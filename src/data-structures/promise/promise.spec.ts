@@ -97,6 +97,7 @@ describe('MyPromise', () => {
 
   describe('toStringTag', () => {
     it('returns correct string representation', () => {
+      // Assert
       expect(Object.prototype.toString.call(MyPromise.resolve(1))).toBe(
         '[object MyPromise]',
       );

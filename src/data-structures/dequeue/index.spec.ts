@@ -18,6 +18,7 @@ describe('Dequeue', () => {
 
   describe('toStringTag', () => {
     it('returns correct string representation', () => {
+      // Assert
       expect(Object.prototype.toString.call(new Dequeue())).toBe(
         '[object Dequeue]',
       );
