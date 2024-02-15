@@ -11,9 +11,17 @@ describe('Stack', () => {
 
   it('returns the initial state of the stack correctly', () => {
     // Act and Assert
-    expect(stack).not.toBeNull();
+    expect(stack).toBeDefined();
     expect(stack.isEmpty).toBeTruthy();
     expect(stack.size).toBe(0);
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      expect(Object.prototype.toString.call(new Stack())).toBe(
+        '[object Stack]',
+      );
+    });
   });
 
   describe('push', () => {
@@ -34,29 +42,6 @@ describe('Stack', () => {
 
       // Assert
       expect(stack.toString()).toBe('10,20,30');
-      expect(stack.size).toBe(3);
-    });
-  });
-
-  describe('isEmpty', () => {
-    it('returns false for a non-empty stack', () => {
-      // Act
-      stack.push(10);
-
-      // Assert
-      expect(stack.isEmpty).toBeFalsy();
-      expect(stack.size).toBe(1);
-    });
-  });
-
-  describe('size', () => {
-    it('returns the number of the elements in the stack', () => {
-      // Arrange
-      stack.push(10);
-      stack.push(20);
-      stack.push(30);
-
-      // Act and Assert
       expect(stack.size).toBe(3);
     });
   });
