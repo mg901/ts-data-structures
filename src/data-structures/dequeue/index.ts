@@ -2,11 +2,7 @@ import { type Callback } from '@/shared/node';
 import { DoublyLinkedList } from '../doubly-linked-list';
 
 export class Dequeue<T = any> {
-  #list: DoublyLinkedList<T>;
-
-  constructor() {
-    this.#list = new DoublyLinkedList<T>();
-  }
+  #list = new DoublyLinkedList<T>();
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
