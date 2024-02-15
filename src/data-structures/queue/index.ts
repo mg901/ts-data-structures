@@ -2,11 +2,7 @@ import { LinkedList } from '@/data-structures/linked-list';
 import { type Callback } from '@/shared/node';
 
 export class Queue<T = any> {
-  #linkedList: LinkedList<T>;
-
-  constructor() {
-    this.#linkedList = new LinkedList<T>();
-  }
+  #linkedList = new LinkedList<T>();
 
   *[Symbol.iterator]() {
     for (const node of this.#linkedList) {
@@ -42,5 +38,10 @@ export class Queue<T = any> {
 
   toString(callback?: Callback<T>) {
     return this.#linkedList.toString(callback);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'Queue';
   }
 }
