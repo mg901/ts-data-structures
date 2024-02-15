@@ -19,31 +19,26 @@ In summary, while there may be historical differences between the terms in certa
 */
 import { LinkedList } from '@/data-structures/linked-list';
 
-const INITIAL_CAPACITY = 10;
-
 type KeyValuePair<K, V> = {
   key: K;
   value: V;
 };
 
+const INITIAL_CAPACITY = 10;
 export class HashMap<K = any, V = any> {
-  #capacity: number;
-
   #buckets: LinkedList<KeyValuePair<K, V>>[] = [];
 
-  #size: number = 0;
+  #size = 0;
 
-  constructor(capacity = INITIAL_CAPACITY) {
-    this.#capacity = capacity;
-  }
-
-  get size() {
-    return this.#size;
-  }
+  #capacity = INITIAL_CAPACITY;
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
     return 'HashMap';
+  }
+
+  get size() {
+    return this.#size;
   }
 
   #hashCode(key: K) {
@@ -117,30 +112,6 @@ export class HashMap<K = any, V = any> {
     return this;
   }
 
-  *keys() {
-    for (const bucket of this.#buckets) {
-      for (const node of bucket) {
-        yield node.data.key;
-      }
-    }
-  }
-
-  *values() {
-    for (const bucket of this.#buckets) {
-      for (const node of bucket) {
-        yield node.data.value;
-      }
-    }
-  }
-
-  *entries() {
-    for (const bucket of this.#buckets) {
-      for (const node of bucket) {
-        yield [node.data.key, node.data.value];
-      }
-    }
-  }
-
   get(key: K) {
     const bucket = this.#findBucketByKey(key);
 
@@ -189,6 +160,30 @@ export class HashMap<K = any, V = any> {
         } else {
           callbackFn(data.value, data.key, this);
         }
+      }
+    }
+  }
+
+  *keys() {
+    for (const bucket of this.#buckets) {
+      for (const node of bucket) {
+        yield node.data.key;
+      }
+    }
+  }
+
+  *values() {
+    for (const bucket of this.#buckets) {
+      for (const node of bucket) {
+        yield node.data.value;
+      }
+    }
+  }
+
+  *entries() {
+    for (const bucket of this.#buckets) {
+      for (const node of bucket) {
+        yield [node.data.key, node.data.value];
       }
     }
   }
