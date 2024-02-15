@@ -95,6 +95,14 @@ describe('MyPromise', () => {
     });
   });
 
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      expect(Object.prototype.toString.call(MyPromise.resolve(1))).toBe(
+        '[object MyPromise]',
+      );
+    });
+  });
+
   describe('then', () => {
     it('calls the fulfillment handler with a nested promise', async () => {
       // Arrange

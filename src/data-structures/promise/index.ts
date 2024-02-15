@@ -148,6 +148,11 @@ export class MyPromise<T = any> {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'MyPromise';
+  }
+
   #resolve(value: Value<T>) {
     if (this.#state === STATE.PENDING) {
       this.#state = STATE.FULFILLED;
