@@ -10,11 +10,6 @@ export class Queue<T = any> {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'Queue';
-  }
-
   get size() {
     return this.#linkedList.size;
   }
@@ -43,5 +38,10 @@ export class Queue<T = any> {
 
   toString(callback?: Callback<T>) {
     return this.#linkedList.toString(callback);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'Queue';
   }
 }
