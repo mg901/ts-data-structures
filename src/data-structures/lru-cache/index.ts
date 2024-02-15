@@ -1,4 +1,4 @@
-import { DoublyLinkedListNode as Node } from '@/data-structures/doubly-linked-list/node';
+import { DoublyLinkedListNode } from '@/data-structures/doubly-linked-list/node';
 
 type NodeValue<K = any, V = any> = {
   key: K;
@@ -6,13 +6,13 @@ type NodeValue<K = any, V = any> = {
 };
 
 export class LRUCache<Key extends string | number | symbol = any, Value = any> {
-  #nodeMap = {} as Record<Key, Node<NodeValue<Key, Value>>>;
+  #nodeMap = {} as Record<Key, DoublyLinkedListNode<NodeValue<Key, Value>>>;
 
   #capacity: number;
 
-  #head: Node | null = null;
+  #head: DoublyLinkedListNode | null = null;
 
-  #tail: Node | null = null;
+  #tail: DoublyLinkedListNode | null = null;
 
   #size: number = 0;
 
@@ -21,7 +21,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
   }
 
   #push<K = any, V = any>(key: K, value: V) {
-    const newNode = new Node({ key, value });
+    const newNode = new DoublyLinkedListNode({ key, value });
 
     if (this.#head === null) {
       this.#head = newNode;
@@ -37,7 +37,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
     return newNode;
   }
 
-  #deleteByReference(node: Node) {
+  #deleteByReference(node: DoublyLinkedListNode) {
     if (this.#head === this.#tail) {
       this.#head = null;
       this.#tail = null;
@@ -72,7 +72,7 @@ export class LRUCache<Key extends string | number | symbol = any, Value = any> {
     }
 
     if (this.#size === this.#capacity) {
-      const head = this.#head as Node<NodeValue<Key, Value>>;
+      const head = this.#head as DoublyLinkedListNode<NodeValue<Key, Value>>;
 
       delete this.#nodeMap[head.data.key];
       this.#deleteByReference(head);

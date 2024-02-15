@@ -1,12 +1,13 @@
+import { type Callback } from '@/shared/node';
 import isFunction from 'lodash.isfunction';
-import { Comparator, CompareFunction } from '../comparator';
-import { BaseLinkedListNode, type Callback } from './node';
+import { LinkedListNode } from '../data-structures/linked-list/node';
+import { Comparator, CompareFunction } from './comparator';
 
 export type Predicate<T = unknown> = (value: T) => boolean;
 
 export abstract class BaseLinkedList<
   T = any,
-  Node extends BaseLinkedListNode<T> = BaseLinkedListNode<T>,
+  Node extends LinkedListNode<T> = LinkedListNode<T>,
 > {
   protected _head: Node | null = null;
 

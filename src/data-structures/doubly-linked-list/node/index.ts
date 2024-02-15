@@ -1,12 +1,17 @@
-import { BaseLinkedListNode } from '@/shared/base-linked-list/node';
+import { Node } from '@/shared/node';
 
-export class DoublyLinkedListNode<T = any> extends BaseLinkedListNode<T> {
+export class DoublyLinkedListNode<T = any> extends Node<T> {
+  next: DoublyLinkedListNode<T> | null;
+
+  prev: DoublyLinkedListNode<T> | null;
+
   constructor(
-    public data: T,
-    public next: DoublyLinkedListNode<T> | null = null,
-    public prev: DoublyLinkedListNode<T> | null = null,
+    data: T,
+    next: DoublyLinkedListNode<T> | null = null,
+    prev: DoublyLinkedListNode<T> | null = null,
   ) {
-    super(data, next);
+    super(data);
+    this.next = next;
     this.prev = prev;
   }
 }
