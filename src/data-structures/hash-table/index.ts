@@ -51,9 +51,7 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   #findBucketByKey(key: Key) {
     const index = this.#hashCode(key);
 
-    return this.#buckets[index] as
-      | LinkedList<{ key: Key; value: Val }>
-      | undefined;
+    return this.#buckets[index] ? this.#buckets[index] : undefined;
   }
 
   set(key: Key, value: Val) {
