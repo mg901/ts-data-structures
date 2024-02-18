@@ -227,6 +227,30 @@ describe('MyPromise', () => {
       expect(onFinallySpy).toHaveBeenCalled();
       expect(onFinallySpy).toHaveBeenCalledOnce();
     });
+
+    it('handles empty onfinally method after fulfillment', async () => {
+      // Arrange
+      const expected = 1;
+
+      // Act
+      await MyPromise.resolve(expected).finally(null).then(onFulfilledSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    });
+
+    it('handles empty onfinally method after rejection', async () => {
+      // Arrange
+      const expected = 1;
+
+      // Act
+      await MyPromise.reject(expected).finally(null).then(onFulfilledSpy);
+
+      // Assert
+      expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+      expect(onFulfilledSpy).toHaveBeenCalledOnce();
+    });
   });
 
   describe('static methods', () => {
