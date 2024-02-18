@@ -26,7 +26,6 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     return hash % this.#buckets.length;
   }
 
-  /* istanbul ignore next */
   #resizeIfNeeded() {
     const RESIZE_THRESHOLD = 0.7;
     const loadFactor = this.#size / this.#buckets.length;
