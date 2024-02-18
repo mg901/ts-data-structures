@@ -1,5 +1,7 @@
 import { LinkedList } from '@/data-structures/linked-list';
 
+type Maybe<T> = T | undefined;
+
 const INITIAL_CAPACITY = 5;
 export class HashTable<Key extends number | string | boolean, Val = any> {
   #capacity = INITIAL_CAPACITY;
@@ -50,11 +52,13 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
 
   #findBucketByKey(key: Key) {
     const index = this.#hashCode(key);
+    const bucket = this.#buckets[index];
 
-    return this.#buckets[index] ? this.#buckets[index] : undefined;
+    return bucket as Maybe<typeof bucket>;
   }
 
   set(key: Key, value: Val) {
+    /* istanbul ignore next */
     this.#resizeIfNeeded();
 
     const hash = this.#hashCode(key);
@@ -86,7 +90,6 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
 
   has(key: Key) {
     const bucket = this.#findBucketByKey(key);
-
     const node = bucket?.find((pair) => pair.key === key);
 
     return Boolean(node);
@@ -96,14 +99,14 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     const hash = this.#hashCode(key);
     const bucket = this.#buckets[hash];
 
-    if (bucket) {
-      const deletedNode = bucket.delete((pair) => pair.key === key);
+    const deletedNode = (bucket as Maybe<typeof bucket>)?.delete(
+      (pair) => pair.key === key,
+    );
 
-      if (deletedNode) {
-        this.#size -= 1;
+    if (deletedNode) {
+      this.#size -= 1;
 
-        return true;
-      }
+      return true;
     }
 
     return false;
