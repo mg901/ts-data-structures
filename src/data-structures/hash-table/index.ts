@@ -48,10 +48,11 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     this.#capacity = newCapacity;
   }
 
-  #findBucketByKey(key: Key) {
+  #getBucketByKey(key: Key) {
     const index = this.#hashCode(key);
+    const bucket = this.#buckets[index];
 
-    return this.#buckets[index] ? this.#buckets[index] : undefined;
+    return bucket as typeof bucket | undefined;
   }
 
   set(key: Key, value: Val) {
@@ -78,32 +79,28 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 
   get(key: Key) {
-    const bucket = this.#findBucketByKey(key);
+    const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
 
     return node?.data.value;
   }
 
   has(key: Key) {
-    const bucket = this.#findBucketByKey(key);
-
+    const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
 
     return Boolean(node);
   }
 
   delete(key: Key) {
-    const hash = this.#hashCode(key);
-    const bucket = this.#buckets[hash];
+    const deletedNode = this.#getBucketByKey(key)?.delete(
+      (pair) => pair.key === key,
+    );
 
-    if (bucket) {
-      const deletedNode = bucket.delete((pair) => pair.key === key);
+    if (deletedNode) {
+      this.#size -= 1;
 
-      if (deletedNode) {
-        this.#size -= 1;
-
-        return true;
-      }
+      return true;
     }
 
     return false;
