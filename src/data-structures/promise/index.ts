@@ -224,8 +224,6 @@ export class MyPromise<T = any> {
           onfinally();
         }
 
-        console.log('-----------', value);
-
         return value;
       },
       (reason) => {
