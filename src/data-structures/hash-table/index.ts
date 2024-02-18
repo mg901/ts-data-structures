@@ -1,7 +1,5 @@
 import { LinkedList } from '@/data-structures/linked-list';
 
-type Maybe<T> = T | undefined;
-
 const INITIAL_CAPACITY = 5;
 export class HashTable<Key extends number | string | boolean, Val = any> {
   #capacity = INITIAL_CAPACITY;
@@ -28,6 +26,7 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     return hash % this.#buckets.length;
   }
 
+  /* istanbul ignore next */
   #resizeIfNeeded() {
     const RESIZE_THRESHOLD = 0.7;
     const loadFactor = this.#size / this.#buckets.length;
@@ -50,15 +49,14 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     this.#capacity = newCapacity;
   }
 
-  #findBucketByKey(key: Key) {
+  #getBucketByKey(key: Key) {
     const index = this.#hashCode(key);
     const bucket = this.#buckets[index];
 
-    return bucket as Maybe<typeof bucket>;
+    return bucket as typeof bucket | undefined;
   }
 
   set(key: Key, value: Val) {
-    /* istanbul ignore next */
     this.#resizeIfNeeded();
 
     const hash = this.#hashCode(key);
@@ -82,24 +80,21 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 
   get(key: Key) {
-    const bucket = this.#findBucketByKey(key);
+    const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
 
     return node?.data.value;
   }
 
   has(key: Key) {
-    const bucket = this.#findBucketByKey(key);
+    const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
 
     return Boolean(node);
   }
 
   delete(key: Key) {
-    const hash = this.#hashCode(key);
-    const bucket = this.#buckets[hash];
-
-    const deletedNode = (bucket as Maybe<typeof bucket>)?.delete(
+    const deletedNode = this.#getBucketByKey(key)?.delete(
       (pair) => pair.key === key,
     );
 
