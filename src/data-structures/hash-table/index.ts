@@ -2,9 +2,9 @@ import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-l
 
 const INITIAL_CAPACITY = 5;
 export class HashTable<Key extends number | string | boolean, Val = any> {
-  capacity = INITIAL_CAPACITY;
+  #capacity = INITIAL_CAPACITY;
 
-  buckets = createArrayOfLinkedLists(this.capacity);
+  #buckets = createArrayOfLinkedLists(this.#capacity);
 
   #size = 0;
 
@@ -19,14 +19,14 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
 
   #resizeIfNeeded() {
     const RESIZE_THRESHOLD = 0.7;
-    const loadFactor = this.#size / this.buckets.length;
+    const loadFactor = this.#size / this.#buckets.length;
     if (loadFactor < RESIZE_THRESHOLD) return;
 
-    const newCapacity = this.capacity * 2;
+    const newCapacity = this.#capacity * 2;
     const newBuckets = createArrayOfLinkedLists(newCapacity);
 
     // Rehash existing key-value pairs into the new buckets
-    for (const bucket of this.buckets) {
+    for (const bucket of this.#buckets) {
       for (const node of bucket) {
         const { data } = node;
 
@@ -36,14 +36,14 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
       }
     }
 
-    this.buckets = newBuckets;
-    this.capacity = newCapacity;
+    this.#buckets = newBuckets;
+    this.#capacity = newCapacity;
   }
 
   #getBucketByKey(key: Key) {
-    const index = calcHashCode(key, this.capacity);
+    const index = calcHashCode(key, this.#capacity);
 
-    return this.buckets[index];
+    return this.#buckets[index];
   }
 
   set(key: Key, value: Val) {
@@ -97,8 +97,8 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 
   clear() {
-    this.capacity = INITIAL_CAPACITY;
-    this.buckets = createArrayOfLinkedLists(this.capacity);
+    this.#capacity = INITIAL_CAPACITY;
+    this.#buckets = createArrayOfLinkedLists(this.#capacity);
     this.#size = 0;
   }
 }
