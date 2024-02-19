@@ -30,7 +30,7 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
       for (const node of bucket) {
         const { data } = node;
 
-        const hashCode = createHashCode(data.key as Key, newCapacity);
+        const hashCode = calcHashCode(data.key as Key, newCapacity);
 
         newBuckets[hashCode].append(data);
       }
@@ -41,7 +41,7 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 
   #getBucketByKey(key: Key) {
-    const index = createHashCode(key, this.capacity);
+    const index = calcHashCode(key, this.capacity);
 
     return this.buckets[index];
   }
@@ -103,7 +103,7 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 }
 
-function createHashCode<T extends string | number | boolean>(
+function calcHashCode<T extends string | number | boolean>(
   key: T,
   length: number,
 ): number {
