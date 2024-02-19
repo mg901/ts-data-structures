@@ -2,9 +2,9 @@ import { LinkedList } from '@/data-structures/linked-list';
 
 const INITIAL_CAPACITY = 5;
 export class HashTable<Key extends number | string | boolean, Val = any> {
-  #capacity = INITIAL_CAPACITY;
+  capacity = INITIAL_CAPACITY;
 
-  #buckets = createArrayOfLinkedLists(this.#capacity);
+  buckets = createArrayOfLinkedLists(this.capacity);
 
   #size = 0;
 
@@ -17,54 +17,44 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     return this.#size;
   }
 
-  #hashCode(key: Key) {
-    const hash = Array.from(String(key)).reduce<number>(
-      (acc, char) => acc + char.charCodeAt(0),
-      0,
-    );
-
-    return hash % this.#buckets.length;
-  }
-
   #resizeIfNeeded() {
     const RESIZE_THRESHOLD = 0.7;
-    const loadFactor = this.#size / this.#buckets.length;
+    const loadFactor = this.#size / this.buckets.length;
     if (loadFactor < RESIZE_THRESHOLD) return;
 
-    const newCapacity = this.#capacity * 2;
+    const newCapacity = this.capacity * 2;
     const newBuckets = createArrayOfLinkedLists(newCapacity);
 
     // Rehash existing key-value pairs into the new buckets
-    for (const bucket of this.#buckets) {
+    for (const bucket of this.buckets) {
       for (const node of bucket) {
         const { data } = node;
 
-        const newIndex = this.#hashCode(data.key) % this.#buckets.length;
-        newBuckets[newIndex].append(data);
+        const hashCode = calcHashCode(data.key as Key, newCapacity);
+
+        newBuckets[hashCode].append(data);
       }
     }
 
-    this.#buckets = newBuckets;
-    this.#capacity = newCapacity;
+    this.buckets = newBuckets;
+    this.capacity = newCapacity;
   }
 
   #getBucketByKey(key: Key) {
-    const index = this.#hashCode(key);
-    const bucket = this.#buckets[index];
+    const index = calcHashCode(key, this.capacity);
 
-    return bucket as typeof bucket | undefined;
+    return this.buckets[index];
   }
 
   set(key: Key, value: Val) {
     this.#resizeIfNeeded();
 
-    const hash = this.#hashCode(key);
-    const bucket = this.#buckets[hash];
-    const existingNode = bucket.find((pair) => pair.key === key);
+    const bucket = this.#getBucketByKey(key);
+    const node = bucket?.find((pair) => pair.key === key);
 
-    if (existingNode) {
+    if (node) {
       // Update existing key-value pair.
-      existingNode.data.value = value;
+      node.data.value = value;
     } else {
       // Add new key-value pair.
       bucket.append({
@@ -107,10 +97,22 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 
   clear() {
-    this.#capacity = INITIAL_CAPACITY;
-    this.#buckets = createArrayOfLinkedLists(this.#capacity);
+    this.capacity = INITIAL_CAPACITY;
+    this.buckets = createArrayOfLinkedLists(this.capacity);
     this.#size = 0;
   }
+}
+
+function calcHashCode<T extends string | number | boolean>(
+  key: T,
+  length: number,
+): number {
+  const hash = Array.from(String(key)).reduce<number>(
+    (acc, char) => acc + char.charCodeAt(0),
+    0,
+  );
+
+  return hash % length;
 }
 
 function createArrayOfLinkedLists<Key = any, Val = any>(capacity: number) {

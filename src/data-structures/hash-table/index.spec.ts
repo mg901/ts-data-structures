@@ -26,13 +26,23 @@ describe('HashTable', () => {
   describe('set', () => {
     it('sets values correctly', () => {
       // Act
-      hashTable.set('one', 1).set('two', 2);
+      hashTable
+        .set('one', 1)
+        .set('two', 2)
+        .set('three', 3)
+        .set('four', 4)
+        .set('five', 5)
+        .set('six', 6);
 
       // Assert
       expect(hashTable.get('one')).toEqual(1);
       expect(hashTable.get('two')).toEqual(2);
+      expect(hashTable.get('three')).toEqual(3);
+      expect(hashTable.get('four')).toEqual(4);
+      expect(hashTable.get('five')).toEqual(5);
+      expect(hashTable.get('six')).toEqual(6);
 
-      expect(hashTable.size).toBe(2);
+      expect(hashTable.size).toBe(6);
     });
 
     it('updates existing values', () => {
