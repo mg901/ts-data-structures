@@ -17,11 +17,15 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     return this.#size;
   }
 
-  #resizeIfNeeded() {
+  #checkResize() {
     const RESIZE_THRESHOLD = 0.7;
     const loadFactor = this.#size / this.#buckets.length;
     if (loadFactor < RESIZE_THRESHOLD) return;
 
+    this.#resize();
+  }
+
+  #resize() {
     const newCapacity = this.#capacity * 2;
     const newBuckets = createArrayOfLinkedLists(newCapacity);
 
@@ -30,9 +34,9 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
       for (const node of bucket) {
         const { data } = node;
 
-        const hashCode = calcHashCode(data.key as Key, newCapacity);
+        const index = calcHash(data.key as Key, newCapacity);
 
-        newBuckets[hashCode].append(data);
+        newBuckets[index].append(data);
       }
     }
 
@@ -41,13 +45,13 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 
   #getBucketByKey(key: Key) {
-    const index = calcHashCode(key, this.#capacity);
+    const index = calcHash(key, this.#capacity);
 
     return this.#buckets[index];
   }
 
   set(key: Key, value: Val) {
-    this.#resizeIfNeeded();
+    this.#checkResize();
 
     const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
@@ -103,7 +107,7 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 }
 
-function calcHashCode<T extends string | number | boolean>(
+function calcHash<T extends string | number | boolean>(
   key: T,
   length: number,
 ): number {
