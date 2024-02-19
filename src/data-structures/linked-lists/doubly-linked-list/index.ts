@@ -1,20 +1,24 @@
-import { LinkedListNode } from '@/data-structures/linked-list/node';
-import { BaseLinkedList, type Predicate } from '@/shared/base-linked-list';
+import {
+  LinkedList,
+  Predicate,
+} from '@/data-structures/linked-lists/linked-list';
+import { DoublyLinkedListNode as Node } from './node';
 
-export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
+export class DoublyLinkedList<T = any> extends LinkedList<T, Node<T>> {
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'LinkedList';
+    return 'DoublyLinkedList';
   }
 
   append(value: T) {
-    const newNode = new LinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this._head === null) {
       this._head = newNode;
       this._tail = newNode;
     } else {
       this._tail!.next = newNode;
+      newNode.prev = this._tail;
       this._tail = newNode;
     }
 
@@ -32,13 +36,14 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
   }
 
   prepend(value: T) {
-    const newNode = new LinkedListNode(value);
+    const newNode = new Node(value);
 
     if (this._head === null) {
       this._head = newNode;
       this._tail = newNode;
     } else {
       newNode.next = this._head;
+      this._head.prev = newNode;
       this._head = newNode;
     }
 
@@ -47,13 +52,12 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     return this;
   }
 
-  delete(value: T): LinkedListNode<T> | null;
-  delete(predicate: Predicate<T>): LinkedListNode<T> | null;
+  delete(value: T): Node<T> | null;
+  delete(predicate: Predicate<T>): Node<T> | null;
   delete(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: LinkedListNode | null = null;
-    let prevNode: LinkedListNode | null = null;
+    let deletedNode: Node | null = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
@@ -61,33 +65,32 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
 
         break;
       }
-
-      prevNode = currentNode;
     }
 
-    if (deletedNode) {
-      this.#deleteNodeAndUpdateTail(deletedNode, prevNode);
+    if (deletedNode === null) return null;
 
-      deletedNode.next = null;
-      this._size -= 1;
+    if (deletedNode.prev !== null) {
+      deletedNode.prev.next = deletedNode.next;
+    } else {
+      // Deleted node is the head;
+      this._head = deletedNode.next;
     }
+
+    // Delete the node from the middle.
+    if (deletedNode.next !== null) {
+      deletedNode.next.prev = deletedNode.prev;
+    } else {
+      // Deleted node is the tail
+      this._tail = deletedNode.prev;
+    }
+
+    // Clear the reference of the deleted node.
+    deletedNode.prev = null;
+    deletedNode.next = null;
+
+    this._size -= 1;
 
     return deletedNode;
-  }
-
-  #deleteNodeAndUpdateTail(
-    deletedNode: LinkedListNode,
-    prevNode: LinkedListNode | null,
-  ) {
-    if (prevNode === null) {
-      this._head = deletedNode.next;
-    } else {
-      prevNode.next = deletedNode.next;
-    }
-
-    if (deletedNode.next === null) {
-      this._tail = prevNode;
-    }
   }
 
   reverse() {
@@ -95,12 +98,13 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
       return this;
     }
 
-    let currentNode = this._head as LinkedListNode | null;
     let prevNode = null;
+    let currentNode = this._head as Node | null;
 
     while (currentNode !== null) {
       const nextNode = currentNode.next;
       currentNode.next = prevNode;
+      currentNode.prev = nextNode;
       prevNode = currentNode;
 
       currentNode = nextNode;
@@ -124,15 +128,15 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
     if (index === 0) {
       // Insert at the beginning.
       this.prepend(value);
-    } else if (index === this._size) {
       // Insert at the end.
+    } else if (index === this._size) {
       this.append(value);
     } else {
       // Insert in the middle.
-      const prevNode = this._findNodeByIndex(index - 1);
-      const newNode = new LinkedListNode(value);
-
+      let prevNode = this._findNodeByIndex(index - 1);
+      let newNode = new Node(value);
       newNode.next = prevNode.next;
+      newNode.prev = prevNode;
       prevNode.next = newNode;
 
       this._size += 1;
@@ -148,6 +152,7 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
 
     if (deletedNode?.next) {
       this._head = deletedNode.next;
+      this._head.prev = null;
     } else {
       this._head = null;
       this._tail = null;
@@ -161,35 +166,24 @@ export class LinkedList<T = any> extends BaseLinkedList<T, LinkedListNode<T>> {
   deleteTail() {
     if (this._head === null) return null;
 
-    const deletedTail = this._tail;
-
     // If there is only one node.
     if (this._head === this._tail) {
+      const deletedNode = this._tail;
       this._head = null;
       this._tail = null;
-    } else {
-      // // If multiple nodes.
-      let prevNode: LinkedListNode | null = null;
 
-      for (const currentNode of this) {
-        if (currentNode.next) {
-          prevNode = currentNode;
-        } else {
-          prevNode!.next = null;
-          this._tail = prevNode;
+      this._size -= 1;
 
-          break;
-        }
-      }
+      return deletedNode;
     }
+
+    const deletedNode = this.tail!;
+
+    this._tail = deletedNode.prev!;
+    this._tail.next = null;
 
     this._size -= 1;
 
-    return deletedTail;
+    return deletedNode;
   }
 }
-
-const list = new LinkedList<number>().append(1).append(2);
-const deleted = list.delete(2);
-
-export const foo = deleted?.toString;

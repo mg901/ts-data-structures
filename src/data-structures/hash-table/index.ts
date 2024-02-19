@@ -1,4 +1,4 @@
-import { LinkedList } from '@/data-structures/linked-list';
+import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
 
 const INITIAL_CAPACITY = 5;
 export class HashTable<Key extends number | string | boolean, Val = any> {
@@ -116,6 +116,6 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
 function createArrayOfLinkedLists<Key = any, Val = any>(capacity: number) {
   return Array.from(
     { length: capacity },
-    () => new LinkedList<{ key: Key; value: Val }>(),
+    () => new SinglyLinkedList<{ key: Key; value: Val }>(),
   );
 }

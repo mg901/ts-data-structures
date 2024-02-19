@@ -1,8 +1,8 @@
-import { LinkedList } from '@/data-structures/linked-list';
+import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
 import { type Callback } from '@/shared/node';
 
 export class Queue<T = any> {
-  #linkedList = new LinkedList<T>();
+  #linkedList = new SinglyLinkedList<T>();
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {

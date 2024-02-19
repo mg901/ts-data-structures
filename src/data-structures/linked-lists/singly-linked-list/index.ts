@@ -1,21 +1,26 @@
-import { BaseLinkedList, Predicate } from '@/shared/base-linked-list';
-import { DoublyLinkedListNode as Node } from './node';
+import {
+  LinkedList,
+  type Predicate,
+} from '@/data-structures/linked-lists/linked-list';
+import { SinglyLinkedListNode } from '@/data-structures/linked-lists/singly-linked-list/node';
 
-export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
+export class SinglyLinkedList<T = any> extends LinkedList<
+  T,
+  SinglyLinkedListNode<T>
+> {
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'DoublyLinkedList';
+    return 'SinglyLinkedList';
   }
 
   append(value: T) {
-    const newNode = new Node(value);
+    const newNode = new SinglyLinkedListNode(value);
 
     if (this._head === null) {
       this._head = newNode;
       this._tail = newNode;
     } else {
       this._tail!.next = newNode;
-      newNode.prev = this._tail;
       this._tail = newNode;
     }
 
@@ -33,14 +38,13 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   }
 
   prepend(value: T) {
-    const newNode = new Node(value);
+    const newNode = new SinglyLinkedListNode(value);
 
     if (this._head === null) {
       this._head = newNode;
       this._tail = newNode;
     } else {
       newNode.next = this._head;
-      this._head.prev = newNode;
       this._head = newNode;
     }
 
@@ -49,12 +53,13 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     return this;
   }
 
-  delete(value: T): Node<T> | null;
-  delete(predicate: Predicate<T>): Node<T> | null;
+  delete(value: T): SinglyLinkedListNode<T> | null;
+  delete(predicate: Predicate<T>): SinglyLinkedListNode<T> | null;
   delete(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: Node | null = null;
+    let deletedNode: SinglyLinkedListNode | null = null;
+    let prevNode: SinglyLinkedListNode | null = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
@@ -62,32 +67,33 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
 
         break;
       }
+
+      prevNode = currentNode;
     }
 
-    if (deletedNode === null) return null;
+    if (deletedNode) {
+      this.#deleteNodeAndUpdateTail(deletedNode, prevNode);
 
-    if (deletedNode.prev !== null) {
-      deletedNode.prev.next = deletedNode.next;
-    } else {
-      // Deleted node is the head;
-      this._head = deletedNode.next;
+      deletedNode.next = null;
+      this._size -= 1;
     }
-
-    // Delete the node from the middle.
-    if (deletedNode.next !== null) {
-      deletedNode.next.prev = deletedNode.prev;
-    } else {
-      // Deleted node is the tail
-      this._tail = deletedNode.prev;
-    }
-
-    // Clear the reference of the deleted node.
-    deletedNode.prev = null;
-    deletedNode.next = null;
-
-    this._size -= 1;
 
     return deletedNode;
+  }
+
+  #deleteNodeAndUpdateTail(
+    deletedNode: SinglyLinkedListNode,
+    prevNode: SinglyLinkedListNode | null,
+  ) {
+    if (prevNode === null) {
+      this._head = deletedNode.next;
+    } else {
+      prevNode.next = deletedNode.next;
+    }
+
+    if (deletedNode.next === null) {
+      this._tail = prevNode;
+    }
   }
 
   reverse() {
@@ -95,13 +101,12 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
       return this;
     }
 
+    let currentNode = this._head as SinglyLinkedListNode | null;
     let prevNode = null;
-    let currentNode = this._head as Node | null;
 
     while (currentNode !== null) {
       const nextNode = currentNode.next;
       currentNode.next = prevNode;
-      currentNode.prev = nextNode;
       prevNode = currentNode;
 
       currentNode = nextNode;
@@ -125,15 +130,15 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
     if (index === 0) {
       // Insert at the beginning.
       this.prepend(value);
-      // Insert at the end.
     } else if (index === this._size) {
+      // Insert at the end.
       this.append(value);
     } else {
       // Insert in the middle.
-      let prevNode = this._findNodeByIndex(index - 1);
-      let newNode = new Node(value);
+      const prevNode = this._findNodeByIndex(index - 1);
+      const newNode = new SinglyLinkedListNode(value);
+
       newNode.next = prevNode.next;
-      newNode.prev = prevNode;
       prevNode.next = newNode;
 
       this._size += 1;
@@ -149,7 +154,6 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
 
     if (deletedNode?.next) {
       this._head = deletedNode.next;
-      this._head.prev = null;
     } else {
       this._head = null;
       this._tail = null;
@@ -163,24 +167,35 @@ export class DoublyLinkedList<T = any> extends BaseLinkedList<T, Node<T>> {
   deleteTail() {
     if (this._head === null) return null;
 
+    const deletedTail = this._tail;
+
     // If there is only one node.
     if (this._head === this._tail) {
-      const deletedNode = this._tail;
       this._head = null;
       this._tail = null;
+    } else {
+      // // If multiple nodes.
+      let prevNode: SinglyLinkedListNode | null = null;
 
-      this._size -= 1;
+      for (const currentNode of this) {
+        if (currentNode.next) {
+          prevNode = currentNode;
+        } else {
+          prevNode!.next = null;
+          this._tail = prevNode;
 
-      return deletedNode;
+          break;
+        }
+      }
     }
-
-    const deletedNode = this.tail!;
-
-    this._tail = deletedNode.prev!;
-    this._tail.next = null;
 
     this._size -= 1;
 
-    return deletedNode;
+    return deletedTail;
   }
 }
+
+const list = new SinglyLinkedList<number>().append(1).append(2);
+const deleted = list.delete(2);
+
+export const foo = deleted?.toString;
