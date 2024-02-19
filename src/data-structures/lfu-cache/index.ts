@@ -22,6 +22,10 @@ export class LFUCache<Key extends Primitive, Value = any> {
   put(key: Key, value: Value) {
     this.#size += 1;
 
+    if (this.#size > this.#capacity) {
+      this.#size -= 1;
+    }
+
     return this;
   }
 }

@@ -33,4 +33,15 @@ describe('LFUCache', () => {
     // Assert
     expect(cache.size).toBe(2);
   });
+
+  it('puts value in loaded cache', () => {
+    // Arrange
+    cache.put('one', 1).put('two', 2);
+
+    // Act
+    cache.put('three', 3);
+
+    // Assert
+    expect(cache.size).toBe(2);
+  });
 });
