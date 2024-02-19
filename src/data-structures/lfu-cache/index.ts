@@ -20,6 +20,8 @@ export class LFUCache<Key extends Primitive, Value = any> {
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   put(key: Key, value: Value) {
+    this.#size += 1;
+
     return this;
   }
 }
