@@ -15,11 +15,22 @@ describe('LFUCache', () => {
     expect(cache.size).toBe(0);
   });
 
-  it('handles put in empty cache', () => {
-    // Arrange
+  it('adds value to empty cache', () => {
+    // Act
     cache.put('one', 1);
 
     // Assert
     expect(cache.size).toBe(1);
+  });
+
+  it('adds value to non-empty cache', () => {
+    // Arrange
+    cache.put('one', 1);
+
+    // Act
+    cache.put('two', 2);
+
+    // Assert
+    expect(cache.size).toBe(2);
   });
 });
