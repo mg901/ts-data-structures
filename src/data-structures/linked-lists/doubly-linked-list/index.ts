@@ -2,6 +2,7 @@ import {
   LinkedList,
   Predicate,
 } from '@/data-structures/linked-lists/linked-list';
+import { Nullable } from '@/shared/types';
 import { DoublyLinkedListNode } from './node';
 
 export class DoublyLinkedList<T = any> extends LinkedList<
@@ -55,12 +56,12 @@ export class DoublyLinkedList<T = any> extends LinkedList<
     return this;
   }
 
-  deleteByValue(value: T): DoublyLinkedListNode<T> | null;
-  deleteByValue(predicate: Predicate<T>): DoublyLinkedListNode<T> | null;
+  deleteByValue(value: T): Nullable<DoublyLinkedListNode<T>>;
+  deleteByValue(predicate: Predicate<T>): Nullable<DoublyLinkedListNode<T>>;
   deleteByValue(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: DoublyLinkedListNode | null = null;
+    let deletedNode: Nullable<DoublyLinkedListNode<T>> = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
@@ -96,24 +97,27 @@ export class DoublyLinkedList<T = any> extends LinkedList<
     return deletedNode;
   }
 
-  deleteByNode(node: DoublyLinkedListNode) {
-    if (this._head === this._tail) {
-      this._head = null;
-      this._tail = null;
-    } else if (node === this._head && this._head?.next) {
-      this._head = this._head.next;
-      this._head.prev = null;
-    } else if (node === this._tail && this._tail.prev) {
-      this._tail = this._tail.prev;
-      this._tail.next = null;
+  deleteByReference(ref: DoublyLinkedListNode<T>) {
+    if (ref.next) {
+      // In the middle or at the beginning.
+      ref.next.prev = ref.prev;
     } else {
-      node.prev!.next = node.next;
-      node.next!.prev = node.prev;
+      this._tail = ref.prev;
+      // Contains one node or at the end.
     }
 
-    if (this._size > 0) {
-      this._size -= 1;
+    if (ref.prev) {
+      // At the end or in the middle.
+      ref.prev.next = ref.next;
+    } else {
+      // Contains one node or at the beginning.
+      this._head = ref.next;
     }
+
+    ref!.next = null;
+    ref!.prev = null;
+
+    this._size -= 1;
   }
 
   reverse() {
@@ -122,7 +126,7 @@ export class DoublyLinkedList<T = any> extends LinkedList<
     }
 
     let prevNode = null;
-    let currentNode = this._head as DoublyLinkedListNode | null;
+    let currentNode = this._head as Nullable<DoublyLinkedListNode<T>>;
 
     while (currentNode !== null) {
       const nextNode = currentNode.next;

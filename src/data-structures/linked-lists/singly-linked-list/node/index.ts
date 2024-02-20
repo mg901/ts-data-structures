@@ -1,9 +1,10 @@
 import { Node } from '@/shared/node';
+import { Nullable } from '@/shared/types';
 
 export class SinglyLinkedListNode<T = any> extends Node<T> {
-  next: SinglyLinkedListNode<T> | null;
+  next: Nullable<SinglyLinkedListNode<T>>;
 
-  constructor(data: T, next: SinglyLinkedListNode<T> | null = null) {
+  constructor(data: T, next: Nullable<SinglyLinkedListNode<T>> = null) {
     super(data);
     this.next = next;
   }

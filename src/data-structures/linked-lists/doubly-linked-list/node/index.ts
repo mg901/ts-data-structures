@@ -1,14 +1,15 @@
 import { Node } from '@/shared/node';
+import { Nullable } from '@/shared/types';
 
 export class DoublyLinkedListNode<T = any> extends Node<T> {
-  next: DoublyLinkedListNode<T> | null;
+  next: Nullable<DoublyLinkedListNode>;
 
-  prev: DoublyLinkedListNode<T> | null;
+  prev: Nullable<DoublyLinkedListNode>;
 
   constructor(
     data: T,
-    next: DoublyLinkedListNode<T> | null = null,
-    prev: DoublyLinkedListNode<T> | null = null,
+    next: Nullable<DoublyLinkedListNode> = null,
+    prev: Nullable<DoublyLinkedListNode> = null,
   ) {
     super(data);
     this.next = next;

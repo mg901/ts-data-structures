@@ -1,5 +1,6 @@
 import { Comparator, CompareFunction } from '@/shared/comparator';
 import { type Callback } from '@/shared/node';
+import { Nullable } from '@/shared/types';
 import isFunction from 'lodash.isfunction';
 import { SinglyLinkedListNode } from './singly-linked-list/node';
 
@@ -9,9 +10,9 @@ export abstract class LinkedList<
   T = any,
   Node extends SinglyLinkedListNode<T> = SinglyLinkedListNode<T>,
 > {
-  protected _head: Node | null = null;
+  protected _head: Nullable<Node> = null;
 
-  protected _tail: Node | null = null;
+  protected _tail: Nullable<Node> = null;
 
   protected _size: number = 0;
 
@@ -72,8 +73,8 @@ export abstract class LinkedList<
     return Array.from(this, (node) => node.data);
   }
 
-  find(value: T): Node | null;
-  find(predicate: Predicate<T>): Node | null;
+  find(value: T): Nullable<Node>;
+  find(predicate: Predicate<T>): Nullable<Node>;
   find(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
@@ -110,9 +111,9 @@ export abstract class LinkedList<
   abstract append(value: T): this;
   abstract fromArray(array: T[]): this;
   abstract prepend(value: T): this;
-  abstract deleteByValue(value: T | Predicate<T>): Node | null;
+  abstract deleteByValue(value: T | Predicate<T>): Nullable<Node>;
   abstract insertAt(index: number, value: T): this;
   abstract reverse(): this;
-  abstract deleteHead(): Node | null;
-  abstract deleteTail(): Node | null;
+  abstract deleteHead(): Nullable<Node>;
+  abstract deleteTail(): Nullable<Node>;
 }
