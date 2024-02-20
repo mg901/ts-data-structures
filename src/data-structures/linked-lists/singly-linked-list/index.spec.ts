@@ -224,7 +224,7 @@ describe('SinglyLinkedList', () => {
   describe('delete', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
-      const deletedNode = singlyList.delete(2);
+      const deletedNode = singlyList.deleteByValue(2);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -235,7 +235,7 @@ describe('SinglyLinkedList', () => {
       singlyList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = singlyList.delete(3);
+      const deletedNode = singlyList.deleteByValue(3);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -249,7 +249,7 @@ describe('SinglyLinkedList', () => {
       singlyList.append(1);
 
       // Act
-      const deletedElement = singlyList.delete(1)!;
+      const deletedElement = singlyList.deleteByValue(1)!;
 
       // Assert
       expect(deletedElement.data).toBe(1);
@@ -264,7 +264,7 @@ describe('SinglyLinkedList', () => {
       singlyList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedNode = singlyList.delete(1);
+      const deletedNode = singlyList.deleteByValue(1);
 
       // Assert
       expect(deletedNode?.data).toBe(1);
@@ -278,7 +278,7 @@ describe('SinglyLinkedList', () => {
       singlyList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedElement = singlyList.delete(2);
+      const deletedElement = singlyList.deleteByValue(2);
 
       // Assert
       expect(deletedElement?.data).toBe(2);
@@ -292,7 +292,7 @@ describe('SinglyLinkedList', () => {
       singlyList.fromArray([1, 2]);
 
       // Act
-      const deletedElement = singlyList.delete(2);
+      const deletedElement = singlyList.deleteByValue(2);
 
       // Assert
       expect(deletedElement?.data).toBe(2);
@@ -316,7 +316,7 @@ describe('SinglyLinkedList', () => {
       ]);
 
       // Act
-      const deletedNode = list.delete((pair) => pair.key === 'two');
+      const deletedNode = list.deleteByValue((pair) => pair.key === 'two');
 
       // Assert
       expect(deletedNode?.data.value).toBe(2);

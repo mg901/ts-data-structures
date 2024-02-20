@@ -52,9 +52,9 @@ export class DoublyLinkedList<T = any> extends LinkedList<T, Node<T>> {
     return this;
   }
 
-  delete(value: T): Node<T> | null;
-  delete(predicate: Predicate<T>): Node<T> | null;
-  delete(arg: T | Predicate<T>) {
+  deleteByValue(value: T): Node<T> | null;
+  deleteByValue(predicate: Predicate<T>): Node<T> | null;
+  deleteByValue(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
     let deletedNode: Node | null = null;

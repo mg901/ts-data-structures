@@ -53,9 +53,9 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     return this;
   }
 
-  delete(value: T): SinglyLinkedListNode<T> | null;
-  delete(predicate: Predicate<T>): SinglyLinkedListNode<T> | null;
-  delete(arg: T | Predicate<T>) {
+  deleteByValue(value: T): SinglyLinkedListNode<T> | null;
+  deleteByValue(predicate: Predicate<T>): SinglyLinkedListNode<T> | null;
+  deleteByValue(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
     let deletedNode: SinglyLinkedListNode | null = null;
@@ -196,6 +196,6 @@ export class SinglyLinkedList<T = any> extends LinkedList<
 }
 
 const list = new SinglyLinkedList<number>().append(1).append(2);
-const deleted = list.delete(2);
+const deleted = list.deleteByValue(2);
 
 export const foo = deleted?.toString;

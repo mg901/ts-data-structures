@@ -110,7 +110,7 @@ export abstract class LinkedList<
   abstract append(value: T): this;
   abstract fromArray(array: T[]): this;
   abstract prepend(value: T): this;
-  abstract delete(value: T | Predicate<T>): Node | null;
+  abstract deleteByValue(value: T | Predicate<T>): Node | null;
   abstract insertAt(index: number, value: T): this;
   abstract reverse(): this;
   abstract deleteHead(): Node | null;
