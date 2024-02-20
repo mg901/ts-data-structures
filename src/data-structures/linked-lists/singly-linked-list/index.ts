@@ -3,6 +3,7 @@ import {
   type Predicate,
 } from '@/data-structures/linked-lists/linked-list';
 import { SinglyLinkedListNode } from '@/data-structures/linked-lists/singly-linked-list/node';
+import { type Nullable } from '@/shared/types';
 
 export class SinglyLinkedList<T = any> extends LinkedList<
   T,
@@ -53,13 +54,13 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     return this;
   }
 
-  delete(value: T): SinglyLinkedListNode<T> | null;
-  delete(predicate: Predicate<T>): SinglyLinkedListNode<T> | null;
-  delete(arg: T | Predicate<T>) {
+  deleteByValue(value: T): Nullable<SinglyLinkedListNode<T>>;
+  deleteByValue(predicate: Predicate<T>): Nullable<SinglyLinkedListNode<T>>;
+  deleteByValue(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: SinglyLinkedListNode | null = null;
-    let prevNode: SinglyLinkedListNode | null = null;
+    let deletedNode: Nullable<SinglyLinkedListNode<T>> = null;
+    let prevNode: Nullable<SinglyLinkedListNode<T>> = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
@@ -83,7 +84,7 @@ export class SinglyLinkedList<T = any> extends LinkedList<
 
   #deleteNodeAndUpdateTail(
     deletedNode: SinglyLinkedListNode,
-    prevNode: SinglyLinkedListNode | null,
+    prevNode: Nullable<SinglyLinkedListNode<T>>,
   ) {
     if (prevNode === null) {
       this._head = deletedNode.next;
@@ -101,7 +102,7 @@ export class SinglyLinkedList<T = any> extends LinkedList<
       return this;
     }
 
-    let currentNode = this._head as SinglyLinkedListNode | null;
+    let currentNode = this._head as Nullable<SinglyLinkedListNode<T>>;
     let prevNode = null;
 
     while (currentNode !== null) {
@@ -175,7 +176,7 @@ export class SinglyLinkedList<T = any> extends LinkedList<
       this._tail = null;
     } else {
       // // If multiple nodes.
-      let prevNode: SinglyLinkedListNode | null = null;
+      let prevNode: Nullable<SinglyLinkedListNode<T>> = null;
 
       for (const currentNode of this) {
         if (currentNode.next) {
@@ -196,6 +197,6 @@ export class SinglyLinkedList<T = any> extends LinkedList<
 }
 
 const list = new SinglyLinkedList<number>().append(1).append(2);
-const deleted = list.delete(2);
+const deleted = list.deleteByValue(2);
 
 export const foo = deleted?.toString;

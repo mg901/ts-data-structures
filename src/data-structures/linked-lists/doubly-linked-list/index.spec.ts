@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DoublyLinkedList } from './index';
+import { DoublyLinkedListNode } from './node';
 
 describe('DoublyLinkedList', () => {
   let doublyList: DoublyLinkedList<number>;
@@ -115,10 +116,10 @@ describe('DoublyLinkedList', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('deleteByValue', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
-      const deletedNode = doublyList.delete(5);
+      const deletedNode = doublyList.deleteByValue(5);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -128,12 +129,12 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.size).toBe(0);
     });
 
-    it('deletes the element outside the list', () => {
+    it('deletes the node outside the list', () => {
       // Arrange
       doublyList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = doublyList.delete(3);
+      const deletedNode = doublyList.deleteByValue(3);
 
       // Assert
       expect(deletedNode).toBeNull();
@@ -152,7 +153,7 @@ describe('DoublyLinkedList', () => {
       doublyList.append(1);
 
       // Act
-      const deletedNode = doublyList.delete(1);
+      const deletedNode = doublyList.deleteByValue(1);
 
       // Assert
       expect(deletedNode?.data).toBe(1);
@@ -162,12 +163,12 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.size).toBe(0);
     });
 
-    it('deletes the first element', () => {
+    it('deletes the first node', () => {
       // Arrange
       doublyList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = doublyList.delete(1);
+      const deletedNode = doublyList.deleteByValue(1);
 
       // Assert
       expect(deletedNode?.data).toBe(1);
@@ -183,12 +184,12 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.size).toBe(1);
     });
 
-    it('deletes an element in the middle', () => {
+    it('deletes the node in the middle', () => {
       // Arrange
       doublyList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedNode = doublyList.delete(2);
+      const deletedNode = doublyList.deleteByValue(2);
 
       // Assert
       expect(deletedNode?.data).toBe(2);
@@ -203,12 +204,12 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.size).toBe(2);
     });
 
-    it('deletes the last element', () => {
+    it('deletes the last node', () => {
       // Arrange
       doublyList.fromArray([1, 2]);
 
       // Act
-      const deleteNode = doublyList.delete(2);
+      const deleteNode = doublyList.deleteByValue(2);
 
       // Assert
       expect(deleteNode?.data).toBe(2);
@@ -224,7 +225,7 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.size).toBe(1);
     });
 
-    it('deletes node with object value', () => {
+    it('deletes the node with object value', () => {
       // Arrange
       type Value = {
         key: string;
@@ -238,7 +239,7 @@ describe('DoublyLinkedList', () => {
       ]);
 
       // Act
-      const deletedNode = list.delete({
+      const deletedNode = list.deleteByValue({
         key: 'two',
         value: 2,
       });
@@ -253,6 +254,79 @@ describe('DoublyLinkedList', () => {
       expect(list.tail?.data.value).toBe(3);
       expect(list.tail?.next).toBeNull();
       expect(list.size).toBe(2);
+    });
+  });
+
+  describe('deleteByReference', () => {
+    // Arrange
+    let nodeMap: Record<string, DoublyLinkedListNode>;
+
+    beforeEach(() => {
+      nodeMap = {};
+    });
+
+    it('deletes the node from a singular node list', () => {
+      // Arrange
+      nodeMap.one = doublyList.append(1).tail!;
+
+      // Act
+      doublyList.deleteByReference(nodeMap.one!);
+
+      // Assert
+      expect(doublyList.head).toBeNull();
+      expect(doublyList.tail).toBeNull();
+      expect(doublyList.size).toBe(0);
+    });
+
+    it('deletes the first node', () => {
+      // Arrange
+      nodeMap.one = doublyList.append(1).tail!;
+      nodeMap.two = doublyList.append(2).tail!;
+
+      // Act
+      doublyList.deleteByReference(nodeMap.one!);
+
+      // Assert
+      expect(doublyList.head?.data).toBe(2);
+      expect(doublyList.head?.next).toBeNull();
+      expect(doublyList.tail?.data).toBe(2);
+      expect(doublyList.tail?.prev).toBeNull();
+      expect(doublyList.size).toBe(1);
+    });
+
+    it('deletes the last element', () => {
+      // Arrange
+      nodeMap.one = doublyList.append(1).tail!;
+      nodeMap.two = doublyList.append(2).tail!;
+
+      // Act
+      doublyList.deleteByReference(nodeMap.two!);
+
+      // Assert
+      expect(doublyList.head?.data).toBe(1);
+      expect(doublyList.head?.next).toBeNull();
+
+      expect(doublyList.tail?.data).toBe(1);
+      expect(doublyList.tail?.prev).toBeNull();
+      expect(doublyList.size).toBe(1);
+    });
+
+    it('deletes the node at the middle', () => {
+      // Arrange
+      nodeMap.one = doublyList.append(1).tail!;
+      nodeMap.two = doublyList.append(2).tail!;
+      nodeMap.three = doublyList.append(3).tail!;
+
+      // Act
+      doublyList.deleteByReference(nodeMap.two);
+
+      // Assert
+      expect(doublyList.head?.data).toBe(1);
+      expect(doublyList.head?.next?.data).toBe(3);
+
+      expect(doublyList.tail?.data).toBe(3);
+      expect(doublyList.tail?.prev?.data).toBe(1);
+      expect(doublyList.size).toBe(2);
     });
   });
 
