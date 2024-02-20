@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DoublyLinkedList } from './index';
+import { DoublyLinkedListNode } from './node';
 
 describe('DoublyLinkedList', () => {
   let doublyList: DoublyLinkedList<number>;
@@ -253,6 +254,35 @@ describe('DoublyLinkedList', () => {
       expect(list.tail?.data.value).toBe(3);
       expect(list.tail?.next).toBeNull();
       expect(list.size).toBe(2);
+    });
+  });
+
+  describe('deleteByNode', () => {
+    it('removes node in the empty list', () => {
+      // Arrange
+      const node = new DoublyLinkedListNode(1);
+
+      // Act
+      doublyList.deleteByNode(node);
+
+      // Assert
+      expect(doublyList.head).toBeNull();
+      expect(doublyList.tail).toBeNull();
+      expect(doublyList.size).toBe(0);
+    });
+
+    it('removes node in the list with one node', () => {
+      // Arrange
+      const node = new DoublyLinkedListNode(1);
+      const list = new DoublyLinkedList().append(1);
+
+      // Act
+      list.deleteByNode(node);
+
+      // Assert
+      expect(doublyList.head).toBeNull();
+      expect(doublyList.tail).toBeNull();
+      expect(doublyList.size).toBe(0);
     });
   });
 

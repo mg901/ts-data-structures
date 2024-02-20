@@ -2,16 +2,19 @@ import {
   LinkedList,
   Predicate,
 } from '@/data-structures/linked-lists/linked-list';
-import { DoublyLinkedListNode as Node } from './node';
+import { DoublyLinkedListNode } from './node';
 
-export class DoublyLinkedList<T = any> extends LinkedList<T, Node<T>> {
+export class DoublyLinkedList<T = any> extends LinkedList<
+  T,
+  DoublyLinkedListNode<T>
+> {
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
     return 'DoublyLinkedList';
   }
 
   append(value: T) {
-    const newNode = new Node(value);
+    const newNode = new DoublyLinkedListNode(value);
 
     if (this._head === null) {
       this._head = newNode;
@@ -36,7 +39,7 @@ export class DoublyLinkedList<T = any> extends LinkedList<T, Node<T>> {
   }
 
   prepend(value: T) {
-    const newNode = new Node(value);
+    const newNode = new DoublyLinkedListNode(value);
 
     if (this._head === null) {
       this._head = newNode;
@@ -52,12 +55,12 @@ export class DoublyLinkedList<T = any> extends LinkedList<T, Node<T>> {
     return this;
   }
 
-  deleteByValue(value: T): Node<T> | null;
-  deleteByValue(predicate: Predicate<T>): Node<T> | null;
+  deleteByValue(value: T): DoublyLinkedListNode<T> | null;
+  deleteByValue(predicate: Predicate<T>): DoublyLinkedListNode<T> | null;
   deleteByValue(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: Node | null = null;
+    let deletedNode: DoublyLinkedListNode | null = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
@@ -93,13 +96,33 @@ export class DoublyLinkedList<T = any> extends LinkedList<T, Node<T>> {
     return deletedNode;
   }
 
+  deleteByNode(node: DoublyLinkedListNode) {
+    if (this._head === this._tail) {
+      this._head = null;
+      this._tail = null;
+    } else if (node === this._head && this._head?.next) {
+      this._head = this._head.next;
+      this._head.prev = null;
+    } else if (node === this._tail && this._tail.prev) {
+      this._tail = this._tail.prev;
+      this._tail.next = null;
+    } else {
+      node.prev!.next = node.next;
+      node.next!.prev = node.prev;
+    }
+
+    if (this._size > 0) {
+      this._size -= 1;
+    }
+  }
+
   reverse() {
     if (this._head === null || this._head.next === null) {
       return this;
     }
 
     let prevNode = null;
-    let currentNode = this._head as Node | null;
+    let currentNode = this._head as DoublyLinkedListNode | null;
 
     while (currentNode !== null) {
       const nextNode = currentNode.next;
@@ -134,7 +157,7 @@ export class DoublyLinkedList<T = any> extends LinkedList<T, Node<T>> {
     } else {
       // Insert in the middle.
       let prevNode = this._findNodeByIndex(index - 1);
-      let newNode = new Node(value);
+      let newNode = new DoublyLinkedListNode(value);
       newNode.next = prevNode.next;
       newNode.prev = prevNode;
       prevNode.next = newNode;
