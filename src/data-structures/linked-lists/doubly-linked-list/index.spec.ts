@@ -10,15 +10,6 @@ describe('DoublyLinkedList', () => {
     doublyList = new DoublyLinkedList<number>();
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new DoublyLinkedList())).toBe(
-        '[object DoublyLinkedList]',
-      );
-    });
-  });
-
   it('returns the initial state correctly', () => {
     // Act and Assert
     expect(doublyList.head).toBeNull();
@@ -564,6 +555,15 @@ describe('DoublyLinkedList', () => {
       expect(doublyList.tail?.next).toBeNull();
       expect(doublyList.tail?.prev).toBeNull();
       expect(doublyList.size).toBe(1);
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new DoublyLinkedList())).toBe(
+        '[object DoublyLinkedList]',
+      );
     });
   });
 });

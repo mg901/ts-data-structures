@@ -12,19 +12,11 @@ describe('LRUCache', () => {
     cache.put('two', 2);
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new LRUCache(6))).toBe(
-        '[object LRUCache]',
-      );
-    });
-  });
-
   it('stores and retrieve values', () => {
     // Assert
     expect(cache.get('one')).toBe(1);
     expect(cache.get('two')).toBe(2);
+    expect(cache.size).toBe(2);
   });
 
   it('evicts least recently used item when exceeding capacity', () => {
@@ -36,6 +28,7 @@ describe('LRUCache', () => {
     expect(cache.get('one')).toBe(1);
     expect(cache.get('two')).toBe(-1);
     expect(cache.get('three')).toBe(3);
+    expect(cache.size).toBe(2);
   });
 
   it('updates value for an existing key', () => {
@@ -48,5 +41,14 @@ describe('LRUCache', () => {
 
     // Assert
     expect(cache.get('value')).toBe(20);
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new LRUCache(6))).toBe(
+        '[object LRUCache]',
+      );
+    });
   });
 });

@@ -4,11 +4,6 @@ import { DoublyLinkedList } from '../linked-lists/doubly-linked-list';
 export class Dequeue<T = any> {
   #list = new DoublyLinkedList<T>();
 
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'Dequeue';
-  }
-
   get size() {
     return this.#list.size;
   }
@@ -47,5 +42,10 @@ export class Dequeue<T = any> {
 
   toString(callback?: Callback<T>) {
     return this.#list.toString(callback);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'Dequeue';
   }
 }
