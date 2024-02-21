@@ -1,88 +1,65 @@
+import { DoublyLinkedList } from '@/data-structures/linked-lists/doubly-linked-list';
 import { DoublyLinkedListNode } from '@/data-structures/linked-lists/doubly-linked-list/node';
 
-type NodeValue<K = any, V = any> = {
-  key: K;
-  value: V;
+type Payload<Key, Val> = {
+  key: Key;
+  value: Val;
 };
 
-export class LRUCache<Key extends string | number | symbol = any, Value = any> {
-  #nodeMap = {} as Record<Key, DoublyLinkedListNode<NodeValue<Key, Value>>>;
-
+export class LRUCache<Key extends string | number | symbol, Val> {
   #capacity: number;
 
-  #head: DoublyLinkedListNode | null = null;
+  #storage = new DoublyLinkedList();
 
-  #tail: DoublyLinkedListNode | null = null;
-
-  #size: number = 0;
+  #nodeMap = Object.create(null) as Record<
+    Key,
+    DoublyLinkedListNode<Payload<Key, Val>>
+  >;
 
   constructor(capacity: number) {
     this.#capacity = capacity;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'LRUCache';
-  }
-
-  #push<K = any, V = any>(key: K, value: V) {
-    const newNode = new DoublyLinkedListNode({ key, value });
-
-    if (this.#head === null) {
-      this.#head = newNode;
-      this.#tail = newNode;
-    } else {
-      this.#tail!.next = newNode;
-      newNode.prev = this.#tail;
-      this.#tail = newNode;
-    }
-
-    this.#size += 1;
-
-    return newNode;
-  }
-
-  #deleteByReference(node: DoublyLinkedListNode) {
-    if (this.#head === this.#tail) {
-      this.#head = null;
-      this.#tail = null;
-    } else if (node === this.#head && this.#head?.next) {
-      this.#head = this.#head.next;
-      this.#head.prev = null;
-    } else if (node === this.#tail && this.#tail.prev) {
-      this.#tail = this.#tail.prev;
-      this.#tail.next = null;
-    } else {
-      node.prev!.next = node.next;
-      node.next!.prev = node.prev;
-    }
-
-    this.#size -= 1;
+  get size() {
+    return this.#storage.size;
   }
 
   get(key: Key) {
-    if (!Object.hasOwn(this.#nodeMap, key)) return -1;
+    if (!this.#nodeMap[key]) return -1;
 
     const node = this.#nodeMap[key];
-    this.#deleteByReference(node);
-    this.#nodeMap[key] = this.#push(key, node.data.value);
+    this.#storage.deleteByReference(node);
+
+    const newNode = this.#storage.append({
+      key,
+      value: node.data.value,
+    }).tail!;
+
+    this.#nodeMap[key] = newNode;
 
     return node.data.value;
   }
 
-  put(key: Key, value: Value) {
-    if (Object.hasOwn(this.#nodeMap, key)) {
+  put(key: Key, value: Val) {
+    if (this.#nodeMap[key]) {
       const node = this.#nodeMap[key];
-      this.#deleteByReference(node!);
+      this.#storage.deleteByReference(node!);
     }
 
-    if (this.#size === this.#capacity) {
-      const head = this.#head as DoublyLinkedListNode<NodeValue<Key, Value>>;
+    if (this.#storage.size === this.#capacity) {
+      const head = this.#storage.head as DoublyLinkedListNode<
+        Payload<Key, Val>
+      >;
 
       delete this.#nodeMap[head.data.key];
-      this.#deleteByReference(head);
+      this.#storage.deleteByReference(head);
     }
 
-    this.#nodeMap[key] = this.#push(key, value);
+    this.#nodeMap[key] = this.#storage.append({ key, value }).tail!;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'LRUCache';
   }
 }

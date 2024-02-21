@@ -9,11 +9,6 @@ export class DoublyLinkedList<T = any> extends LinkedList<
   T,
   DoublyLinkedListNode<T>
 > {
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'DoublyLinkedList';
-  }
-
   append(value: T) {
     const newNode = new DoublyLinkedListNode(value);
 
@@ -212,5 +207,10 @@ export class DoublyLinkedList<T = any> extends LinkedList<
     this._size -= 1;
 
     return deletedNode;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'DoublyLinkedList';
   }
 }
