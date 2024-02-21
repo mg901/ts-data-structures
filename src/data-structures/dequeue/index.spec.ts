@@ -16,15 +16,6 @@ describe('Dequeue', () => {
     expect(dequeue.isEmpty).toBeTruthy();
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new Dequeue())).toBe(
-        '[object Dequeue]',
-      );
-    });
-  });
-
   describe('addFront', () => {
     it('adds elements to the front in the correct order', () => {
       // Act
@@ -118,6 +109,15 @@ describe('Dequeue', () => {
 
       // Act and Assert
       expect(dequeue.peekRear()?.data).toBe(2);
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new Dequeue())).toBe(
+        '[object Dequeue]',
+      );
     });
   });
 });

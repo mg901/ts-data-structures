@@ -9,7 +9,7 @@ describe('HashTable', () => {
     hashTable = new HashTable<string, number>();
   });
 
-  it('returns the initial state of the HashMap correctly', () => {
+  it('returns the initial state correctly', () => {
     // Act and Assert
     expect(hashTable.size).toBe(0);
   });

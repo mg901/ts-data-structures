@@ -87,7 +87,7 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
   }
 
   delete(key: Key) {
-    const deletedNode = this.#getBucketByKey(key)?.delete(
+    const deletedNode = this.#getBucketByKey(key)?.deleteByValue(
       (pair) => pair.key === key,
     );
 
