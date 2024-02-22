@@ -14,15 +14,6 @@ describe('HashTable', () => {
     expect(hashTable.size).toBe(0);
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new HashTable())).toBe(
-        '[object HashTable]',
-      );
-    });
-  });
-
   describe('set', () => {
     it('sets values correctly', () => {
       // Act
@@ -111,6 +102,15 @@ describe('HashTable', () => {
       expect(hashTable.get('one')).toBeUndefined();
       expect(hashTable.get('two')).toBeUndefined();
       expect(hashTable.size).toBe(0);
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new HashTable())).toBe(
+        '[object HashTable]',
+      );
     });
   });
 });

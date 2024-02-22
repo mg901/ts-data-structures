@@ -1,25 +1,43 @@
 import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
 
 const INITIAL_CAPACITY = 5;
-export class HashTable<Key extends number | string | boolean, Val = any> {
+export class HashTable<Key extends number | string | symbol, Value = any> {
   #capacity = INITIAL_CAPACITY;
 
   #buckets = createArrayOfLinkedLists(this.#capacity);
 
   #size = 0;
 
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'HashTable';
+  get size(): number {
+    return this.#size;
   }
 
-  get size() {
-    return this.#size;
+  set(key: Key, value: Value): this {
+    this.#checkResize();
+
+    const bucket = this.#getBucketByKey(key);
+    const node = bucket?.find((pair) => pair.key === key);
+
+    if (node) {
+      // Update existing key-value pair.
+      node.data.value = value;
+    } else {
+      // Add new key-value pair.
+      bucket.append({
+        key,
+        value,
+      });
+
+      this.#size += 1;
+    }
+
+    return this;
   }
 
   #checkResize() {
     const RESIZE_THRESHOLD = 0.7;
     const loadFactor = this.#size / this.#buckets.length;
+
     if (loadFactor < RESIZE_THRESHOLD) return;
 
     this.#resize();
@@ -50,43 +68,21 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     return this.#buckets[index];
   }
 
-  set(key: Key, value: Val) {
-    this.#checkResize();
-
+  get(key: Key): Value {
     const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
 
-    if (node) {
-      // Update existing key-value pair.
-      node.data.value = value;
-    } else {
-      // Add new key-value pair.
-      bucket.append({
-        key,
-        value,
-      });
-
-      this.#size += 1;
-    }
-
-    return this;
+    return node?.data.value as Value;
   }
 
-  get(key: Key) {
-    const bucket = this.#getBucketByKey(key);
-    const node = bucket?.find((pair) => pair.key === key);
-
-    return node?.data.value;
-  }
-
-  has(key: Key) {
+  has(key: Key): boolean {
     const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
 
     return Boolean(node);
   }
 
-  delete(key: Key) {
+  delete(key: Key): boolean {
     const deletedNode = this.#getBucketByKey(key)?.deleteByValue(
       (pair) => pair.key === key,
     );
@@ -100,14 +96,19 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     return false;
   }
 
-  clear() {
+  clear(): void {
     this.#capacity = INITIAL_CAPACITY;
     this.#buckets = createArrayOfLinkedLists(this.#capacity);
     this.#size = 0;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'HashTable';
+  }
 }
 
-function calcHash<T extends string | number | boolean>(
+function calcHash<T extends string | number | symbol>(
   key: T,
   length: number,
 ): number {
