@@ -1,5 +1,5 @@
-import { DoublyLinkedList } from '../linked-lists/doubly-linked-list';
-import { DoublyLinkedListNode } from '../linked-lists/doubly-linked-list/node';
+import { DoublyLinkedList } from '../../linked-lists/doubly-linked-list';
+import { DoublyLinkedListNode } from '../../linked-lists/doubly-linked-list/node';
 
 interface IMFUCache<Key, Value> {
   get size(): number;
