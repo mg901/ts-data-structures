@@ -31,150 +31,55 @@ export class MFUCache<Key extends string | number | symbol, Value> {
   }
 
   get(key: Key): Value | null {
-    if (!this.#nodeMap.get(key)) return null;
+    const nodeMap = this.#nodeMap;
+    const freqMap = this.#frequencyMap;
 
-    // Get actual frequency
-    const oldFreq = this.#frequencyMap.get(key)!;
-    const bucket = this.#buckets.get(oldFreq);
-    const node = this.#nodeMap.get(key)!;
+    if (!nodeMap.get(key)) return null;
 
-    // Delete item by reference
-    bucket?.deleteByRef(node);
+    const oldFreq = freqMap.get(key)!;
 
-    // Remove DLL if is empty.
-    if (this.#buckets.get(oldFreq)?.isEmpty) {
-      this.#buckets.delete(oldFreq);
-    }
+    this.#deleteFromBucket(key, oldFreq);
+    this.#updateFrequency(key, oldFreq);
 
-    // Update frequency
-    this.#frequencyMap.set(key, oldFreq + 1);
+    const currentFreq = freqMap.get(key)!;
+    this.#updateMaxFrequency(currentFreq);
 
-    // Update max frequency if needed
-    this.#maxFrequency = Math.max(
-      this.#maxFrequency,
-      this.#frequencyMap.get(key)!,
-    );
+    const node = nodeMap.get(key)!;
+    this.#addToBucket(key, node.data.value, currentFreq);
 
-    const freq = this.#frequencyMap.get(key)!;
-
-    // Get DLL of create it
-    const dll =
-      this.#buckets.get(freq) ?? new DoublyLinkedList<Payload<Key, Value>>();
-
-    // Add Item to the DLL
-    dll.append({
-      key,
-      value: this.#nodeMap.get(key)!.data.value,
-    });
-
-    // Update reference
-    this.#nodeMap.set(key, dll.tail!);
-
-    // Update DLL
-    this.#buckets.set(freq, dll);
-
-    // console.log('nodeMap', this.#nodeMap);
-    // console.log('maxFrequency ^^^^^', this.#maxFrequency);
-    // console.log('freqMap', this.#frequencyMap);
-    // console.log(
-    //   'buckets ---------- 1',
-    //   this.#buckets.get(1)?.toString((x) => x.key),
-    //   ' size',
-    //   this.#buckets.get(1)?.size,
-    // );
-    // console.log(
-    //   'buckets ---------- 2',
-    //   this.#buckets.get(2)?.toString((x) => x.key),
-    //   ' size',
-    //   this.#buckets.get(2)?.size,
-    // );
-    // console.log(
-    //   'buckets ---------- 3',
-    //   this.#buckets.get(3)?.toString((x) => x.key),
-    //   ' size',
-    //   this.#buckets.get(3)?.size,
-    // );
-
-    return this.#nodeMap.get(key)?.data.value as Value;
+    return node.data.value as Value;
   }
 
   put(key: Key, value: Value): this {
+    const freqMap = this.#frequencyMap;
+
     // Overwrite the value by the key
     if (this.#nodeMap.has(key)) {
-      // Get actual frequency
-      const oldFreq = this.#frequencyMap.get(key)!;
-      const bucket = this.#buckets.get(oldFreq);
-      const node = this.#nodeMap.get(key)!;
+      const oldFreq = freqMap.get(key)!;
 
-      bucket?.deleteByRef(node);
-
-      if (this.#buckets.get(oldFreq)?.isEmpty) this.#buckets.delete(oldFreq);
-
-      this.#frequencyMap.set(key, this.#frequencyMap.get(key)! + 1);
-
+      this.#deleteFromBucket(key, oldFreq);
       this.#size -= 1;
+
+      this.#updateFrequency(key, oldFreq);
     }
 
     if (this.#size === this.#capacity) {
-      // Get the most frequently bucket
-      const bucket = this.#buckets.get(this.#maxFrequency);
-
-      // Delete item
-      const deletedNode = bucket?.deleteTail()!;
-
-      if (bucket?.isEmpty) this.#buckets.delete(this.#maxFrequency);
-
-      // Remove mfu frequency
-      this.#frequencyMap.delete(deletedNode.data.key);
-
-      // Remove reverence to the mfu item;
-      this.#nodeMap.delete(deletedNode.data.key);
-
-      // Decrease max frequency
-      this.#maxFrequency -= 1;
-      this.#size -= 1;
+      this.#evictLeastFrequent();
     }
 
     // Add item
     const INITIAL_FREQUENCY = 1;
-    // Get frequency value or set initial.
-    this.#frequencyMap.set(
-      key,
-      this.#frequencyMap.get(key) ?? INITIAL_FREQUENCY,
-    );
+    freqMap.set(key, freqMap.get(key) ?? INITIAL_FREQUENCY);
 
-    const freq = this.#frequencyMap.get(key)!;
-
-    this.#addToBucket(key, value, freq);
+    const currentFreq = freqMap.get(key)!;
+    this.#addToBucket(key, value, currentFreq);
 
     this.#size += 1;
-
-    // console.log('nodeMap', this.#nodeMap);
-    // console.log('maxFrequency ^^^^^', this.#maxFrequency);
-    // console.log('freqMap', this.#frequencyMap);
-    // console.log(
-    //   'buckets ---------- 1',
-    //   this.#buckets.get(1)?.toString((x) => x.key),
-    //   ' size',
-    //   this.#buckets.get(1)?.size,
-    // );
-    // console.log(
-    //   'buckets ---------- 2',
-    //   this.#buckets.get(2)?.toString((x) => x.key),
-    //   ' size',
-    //   this.#buckets.get(2)?.size,
-    // );
-    // console.log(
-    //   'buckets ---------- 3',
-    //   this.#buckets.get(3)?.toString((x) => x.key),
-    //   ' size',
-    //   this.#buckets.get(3)?.size,
-    // );
 
     return this;
   }
 
-  #addToBucket(key: Key, value: Value, freq: number) {
+  #addToBucket(key: Key, value: Value, freq: number): void {
     // Get or update DLL
     const dll =
       this.#buckets.get(freq) ?? new DoublyLinkedList<Payload<Key, Value>>();
@@ -187,5 +92,42 @@ export class MFUCache<Key extends string | number | symbol, Value> {
 
     // Update reference
     this.#nodeMap.set(key, dll.tail!);
+  }
+
+  #deleteFromBucket(key: Key, oldFreq: number) {
+    const bucket = this.#buckets.get(oldFreq);
+    const node = this.#nodeMap.get(key)!;
+
+    bucket?.deleteByRef(node);
+
+    if (this.#buckets.get(oldFreq)?.isEmpty) this.#buckets.delete(oldFreq);
+  }
+
+  #updateFrequency(key: Key, oldFreq: number) {
+    this.#frequencyMap.set(key, oldFreq + 1);
+  }
+
+  #evictLeastFrequent() {
+    // Get the most frequently bucket
+    const bucket = this.#buckets.get(this.#maxFrequency);
+
+    // Delete item
+    const deletedNode = bucket?.deleteTail()!;
+
+    if (bucket?.isEmpty) this.#buckets.delete(this.#maxFrequency);
+
+    // Remove mfu frequency
+    this.#frequencyMap.delete(deletedNode.data.key);
+
+    // Remove reverence to the mfu item;
+    this.#nodeMap.delete(deletedNode.data.key);
+
+    // Decrease max frequency
+    this.#maxFrequency -= 1;
+    this.#size -= 1;
+  }
+
+  #updateMaxFrequency(freq: number) {
+    this.#maxFrequency = Math.max(this.#maxFrequency, freq);
   }
 }
