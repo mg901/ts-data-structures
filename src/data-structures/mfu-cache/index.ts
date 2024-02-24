@@ -1,19 +1,27 @@
 import { DoublyLinkedList } from '../linked-lists/doubly-linked-list';
 import { DoublyLinkedListNode } from '../linked-lists/doubly-linked-list/node';
 
+interface IMFUCache<Key, Value> {
+  get size(): number;
+  get(key: Key): Value | null;
+  put(key: Key, value: Value): this;
+}
+
 type Payload<Key, Value> = {
   key: Key;
   value: Value;
 };
 
-export class MFUCache<Key extends string | number | symbol, Value> {
+export class MFUCache<Key extends string | number | symbol, Value>
+  implements IMFUCache<Key, Value>
+{
   #capacity: number;
 
   #nodeMap = new Map() as Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>;
 
   #frequencyMap = new Map() as Map<Key, number>;
 
-  #buckets = new Map() as Map<
+  #cache = new Map() as Map<
     number,
     DoublyLinkedList<Payload<Key, Value>> | undefined
   >;
@@ -79,42 +87,47 @@ export class MFUCache<Key extends string | number | symbol, Value> {
     return this;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'MFUCache';
+  }
+
   #addToBucket(key: Key, value: Value, freq: number): void {
     // Get or update DLL
     const dll =
-      this.#buckets.get(freq) ?? new DoublyLinkedList<Payload<Key, Value>>();
+      this.#cache.get(freq) ?? new DoublyLinkedList<Payload<Key, Value>>();
 
     // Add Item to DLL
     dll.append({ key, value });
 
     // Update DLL
-    this.#buckets.set(freq, dll);
+    this.#cache.set(freq, dll);
 
     // Update reference
     this.#nodeMap.set(key, dll.tail!);
   }
 
-  #deleteFromBucket(key: Key, oldFreq: number) {
-    const bucket = this.#buckets.get(oldFreq);
+  #deleteFromBucket(key: Key, oldFreq: number): void {
+    const bucket = this.#cache.get(oldFreq);
     const node = this.#nodeMap.get(key)!;
 
     bucket?.deleteByRef(node);
 
-    if (this.#buckets.get(oldFreq)?.isEmpty) this.#buckets.delete(oldFreq);
+    if (this.#cache.get(oldFreq)?.isEmpty) this.#cache.delete(oldFreq);
   }
 
-  #updateFrequency(key: Key, oldFreq: number) {
+  #updateFrequency(key: Key, oldFreq: number): void {
     this.#frequencyMap.set(key, oldFreq + 1);
   }
 
-  #evictLeastFrequent() {
+  #evictLeastFrequent(): void {
     // Get the most frequently bucket
-    const bucket = this.#buckets.get(this.#maxFrequency);
+    const bucket = this.#cache.get(this.#maxFrequency);
 
     // Delete item
     const deletedNode = bucket?.deleteTail()!;
 
-    if (bucket?.isEmpty) this.#buckets.delete(this.#maxFrequency);
+    if (bucket?.isEmpty) this.#cache.delete(this.#maxFrequency);
 
     // Remove mfu frequency
     this.#frequencyMap.delete(deletedNode.data.key);
@@ -127,7 +140,7 @@ export class MFUCache<Key extends string | number | symbol, Value> {
     this.#size -= 1;
   }
 
-  #updateMaxFrequency(freq: number) {
+  #updateMaxFrequency(freq: number): void {
     this.#maxFrequency = Math.max(this.#maxFrequency, freq);
   }
 }
