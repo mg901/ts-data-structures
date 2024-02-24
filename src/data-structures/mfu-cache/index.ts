@@ -103,18 +103,16 @@ export class MFUCache<Key extends string | number | symbol, Value> {
     if (this.#nodeMap.has(key)) {
       // Get actual frequency
       const oldFreq = this.#frequencyMap.get(key)!;
-
-      // Get bucket by frequency
       const bucket = this.#buckets.get(oldFreq);
+      const node = this.#nodeMap.get(key)!;
 
-      // Remove item by reference
-      bucket?.deleteByRef(this.#nodeMap.get(key)!);
+      bucket?.deleteByRef(node);
 
       if (this.#buckets.get(oldFreq)?.isEmpty) this.#buckets.delete(oldFreq);
 
-      this.#size -= 1;
-
       this.#frequencyMap.set(key, this.#frequencyMap.get(key)! + 1);
+
+      this.#size -= 1;
     }
 
     if (this.#size === this.#capacity) {
@@ -147,18 +145,7 @@ export class MFUCache<Key extends string | number | symbol, Value> {
 
     const freq = this.#frequencyMap.get(key)!;
 
-    // Create DLL
-    const dll =
-      this.#buckets.get(freq) ?? new DoublyLinkedList<Payload<Key, Value>>();
-
-    // Add item
-    dll.append({ key, value });
-
-    // Update DLL
-    this.#buckets.set(freq, dll);
-
-    // Update reference
-    this.#nodeMap.set(key, dll.tail!);
+    this.#addToBucket(key, value, freq);
 
     this.#size += 1;
 
@@ -185,5 +172,20 @@ export class MFUCache<Key extends string | number | symbol, Value> {
     // );
 
     return this;
+  }
+
+  #addToBucket(key: Key, value: Value, freq: number) {
+    // Get or update DLL
+    const dll =
+      this.#buckets.get(freq) ?? new DoublyLinkedList<Payload<Key, Value>>();
+
+    // Add Item to DLL
+    dll.append({ key, value });
+
+    // Update DLL
+    this.#buckets.set(freq, dll);
+
+    // Update reference
+    this.#nodeMap.set(key, dll.tail!);
   }
 }
