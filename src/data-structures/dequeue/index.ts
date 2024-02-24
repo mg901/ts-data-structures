@@ -2,46 +2,46 @@ import { type Callback } from '@/shared/node';
 import { DoublyLinkedList } from '../linked-lists/doubly-linked-list';
 
 export class Dequeue<T = any> {
-  #list = new DoublyLinkedList<T>();
+  #dll = new DoublyLinkedList<T>();
 
   get size() {
-    return this.#list.size;
+    return this.#dll.size;
   }
 
   get isEmpty() {
-    return this.#list.isEmpty;
+    return this.#dll.isEmpty;
   }
 
   addFront(value: T) {
-    this.#list.prepend(value);
+    this.#dll.prepend(value);
 
     return this;
   }
 
   removeFront() {
-    return this.#list.deleteHead();
+    return this.#dll.deleteHead();
   }
 
   peekFront() {
-    return this.#list.head;
+    return this.#dll.head;
   }
 
   addRear(value: T) {
-    this.#list.append(value);
+    this.#dll.append(value);
 
     return this;
   }
 
   removeRear() {
-    return this.#list.deleteTail();
+    return this.#dll.deleteTail();
   }
 
   peekRear() {
-    return this.#list.tail;
+    return this.#dll.tail;
   }
 
   toString(callback?: Callback<T>) {
-    return this.#list.toString(callback);
+    return this.#dll.toArrayOfStringifiedNodes(callback).toString();
   }
 
   // eslint-disable-next-line class-methods-use-this

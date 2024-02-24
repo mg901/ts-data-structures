@@ -2,7 +2,7 @@ import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-l
 import { type Callback } from '@/shared/node';
 
 export class Queue<T = any> {
-  #linkedList = new SinglyLinkedList<T>();
+  #sll = new SinglyLinkedList<T>();
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
@@ -10,38 +10,38 @@ export class Queue<T = any> {
   }
 
   get size() {
-    return this.#linkedList.size;
+    return this.#sll.size;
   }
 
   get isEmpty() {
-    return this.#linkedList.isEmpty;
+    return this.#sll.isEmpty;
   }
 
   enqueue(value: T) {
-    this.#linkedList.append(value);
+    this.#sll.append(value);
 
     return this;
   }
 
   *[Symbol.iterator]() {
-    for (const node of this.#linkedList) {
+    for (const node of this.#sll) {
       yield node.data;
     }
   }
 
   dequeue() {
-    return this.#linkedList.deleteHead()?.data;
+    return this.#sll.deleteHead()?.data;
   }
 
   peek() {
-    return this.#linkedList.head?.data;
+    return this.#sll.head?.data;
   }
 
   clear() {
-    this.#linkedList.clear();
+    this.#sll.clear();
   }
 
   toString(callback?: Callback<T>) {
-    return this.#linkedList.toString(callback);
+    return this.#sll.toArrayOfStringifiedNodes(callback).toString();
   }
 }

@@ -2,7 +2,7 @@ import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-l
 import { type Callback } from '@/shared/node';
 
 export class Stack<T = any> {
-  #linkedList = new SinglyLinkedList<T>();
+  #sll = new SinglyLinkedList<T>();
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
@@ -10,28 +10,28 @@ export class Stack<T = any> {
   }
 
   get isEmpty() {
-    return this.#linkedList.isEmpty;
+    return this.#sll.isEmpty;
   }
 
   get size() {
-    return this.#linkedList.size;
+    return this.#sll.size;
   }
 
   push(value: T) {
-    this.#linkedList.append(value);
+    this.#sll.append(value);
 
     return this;
   }
 
   pop() {
-    return this.#linkedList.deleteTail()?.data;
+    return this.#sll.deleteTail()?.data;
   }
 
   clear() {
-    this.#linkedList.clear();
+    this.#sll.clear();
   }
 
   toString(callback?: Callback<T>) {
-    return this.#linkedList.toString(callback);
+    return this.#sll.toArrayOfStringifiedNodes(callback).toString();
   }
 }
