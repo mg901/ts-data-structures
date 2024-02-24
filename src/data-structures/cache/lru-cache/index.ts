@@ -1,5 +1,5 @@
-import { DoublyLinkedList } from '@/data-structures/linked-lists/doubly-linked-list';
-import { DoublyLinkedListNode } from '@/data-structures/linked-lists/doubly-linked-list/node';
+import { DoublyLinkedList } from '../../linked-lists/doubly-linked-list';
+import { DoublyLinkedListNode } from '../../linked-lists/doubly-linked-list/node';
 
 type Payload<Key, Val> = {
   key: Key;
