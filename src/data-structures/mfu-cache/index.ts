@@ -17,11 +17,11 @@ export class MFUCache<Key extends string | number | symbol, Value>
 {
   #capacity: number;
 
-  #nodeMap = new Map() as Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>;
+  #keyNodeMap = {} as Record<Key, DoublyLinkedListNode<Payload<Key, Value>>>;
 
-  #frequencyMap = new Map() as Map<Key, number>;
+  #keyFrequencyMap = {} as Record<Key, number>;
 
-  #cache = new Map() as Map<
+  #buckets = {} as Record<
     number,
     DoublyLinkedList<Payload<Key, Value>> | undefined
   >;
@@ -39,48 +39,48 @@ export class MFUCache<Key extends string | number | symbol, Value>
   }
 
   get(key: Key): Value | null {
-    const nodeMap = this.#nodeMap;
-    const freqMap = this.#frequencyMap;
+    const keyNodeMap = this.#keyNodeMap;
+    const freqMap = this.#keyFrequencyMap;
 
-    if (!nodeMap.get(key)) return null;
+    if (!keyNodeMap[key]) return null;
 
-    const oldFreq = freqMap.get(key)!;
+    const oldFreq = freqMap[key];
 
-    this.#deleteFromBucket(key, oldFreq);
-    this.#updateFrequency(key, oldFreq);
+    this.#deleteFromBuckets(key, oldFreq);
+    this.#updateFrequencyByKey(key, oldFreq);
 
-    const currentFreq = freqMap.get(key)!;
+    const currentFreq = freqMap[key];
     this.#updateMaxFrequency(currentFreq);
 
-    const node = nodeMap.get(key)!;
-    this.#addToBucket(key, node.data.value, currentFreq);
+    const node = keyNodeMap[key];
+    this.#addToBuckets(key, node.data.value, currentFreq);
 
     return node.data.value as Value;
   }
 
   put(key: Key, value: Value): this {
-    const freqMap = this.#frequencyMap;
+    const freqMap = this.#keyFrequencyMap;
 
     // Overwrite the value by the key
-    if (this.#nodeMap.has(key)) {
-      const oldFreq = freqMap.get(key)!;
+    if (this.#keyNodeMap[key]) {
+      const oldFreq = freqMap[key];
 
-      this.#deleteFromBucket(key, oldFreq);
+      this.#deleteFromBuckets(key, oldFreq);
       this.#size -= 1;
 
-      this.#updateFrequency(key, oldFreq);
+      this.#updateFrequencyByKey(key, oldFreq);
     }
 
     if (this.#size === this.#capacity) {
-      this.#evictLeastFrequent();
+      this.#evictLeastFrequentKey();
     }
 
     // Add item
     const INITIAL_FREQUENCY = 1;
-    freqMap.set(key, freqMap.get(key) ?? INITIAL_FREQUENCY);
+    freqMap[key] = freqMap[key] ?? INITIAL_FREQUENCY;
 
-    const currentFreq = freqMap.get(key)!;
-    this.#addToBucket(key, value, currentFreq);
+    const currentFreq = freqMap[key];
+    this.#addToBuckets(key, value, currentFreq);
 
     this.#size += 1;
 
@@ -92,48 +92,52 @@ export class MFUCache<Key extends string | number | symbol, Value>
     return 'MFUCache';
   }
 
-  #addToBucket(key: Key, value: Value, freq: number): void {
+  #addToBuckets(key: Key, value: Value, freq: number): void {
     // Get or update DLL
     const dll =
-      this.#cache.get(freq) ?? new DoublyLinkedList<Payload<Key, Value>>();
+      this.#buckets[freq] ?? new DoublyLinkedList<Payload<Key, Value>>();
 
     // Add Item to DLL
     dll.append({ key, value });
 
     // Update DLL
-    this.#cache.set(freq, dll);
+    this.#buckets[freq] = dll;
 
     // Update reference
-    this.#nodeMap.set(key, dll.tail!);
+    this.#keyNodeMap[key] = dll.tail!;
   }
 
-  #deleteFromBucket(key: Key, oldFreq: number): void {
-    const bucket = this.#cache.get(oldFreq);
-    const node = this.#nodeMap.get(key)!;
+  #deleteFromBuckets(key: Key, oldFreq: number): void {
+    const bucket = this.#buckets[oldFreq];
+    const node = this.#keyNodeMap[key];
 
     bucket?.deleteByRef(node);
 
-    if (this.#cache.get(oldFreq)?.isEmpty) this.#cache.delete(oldFreq);
+    if (this.#buckets[oldFreq]!.isEmpty) {
+      delete this.#buckets[oldFreq];
+    }
   }
 
-  #updateFrequency(key: Key, oldFreq: number): void {
-    this.#frequencyMap.set(key, oldFreq + 1);
+  #updateFrequencyByKey(key: Key, oldFreq: number): void {
+    this.#keyFrequencyMap[key] = oldFreq + 1;
   }
 
-  #evictLeastFrequent(): void {
+  #evictLeastFrequentKey(): void {
     // Get the most frequently bucket
-    const bucket = this.#cache.get(this.#maxFrequency);
+    const bucket = this.#buckets[this.#maxFrequency];
 
     // Delete item
     const deletedNode = bucket?.deleteTail()!;
 
-    if (bucket?.isEmpty) this.#cache.delete(this.#maxFrequency);
+    if (bucket?.isEmpty) {
+      delete this.#buckets[this.#maxFrequency];
+    }
 
-    // Remove mfu frequency
-    this.#frequencyMap.delete(deletedNode.data.key);
+    // Remove least frequent key
+    delete this.#keyFrequencyMap[deletedNode.data.key];
 
     // Remove reverence to the mfu item;
-    this.#nodeMap.delete(deletedNode.data.key);
+    delete this.#keyNodeMap[deletedNode.data.key];
 
     // Decrease max frequency
     this.#maxFrequency -= 1;
