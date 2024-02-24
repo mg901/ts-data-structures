@@ -15,7 +15,7 @@ describe('LRUCacheOnMap', () => {
       cache.put('one', 1);
 
       // Assert
-      expect(cache.toArray).toEqual([1]);
+      expect(cache.toArray()).toEqual([1]);
       expect(cache.size).toBe(1);
     });
 
@@ -25,7 +25,7 @@ describe('LRUCacheOnMap', () => {
       cache.put('two', 2);
 
       // Assert
-      expect(cache.toArray).toEqual([1, 2]);
+      expect(cache.toArray()).toEqual([1, 2]);
       expect(cache.size).toBe(2);
     });
 
