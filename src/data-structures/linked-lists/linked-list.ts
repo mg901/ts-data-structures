@@ -38,6 +38,15 @@ export abstract class LinkedList<
     return this._head === null;
   }
 
+  *[Symbol.iterator]() {
+    let currentNode = this._head;
+
+    while (currentNode !== null) {
+      yield currentNode;
+      currentNode = currentNode.next as Node;
+    }
+  }
+
   protected _isMatch(value: T, matcher: T | Predicate<T>) {
     return isFunction(matcher)
       ? matcher(value)
@@ -54,19 +63,8 @@ export abstract class LinkedList<
     return currentNode;
   }
 
-  *[Symbol.iterator]() {
-    let currentNode = this._head;
-
-    while (currentNode !== null) {
-      yield currentNode;
-      currentNode = currentNode.next as Node;
-    }
-  }
-
-  toString(callback?: Callback<T>) {
-    const array = Array.from(this, (node) => node.toString(callback));
-
-    return array.toString();
+  toArrayOfStringifiedNodes(callback?: Callback<T>) {
+    return Array.from(this, (node) => node.toString(callback));
   }
 
   toArray() {

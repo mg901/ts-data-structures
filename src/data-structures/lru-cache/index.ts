@@ -9,7 +9,7 @@ type Payload<Key, Val> = {
 export class LRUCache<Key extends string | number | symbol, Val> {
   #capacity: number;
 
-  #storage = new DoublyLinkedList();
+  #dll = new DoublyLinkedList();
 
   #nodeMap = Object.create(null) as Record<
     Key,
@@ -21,16 +21,16 @@ export class LRUCache<Key extends string | number | symbol, Val> {
   }
 
   get size() {
-    return this.#storage.size;
+    return this.#dll.size;
   }
 
   get(key: Key) {
     if (!this.#nodeMap[key]) return -1;
 
     const node = this.#nodeMap[key];
-    this.#storage.deleteByReference(node);
+    this.#dll.deleteByRef(node);
 
-    const newNode = this.#storage.append({
+    const newNode = this.#dll.append({
       key,
       value: node.data.value,
     }).tail!;
@@ -43,19 +43,17 @@ export class LRUCache<Key extends string | number | symbol, Val> {
   put(key: Key, value: Val) {
     if (this.#nodeMap[key]) {
       const node = this.#nodeMap[key];
-      this.#storage.deleteByReference(node!);
+      this.#dll.deleteByRef(node!);
     }
 
-    if (this.#storage.size === this.#capacity) {
-      const head = this.#storage.head as DoublyLinkedListNode<
-        Payload<Key, Val>
-      >;
+    if (this.#dll.size === this.#capacity) {
+      const head = this.#dll.head as DoublyLinkedListNode<Payload<Key, Val>>;
 
       delete this.#nodeMap[head.data.key];
-      this.#storage.deleteByReference(head);
+      this.#dll.deleteByRef(head);
     }
 
-    this.#nodeMap[key] = this.#storage.append({ key, value }).tail!;
+    this.#nodeMap[key] = this.#dll.append({ key, value }).tail!;
   }
 
   // eslint-disable-next-line class-methods-use-this

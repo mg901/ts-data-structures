@@ -1,20 +1,43 @@
 import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
 
 const INITIAL_CAPACITY = 5;
-export class HashTable<Key extends number | string | boolean, Val = any> {
+export class HashTable<Key extends number | string | boolean, Value = any> {
   #capacity = INITIAL_CAPACITY;
 
   #buckets = createArrayOfLinkedLists(this.#capacity);
 
   #size = 0;
 
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'HashTable';
-  }
-
   get size() {
     return this.#size;
+  }
+
+  #getBucketByKey(key: Key) {
+    const index = calcHash(key, this.#capacity);
+
+    return this.#buckets[index];
+  }
+
+  set(key: Key, value: Value) {
+    this.#checkResize();
+
+    const bucket = this.#getBucketByKey(key);
+    const node = bucket?.find((pair) => pair.key === key);
+
+    if (node) {
+      // Update existing key-value pair.
+      node.data.value = value;
+    } else {
+      // Add new key-value pair.
+      bucket.append({
+        key,
+        value,
+      });
+
+      this.#size += 1;
+    }
+
+    return this;
   }
 
   #checkResize() {
@@ -44,39 +67,11 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     this.#capacity = newCapacity;
   }
 
-  #getBucketByKey(key: Key) {
-    const index = calcHash(key, this.#capacity);
-
-    return this.#buckets[index];
-  }
-
-  set(key: Key, value: Val) {
-    this.#checkResize();
-
-    const bucket = this.#getBucketByKey(key);
-    const node = bucket?.find((pair) => pair.key === key);
-
-    if (node) {
-      // Update existing key-value pair.
-      node.data.value = value;
-    } else {
-      // Add new key-value pair.
-      bucket.append({
-        key,
-        value,
-      });
-
-      this.#size += 1;
-    }
-
-    return this;
-  }
-
   get(key: Key) {
     const bucket = this.#getBucketByKey(key);
     const node = bucket?.find((pair) => pair.key === key);
 
-    return node?.data.value;
+    return node?.data.value as Value | undefined;
   }
 
   has(key: Key) {
@@ -104,6 +99,11 @@ export class HashTable<Key extends number | string | boolean, Val = any> {
     this.#capacity = INITIAL_CAPACITY;
     this.#buckets = createArrayOfLinkedLists(this.#capacity);
     this.#size = 0;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'HashTable';
   }
 }
 

@@ -3,17 +3,13 @@ import {
   type Predicate,
 } from '@/data-structures/linked-lists/linked-list';
 import { SinglyLinkedListNode } from '@/data-structures/linked-lists/singly-linked-list/node';
+import { Callback } from '@/shared/node';
 import { type Nullable } from '@/shared/types';
 
 export class SinglyLinkedList<T = any> extends LinkedList<
   T,
   SinglyLinkedListNode<T>
 > {
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'SinglyLinkedList';
-  }
-
   append(value: T) {
     const newNode = new SinglyLinkedListNode(value);
 
@@ -28,6 +24,10 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     this._size += 1;
 
     return this;
+  }
+
+  toString(callback?: Callback<T>) {
+    return this.toArrayOfStringifiedNodes(callback).join(' -> ');
   }
 
   fromArray(array: T[]) {
@@ -194,9 +194,9 @@ export class SinglyLinkedList<T = any> extends LinkedList<
 
     return deletedTail;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'SinglyLinkedList';
+  }
 }
-
-const list = new SinglyLinkedList<number>().append(1).append(2);
-const deleted = list.deleteByValue(2);
-
-export const foo = deleted?.toString;
