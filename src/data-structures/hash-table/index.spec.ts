@@ -14,15 +14,6 @@ describe('HashTable', () => {
     expect(hashTable.size).toBe(0);
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new HashTable())).toBe(
-        '[object HashTable]',
-      );
-    });
-  });
-
   describe('set', () => {
     it('sets values correctly', () => {
       // Act
@@ -34,18 +25,10 @@ describe('HashTable', () => {
         .set('five', 5)
         .set('six', 6);
 
-      // Assert
-      expect(hashTable.get('one')).toEqual(1);
-      expect(hashTable.get('two')).toEqual(2);
-      expect(hashTable.get('three')).toEqual(3);
-      expect(hashTable.get('four')).toEqual(4);
-      expect(hashTable.get('five')).toEqual(5);
-      expect(hashTable.get('six')).toEqual(6);
-
       expect(hashTable.size).toBe(6);
     });
 
-    it('updates existing values', () => {
+    it('updates existing value', () => {
       // Act
       hashTable.set('value', 1).set('value', 2);
 
@@ -55,10 +38,18 @@ describe('HashTable', () => {
   });
 
   describe('get', () => {
-    it('handles a non-existing key in an empty HashTable', () => {
+    it('handles a non-existing key', () => {
       // Act and Assert
       expect(hashTable.get('one')).toBeUndefined();
       expect(hashTable.size).toBe(0);
+    });
+
+    it('returns the value by the key', () => {
+      // Arrange
+      hashTable.set('one', 1);
+
+      // Act and Assert
+      expect(hashTable.get('one')).toBe(1);
     });
   });
 
@@ -75,16 +66,7 @@ describe('HashTable', () => {
   });
 
   describe('delete', () => {
-    it('deletes a none-existing value', () => {
-      // Act
-      const received = hashTable.delete('non-existing-key');
-
-      // Assert
-      expect(hashTable.size).toBe(0);
-      expect(received).toBeFalsy();
-    });
-
-    it('deletes existing values for existing keys', () => {
+    it('deletes existing values correctly', () => {
       // Arrange
       hashTable.set('one', 1);
       hashTable.set('two', 2);
@@ -95,6 +77,15 @@ describe('HashTable', () => {
 
       expect(hashTable.delete('two')).toBeTruthy();
       expect(hashTable.size).toBe(0);
+    });
+
+    it('deletes a none-existing value', () => {
+      // Act
+      const received = hashTable.delete('non-existing-key');
+
+      // Assert
+      expect(hashTable.size).toBe(0);
+      expect(received).toBeFalsy();
     });
   });
 
@@ -111,6 +102,15 @@ describe('HashTable', () => {
       expect(hashTable.get('one')).toBeUndefined();
       expect(hashTable.get('two')).toBeUndefined();
       expect(hashTable.size).toBe(0);
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new HashTable())).toBe(
+        '[object HashTable]',
+      );
     });
   });
 });
