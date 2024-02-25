@@ -3,6 +3,7 @@ import { DoublyLinkedListNode } from '../../linked-lists/doubly-linked-list/node
 
 interface IMFUCache<Key, Value> {
   get size(): number;
+  toArray(): Value[];
   get(key: Key): Value | null;
   put(key: Key, value: Value): this;
 }
@@ -36,6 +37,12 @@ export class MFUCache<Key extends string | number | symbol, Value>
 
   get size(): number {
     return this.#size;
+  }
+
+  toArray(): Value[] {
+    return Object.values(this.#buckets).flatMap((list) =>
+      list!.toArray().map((node) => node.value),
+    );
   }
 
   get(key: Key): Value | null {
