@@ -28,29 +28,6 @@ export class LRUCache<Key extends string | number | symbol, Value>
     return Array.from(this.#cache, ({ data }) => data.value);
   }
 
-  get(key: Key) {
-    const node = this.#keyNodeMap[key];
-
-    if (!node) return null;
-
-    this.#updateAccessOrderByKey(key);
-
-    return node.data.value;
-  }
-
-  #updateAccessOrderByKey(key: Key) {
-    const node = this.#keyNodeMap[key];
-    const cache = this.#cache;
-
-    cache.deleteByRef(node);
-    cache.append({
-      key,
-      value: node.data.value,
-    });
-
-    this.#keyNodeMap[key] = cache.tail!;
-  }
-
   put(key: Key, value: Value): this {
     if (this.#keyNodeMap[key]) {
       this.#deleteItemByKey(key);
@@ -79,6 +56,29 @@ export class LRUCache<Key extends string | number | symbol, Value>
 
   #addItem(key: Key, value: Value) {
     this.#keyNodeMap[key] = this.#cache.append({ key, value }).tail!;
+  }
+
+  get(key: Key) {
+    const node = this.#keyNodeMap[key];
+
+    if (!node) return null;
+
+    this.#updateAccessOrderByKey(key);
+
+    return node.data.value;
+  }
+
+  #updateAccessOrderByKey(key: Key) {
+    const node = this.#keyNodeMap[key];
+    const cache = this.#cache;
+
+    cache.deleteByRef(node);
+    cache.append({
+      key,
+      value: node.data.value,
+    });
+
+    this.#keyNodeMap[key] = cache.tail!;
   }
 
   // eslint-disable-next-line class-methods-use-this
