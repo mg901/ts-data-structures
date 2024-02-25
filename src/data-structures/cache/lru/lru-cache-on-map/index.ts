@@ -17,21 +17,6 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
     return Array.from(this.#cache, ([, value]) => value);
   }
 
-  get(key: Key): Value | null {
-    if (!this.#cache.has(key)) return null;
-
-    this.#updateAccessOrderByKey(key);
-
-    return this.#cache.get(key)!;
-  }
-
-  #updateAccessOrderByKey(key: Key) {
-    const value = this.#cache.get(key)!;
-
-    this.#cache.delete(key);
-    this.#cache.set(key, value);
-  }
-
   put(key: Key, value: Value) {
     if (this.#cache.has(key)) {
       this.#cache.delete(key);
@@ -49,6 +34,21 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
   #evictLastRecentlyUsed() {
     const firstKey = this.#cache.keys().next().value;
     this.#cache.delete(firstKey);
+  }
+
+  get(key: Key): Value | null {
+    if (!this.#cache.has(key)) return null;
+
+    this.#updateAccessOrderByKey(key);
+
+    return this.#cache.get(key)!;
+  }
+
+  #updateAccessOrderByKey(key: Key) {
+    const value = this.#cache.get(key)!;
+
+    this.#cache.delete(key);
+    this.#cache.set(key, value);
   }
 
   // eslint-disable-next-line class-methods-use-this
