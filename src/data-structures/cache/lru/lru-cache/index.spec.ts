@@ -9,6 +9,12 @@ describe('LRUCache', () => {
     cache = new LRUCache<string, number>(3);
   });
 
+  it('returns initial state correctly', () => {
+    // Act and Assert
+    expect(cache.toArray()).toEqual([]);
+    expect(cache.size).toBe(0);
+  });
+
   describe('put', () => {
     it('adds item correctly', () => {
       // Act
@@ -46,7 +52,6 @@ describe('LRUCache', () => {
       cache.put('one', 1);
       cache.put('two', 2);
       cache.put('three', 3);
-      // 2, 3, 4
 
       // Act
       cache.put('four', 4);

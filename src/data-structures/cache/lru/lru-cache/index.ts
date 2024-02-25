@@ -24,6 +24,10 @@ export class LRUCache<Key extends string | number | symbol, Value>
     return this.#cache.size;
   }
 
+  toArray(): Value[] {
+    return Array.from(this.#cache, ({ data }) => data.value);
+  }
+
   get(key: Key) {
     const node = this.#keyNodeMap[key];
 
@@ -75,10 +79,6 @@ export class LRUCache<Key extends string | number | symbol, Value>
 
   #addItem(key: Key, value: Value) {
     this.#keyNodeMap[key] = this.#cache.append({ key, value }).tail!;
-  }
-
-  toArray(): Value[] {
-    return Array.from(this.#cache, ({ data }) => data.value);
   }
 
   // eslint-disable-next-line class-methods-use-this

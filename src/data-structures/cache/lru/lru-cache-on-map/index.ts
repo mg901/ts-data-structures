@@ -13,6 +13,10 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
     return this.#cache.size;
   }
 
+  toArray() {
+    return Array.from(this.#cache, ([, value]) => value);
+  }
+
   get(key: Key): Value | null {
     if (!this.#cache.has(key)) return null;
 
@@ -45,10 +49,6 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
   #evictLastRecentlyUsed() {
     const firstKey = this.#cache.keys().next().value;
     this.#cache.delete(firstKey);
-  }
-
-  toArray() {
-    return Array.from(this.#cache, ([, value]) => value);
   }
 
   // eslint-disable-next-line class-methods-use-this
