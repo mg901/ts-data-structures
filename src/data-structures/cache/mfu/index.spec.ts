@@ -105,6 +105,7 @@ describe('MFUCache', () => {
       cache.put('two', 2);
       cache.put('three', 3);
       // [1] -> 1, 2, 3
+      expect(cache.toArray()).toEqual([1, 2, 3]);
 
       cache.get('one');
       cache.get('three');
@@ -112,10 +113,12 @@ describe('MFUCache', () => {
       // [1] -> 2
       // [2] -> 1
       // [3] -> 3
+      expect(cache.toArray()).toEqual([2, 1, 3]);
 
       cache.get('two');
       // [2] -> 1, 2
       // [3] -> 3
+      expect(cache.toArray()).toEqual([1, 2, 3]);
 
       // Act
       cache.put('four', 4); // Should evict 3

@@ -45,34 +45,6 @@ export class MFUCache<Key extends string | number | symbol, Value>
     );
   }
 
-  get(key: Key): Value | null {
-    const node = this.#keyNodeMap[key];
-
-    if (!node) return null;
-
-    this.#updateAccessOrderByKey(key);
-
-    return node.data.value as Value;
-  }
-
-  #updateAccessOrderByKey(key: Key) {
-    const freqMap = this.#keyFrequencyMap;
-    const oldFreq = freqMap[key];
-
-    this.#deleteFromBuckets(key, oldFreq);
-    this.#updateFrequencyByKey(key, oldFreq);
-
-    const currentFreq = freqMap[key];
-    this.#updateMaxFrequency(currentFreq);
-
-    const node = this.#keyNodeMap[key];
-    this.#addToBuckets(key, node.data.value, currentFreq);
-  }
-
-  #updateMaxFrequency(freq: number): void {
-    this.#maxFrequency = Math.max(this.#maxFrequency, freq);
-  }
-
   put(key: Key, value: Value): this {
     // Overwrite the value by the key
     if (this.#keyNodeMap[key]) {
@@ -143,6 +115,34 @@ export class MFUCache<Key extends string | number | symbol, Value>
     this.#addToBuckets(key, value, currentFreq);
 
     this.#size += 1;
+  }
+
+  get(key: Key): Value | null {
+    const node = this.#keyNodeMap[key];
+
+    if (!node) return null;
+
+    this.#updateAccessOrderByKey(key);
+
+    return node.data.value as Value;
+  }
+
+  #updateAccessOrderByKey(key: Key) {
+    const freqMap = this.#keyFrequencyMap;
+    const oldFreq = freqMap[key];
+
+    this.#deleteFromBuckets(key, oldFreq);
+    this.#updateFrequencyByKey(key, oldFreq);
+
+    const currentFreq = freqMap[key];
+    this.#updateMaxFrequency(currentFreq);
+
+    const node = this.#keyNodeMap[key];
+    this.#addToBuckets(key, node.data.value, currentFreq);
+  }
+
+  #updateMaxFrequency(freq: number): void {
+    this.#maxFrequency = Math.max(this.#maxFrequency, freq);
   }
 
   #addToBuckets(key: Key, value: Value, freq: number): void {
