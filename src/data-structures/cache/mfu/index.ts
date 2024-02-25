@@ -3,6 +3,7 @@ import { DoublyLinkedListNode } from '../../linked-lists/doubly-linked-list/node
 
 interface IMFUCache<Key, Value> {
   get size(): number;
+  toArray(): Value[];
   get(key: Key): Value | null;
   put(key: Key, value: Value): this;
 }
@@ -38,12 +39,24 @@ export class MFUCache<Key extends string | number | symbol, Value>
     return this.#size;
   }
 
+  toArray(): Value[] {
+    return Object.values(this.#buckets).flatMap((list) =>
+      list!.toArray().map((node) => node.value),
+    );
+  }
+
   get(key: Key): Value | null {
-    const keyNodeMap = this.#keyNodeMap;
+    const node = this.#keyNodeMap[key];
+
+    if (!node) return null;
+
+    this.#updateAccessOrderByKey(key);
+
+    return node.data.value as Value;
+  }
+
+  #updateAccessOrderByKey(key: Key) {
     const freqMap = this.#keyFrequencyMap;
-
-    if (!keyNodeMap[key]) return null;
-
     const oldFreq = freqMap[key];
 
     this.#deleteFromBuckets(key, oldFreq);
@@ -52,22 +65,20 @@ export class MFUCache<Key extends string | number | symbol, Value>
     const currentFreq = freqMap[key];
     this.#updateMaxFrequency(currentFreq);
 
-    const node = keyNodeMap[key];
+    const node = this.#keyNodeMap[key];
     this.#addToBuckets(key, node.data.value, currentFreq);
+  }
 
-    return node.data.value as Value;
+  #updateMaxFrequency(freq: number): void {
+    this.#maxFrequency = Math.max(this.#maxFrequency, freq);
   }
 
   put(key: Key, value: Value): this {
-    const freqMap = this.#keyFrequencyMap;
-
     // Overwrite the value by the key
     if (this.#keyNodeMap[key]) {
-      const oldFreq = freqMap[key];
+      const oldFreq = this.#keyFrequencyMap[key];
 
-      this.#deleteFromBuckets(key, oldFreq);
-      this.#size -= 1;
-
+      this.#deleteItemByKey(key, oldFreq);
       this.#updateFrequencyByKey(key, oldFreq);
     }
 
@@ -75,36 +86,14 @@ export class MFUCache<Key extends string | number | symbol, Value>
       this.#evictLeastFrequentKey();
     }
 
-    // Add item
-    const INITIAL_FREQUENCY = 1;
-    freqMap[key] = freqMap[key] ?? INITIAL_FREQUENCY;
-
-    const currentFreq = freqMap[key];
-    this.#addToBuckets(key, value, currentFreq);
-
-    this.#size += 1;
+    this.#addItem(key, value);
 
     return this;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'MFUCache';
-  }
-
-  #addToBuckets(key: Key, value: Value, freq: number): void {
-    // Get or update DLL
-    const dll =
-      this.#buckets[freq] ?? new DoublyLinkedList<Payload<Key, Value>>();
-
-    // Add Item to DLL
-    dll.append({ key, value });
-
-    // Update DLL
-    this.#buckets[freq] = dll;
-
-    // Update reference
-    this.#keyNodeMap[key] = dll.tail!;
+  #deleteItemByKey(key: Key, freq: number) {
+    this.#deleteFromBuckets(key, freq);
+    this.#size -= 1;
   }
 
   #deleteFromBuckets(key: Key, oldFreq: number): void {
@@ -144,7 +133,35 @@ export class MFUCache<Key extends string | number | symbol, Value>
     this.#size -= 1;
   }
 
-  #updateMaxFrequency(freq: number): void {
-    this.#maxFrequency = Math.max(this.#maxFrequency, freq);
+  #addItem(key: Key, value: Value) {
+    const freqMap = this.#keyFrequencyMap;
+    // Add item
+    const INITIAL_FREQUENCY = 1;
+    freqMap[key] = freqMap[key] ?? INITIAL_FREQUENCY;
+
+    const currentFreq = freqMap[key];
+    this.#addToBuckets(key, value, currentFreq);
+
+    this.#size += 1;
+  }
+
+  #addToBuckets(key: Key, value: Value, freq: number): void {
+    // Get or update DLL
+    const dll =
+      this.#buckets[freq] ?? new DoublyLinkedList<Payload<Key, Value>>();
+
+    // Add Item to DLL
+    dll.append({ key, value });
+
+    // Update DLL
+    this.#buckets[freq] = dll;
+
+    // Update reference
+    this.#keyNodeMap[key] = dll.tail!;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'MFUCache';
   }
 }

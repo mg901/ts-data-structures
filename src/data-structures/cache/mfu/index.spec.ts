@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { MFUCache } from './index';
 
 describe('MFUCache', () => {
-  it('return initial state correctly', () => {
+  it('returns initial state correctly', () => {
     // Arrange
     const cache = new MFUCache(2);
 
@@ -19,6 +19,7 @@ describe('MFUCache', () => {
       cache.put('one', 1);
 
       // Assert
+      expect(cache.toArray()).toEqual([1]);
       expect(cache.size).toBe(1);
     });
 
@@ -31,6 +32,7 @@ describe('MFUCache', () => {
       cache.put('two', 2);
 
       // Assert
+      expect(cache.toArray()).toEqual([1, 2]);
       expect(cache.size).toBe(2);
     });
 
@@ -43,6 +45,7 @@ describe('MFUCache', () => {
       cache.put('one', 2);
 
       // Assert
+      expect(cache.toArray()).toEqual([2]);
       expect(cache.size).toBe(1);
     });
 
@@ -53,9 +56,10 @@ describe('MFUCache', () => {
       cache.put('two', 2);
 
       // Act
-      cache.put('three', 3);
+      cache.put('three', 3); // Should evict 2
 
       // Assert
+      expect(cache.toArray()).toEqual([1, 3]);
       expect(cache.size).toBe(2);
     });
   });
@@ -77,6 +81,7 @@ describe('MFUCache', () => {
 
       // Act and Assert
       expect(cache.get('one')).toBe(1);
+      expect(cache.toArray()).toEqual([2, 1]);
       expect(cache.size).toBe(2);
     });
 
@@ -89,6 +94,7 @@ describe('MFUCache', () => {
       // Act and Assert
       expect(cache.get('one')).toBe(1);
       expect(cache.get('two')).toBe(2);
+      expect(cache.toArray()).toEqual([1, 2]);
       expect(cache.size).toBe(2);
     });
 
@@ -98,18 +104,27 @@ describe('MFUCache', () => {
       cache.put('one', 1);
       cache.put('two', 2);
       cache.put('three', 3);
+      // [1] -> 1, 2, 3
 
       cache.get('one');
       cache.get('three');
       cache.get('three');
+      // [1] -> 2
+      // [2] -> 1
+      // [3] -> 3
 
       cache.get('two');
+      // [2] -> 1, 2
+      // [3] -> 3
 
       // Act
-      cache.put('four', 4);
+      cache.put('four', 4); // Should evict 3
+      // [1] -> 4
+      // [2] -> 1, 2
 
       // Assert
-      expect(cache.get('four')).toBe(4);
+      expect(cache.get('three')).toBeNull();
+      expect(cache.toArray()).toEqual([4, 1, 2]);
       expect(cache.size).toBe(3);
     });
   });
