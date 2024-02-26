@@ -38,6 +38,7 @@ export class LFUCache<Key, Value> {
   put(key: Key, value: Value) {
     if (this.#keyRefMap.has(key)) {
       this.#updateItemByKey(key);
+      this.#size -= 1;
     }
 
     if (this.#size === this.#capacity) {
@@ -55,7 +56,6 @@ export class LFUCache<Key, Value> {
     this.#deleteRefByKey(key);
     this.#updateFrequencyByKey(key);
     this.#updateMinFrequencyByKey(key);
-    this.#size -= 1;
   }
 
   #deleteNodeInList(key: Key, frequency: number) {
