@@ -100,8 +100,8 @@ export class LFUCache<Key, Value> {
     nodesList.append({ key, value });
     this.#buckets.set(frequency, nodesList);
 
-    const newNode = nodesList.tail!;
-    this.#keyRefMap.set(key, newNode);
+    const newRef = nodesList.tail!;
+    this.#keyRefMap.set(key, newRef);
 
     this.#size += 1;
   }
