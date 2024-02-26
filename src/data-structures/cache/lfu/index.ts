@@ -42,11 +42,6 @@ export class LFUCache<Key, Value> {
 
     this.#addItem(key, value);
 
-    console.log('keyNodeMap', this.#keyNodeMap);
-    console.log('minFrequency', this.#minFrequency);
-    console.log('keyFreqMap', this.#keyFrequencyMap);
-    console.log('buckets', this.#buckets);
-
     return this;
   }
 
