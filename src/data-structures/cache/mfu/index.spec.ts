@@ -1,20 +1,21 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { MFUCache } from './index';
 
 describe('MFUCache', () => {
-  it('returns initial state correctly', () => {
-    // Arrange
-    const cache = new MFUCache(2);
+  let cache: MFUCache<string, number>;
 
+  // Arrange
+  beforeEach(() => {
+    cache = new MFUCache(3);
+  });
+
+  it('returns initial state correctly', () => {
     // Assert
     expect(cache.size).toBe(0);
   });
 
   describe('put', () => {
     it('adds item to the cache', () => {
-      // Arrange
-      const cache = new MFUCache(2);
-
       // Act
       cache.put('one', 1);
 
@@ -24,21 +25,18 @@ describe('MFUCache', () => {
     });
 
     it('fills the cache', () => {
-      // Arrange
-      const cache = new MFUCache(2);
-
       // Act
       cache.put('one', 1);
       cache.put('two', 2);
+      cache.put('three', 3);
 
       // Assert
-      expect(cache.toArray()).toEqual([1, 2]);
-      expect(cache.size).toBe(2);
+      expect(cache.toArray()).toEqual([1, 2, 3]);
+      expect(cache.size).toBe(3);
     });
 
     it('overwrites the value by the key', () => {
       // Arrange
-      const cache = new MFUCache(2);
       cache.put('one', 1);
 
       // Act
@@ -51,31 +49,27 @@ describe('MFUCache', () => {
 
     it('evicts the most frequently used item', () => {
       // Arrange
-      const cache = new MFUCache(2);
       cache.put('one', 1);
       cache.put('two', 2);
+      cache.put('three', 3);
 
       // Act
-      cache.put('three', 3); // Should evict 2
+      cache.put('four', 4); // Should evict 3
 
       // Assert
-      expect(cache.toArray()).toEqual([1, 3]);
-      expect(cache.size).toBe(2);
+      expect(cache.toArray()).toEqual([1, 2, 4]);
+      expect(cache.size).toBe(3);
     });
   });
 
   describe('get', () => {
     it('returns null for a non-existing item', () => {
-      // Arrange
-      const cache = new MFUCache(1);
-
       // Act and Assert
       expect(cache.get('one')).toBeNull();
     });
 
     it('returns value of existing item', () => {
       // Arrange
-      const cache = new MFUCache(2);
       cache.put('one', 1);
       cache.put('two', 2);
 
@@ -87,7 +81,6 @@ describe('MFUCache', () => {
 
     it('returns the values of the items', () => {
       // Arrange
-      const cache = new MFUCache(2);
       cache.put('one', 1);
       cache.put('two', 2);
 
@@ -100,7 +93,6 @@ describe('MFUCache', () => {
 
     it('evicts the most frequently item', () => {
       // Arrange
-      const cache = new MFUCache(3);
       cache.put('one', 1);
       cache.put('two', 2);
       cache.put('three', 3);
@@ -129,6 +121,24 @@ describe('MFUCache', () => {
       expect(cache.get('three')).toBeNull();
       expect(cache.toArray()).toEqual([4, 1, 2]);
       expect(cache.size).toBe(3);
+    });
+  });
+
+  describe('clear', () => {
+    it('clears cache correctly', () => {
+      // Arrange
+      cache.put('one', 1);
+      cache.put('two', 2);
+      cache.put('three', 3);
+
+      // Act
+      cache.clear();
+
+      // Assert
+      expect(cache.get('one')).toBeNull();
+      expect(cache.get('two')).toBeNull();
+      expect(cache.get('three')).toBeNull();
+      expect(cache.size).toBe(0);
     });
   });
 

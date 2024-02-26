@@ -6,6 +6,7 @@ interface IMFUCache<Key, Value> {
   toArray(): Value[];
   get(key: Key): Value | null;
   put(key: Key, value: Value): this;
+  clear(): void;
 }
 
 type Payload<Key, Value> = {
@@ -74,7 +75,7 @@ export class MFUCache<Key extends string | number | symbol, Value>
 
     bucket?.deleteByRef(node);
 
-    if (this.#buckets[oldFreq]!.isEmpty) {
+    if (this.#buckets[oldFreq]?.isEmpty) {
       delete this.#buckets[oldFreq];
     }
   }
@@ -158,6 +159,16 @@ export class MFUCache<Key extends string | number | symbol, Value>
 
     // Update reference
     this.#keyNodeMap[key] = dll.tail!;
+  }
+
+  clear() {
+    // @ts-ignore
+    this.#keyNodeMap = {};
+    // @ts-ignore
+    this.#keyFrequencyMap = {};
+    this.#buckets = {};
+    this.#maxFrequency = 1;
+    this.#size = 0;
   }
 
   // eslint-disable-next-line class-methods-use-this
