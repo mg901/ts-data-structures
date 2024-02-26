@@ -54,26 +54,18 @@ export class LFUCache<Key, Value> {
     const frequency = this.#getFrequencyByKey(key);
     this.#deleteNodeInList(key, frequency);
     this.#deleteRefByKey(key);
-    this.#updateFrequencyByKey(key);
+    this.#setFrequency(key, frequency + 1);
     this.#updateMinFrequencyByKey(key);
   }
 
   #deleteNodeInList(key: Key, frequency: number) {
     const nodeList = this.#getNodeListByFrequency(frequency);
-    nodeList.deleteByRef(this.#keyRefMap.get(key)!);
+    const ref = this.#keyRefMap.get(key)!;
+    nodeList.deleteByRef(ref);
 
     if (nodeList.isEmpty) {
       this.#buckets.delete(frequency);
     }
-  }
-
-  #deleteRefByKey(key: Key) {
-    this.#keyRefMap.delete(key);
-  }
-
-  #updateFrequencyByKey(key: Key) {
-    const prevFrequency = this.#getFrequencyByKey(key);
-    this.#keyFrequencyMap.set(key, prevFrequency + 1);
   }
 
   #updateMinFrequencyByKey(key: Key) {
@@ -84,19 +76,24 @@ export class LFUCache<Key, Value> {
     const minFreq = this.#minFrequency;
     const nodeList = this.#getNodeListByFrequency(minFreq);
     const deletedNode = nodeList.deleteHead();
+    const { key } = deletedNode!.data;
 
     if (nodeList.isEmpty) {
       this.#buckets.delete(minFreq);
     }
 
-    this.#deleteRefByKey(deletedNode?.data.key!);
-    this.#keyFrequencyMap.delete(deletedNode?.data.key!);
+    this.#deleteRefByKey(key);
+    this.#keyFrequencyMap.delete(key);
     this.#size -= 1;
+  }
+
+  #deleteRefByKey(key: Key) {
+    this.#keyRefMap.delete(key);
   }
 
   #addItem(key: Key, value: Value) {
     let frequency = this.#getFrequencyByKey(key);
-    this.#keyFrequencyMap.set(key, frequency);
+    this.#setFrequency(key, frequency);
 
     const nodesList = this.#getNodeListByFrequency(frequency);
 
@@ -107,6 +104,10 @@ export class LFUCache<Key, Value> {
     this.#keyRefMap.set(key, newNode);
 
     this.#size += 1;
+  }
+
+  #setFrequency(key: Key, frequency: number) {
+    this.#keyFrequencyMap.set(key, frequency);
   }
 
   #getFrequencyByKey(key: Key) {
