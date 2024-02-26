@@ -35,6 +35,7 @@ describe('MFUCache', () => {
       expect(cache.size).toBe(3);
     });
 
+    // FIXME: replace by with of
     it('overwrites the value by the key', () => {
       // Arrange
       cache.put('one', 1);

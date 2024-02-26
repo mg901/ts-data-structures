@@ -33,53 +33,65 @@ export class LFUCache<Key, Value> {
 
   put(key: Key, value: Value) {
     if (this.#keyNodeMap.has(key)) {
-      this.#deleteItemByKey(key);
+      this.#updateItemByKey(key);
     }
 
     if (this.#size === this.#capacity) {
-      this.#evictLastFrequentlyUsedItem();
+      this.#evictLastFrequentlyUsed();
     }
 
     this.#addItem(key, value);
 
-    // console.log('minFrequency', this.#minFrequency);
-    // console.log('keyFreqMap', this.#keyFrequencyMap);
-    // console.log('buckets', this.#buckets);
+    console.log('keyNodeMap', this.#keyNodeMap);
+    console.log('minFrequency', this.#minFrequency);
+    console.log('keyFreqMap', this.#keyFrequencyMap);
+    console.log('buckets', this.#buckets);
 
     return this;
   }
 
-  #deleteItemByKey(key: Key) {
-    this.#deleteNodeByKey(key);
+  #updateItemByKey(key: Key) {
+    const frequency = this.#getFrequencyByKey(key);
+    this.#deleteNodeInList(key, frequency);
+    this.#keyNodeMap.delete(key);
     this.#updateFrequencyByKey(key);
     this.#updateMinFrequencyByKey(key);
     this.#size -= 1;
   }
 
-  #deleteNodeByKey(key: Key) {
-    const keyNodeMap = this.#keyNodeMap;
+  #deleteNodeInList(key: Key, frequency: number) {
+    const nodeList = this.#getNodeListByFrequency(frequency);
+    nodeList.deleteByRef(this.#keyNodeMap.get(key)!);
 
-    const frequency = this.#keyFrequencyMap.get(key)!;
-    const nodeList = this.#buckets.get(frequency)!;
-    nodeList?.deleteByRef(keyNodeMap.get(key)!);
-
-    if (nodeList?.isEmpty) {
+    if (nodeList.isEmpty) {
       this.#buckets.delete(frequency);
     }
+  }
 
-    keyNodeMap.delete(key);
+  #deleteNodeByKey(key: Key) {
+    this.#keyNodeMap.delete(key);
   }
 
   #updateFrequencyByKey(key: Key) {
-    const prevFrequency = this.#keyFrequencyMap.get(key)!;
+    const prevFrequency = this.#getFrequencyByKey(key);
     this.#keyFrequencyMap.set(key, prevFrequency + 1);
   }
 
   #updateMinFrequencyByKey(key: Key) {
-    this.#minFrequency = this.#keyFrequencyMap.get(key)!;
+    this.#minFrequency = this.#getFrequencyByKey(key);
   }
 
-  #evictLastFrequentlyUsedItem() {
+  #evictLastFrequentlyUsed() {
+    const minFreq = this.#minFrequency;
+    const nodeList = this.#getNodeListByFrequency(minFreq);
+    const deletedNode = nodeList.deleteHead();
+
+    if (nodeList.isEmpty) {
+      this.#buckets.delete(minFreq);
+    }
+
+    this.#deleteNodeByKey(deletedNode?.data.key!);
+    this.#keyFrequencyMap.delete(deletedNode?.data.key!);
     this.#size -= 1;
   }
 
