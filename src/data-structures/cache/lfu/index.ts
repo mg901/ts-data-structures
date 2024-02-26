@@ -52,20 +52,18 @@ export class LFUCache<Key, Value> {
 
   #updateItemByKey(key: Key) {
     const frequency = this.#getFrequencyByKey(key);
-    this.#deleteNodeInList(key, frequency);
+    this.#deleteNodeByRef(key, frequency);
     this.#deleteRefByKey(key);
     this.#setFrequencyByKey(key, frequency + 1);
     this.#updateMinFrequencyByKey(key);
   }
 
-  #deleteNodeInList(key: Key, frequency: number) {
+  #deleteNodeByRef(key: Key, frequency: number) {
     const nodeList = this.#getNodeListByFrequency(frequency);
     const ref = this.#keyRefMap.get(key)!;
     nodeList.deleteByRef(ref);
 
-    if (nodeList.isEmpty) {
-      this.#buckets.delete(frequency);
-    }
+    this.#deleteIfBucketIsEmpty(nodeList, frequency);
   }
 
   #updateMinFrequencyByKey(key: Key) {
@@ -74,21 +72,31 @@ export class LFUCache<Key, Value> {
 
   #evictLastFrequentlyUsed() {
     const minFreq = this.#minFrequency;
-    const nodeList = this.#getNodeListByFrequency(minFreq);
-    const deletedNode = nodeList.deleteHead();
+    const list = this.#getNodeListByFrequency(minFreq);
+    const deletedNode = list.deleteHead();
     const { key } = deletedNode!.data;
 
-    if (nodeList.isEmpty) {
-      this.#buckets.delete(minFreq);
-    }
-
+    this.#deleteIfBucketIsEmpty(list, minFreq);
     this.#deleteRefByKey(key);
-    this.#keyFrequencyMap.delete(key);
+    this.#deleteFrequencyByKey(key);
     this.#size -= 1;
+  }
+
+  #deleteIfBucketIsEmpty(
+    nodeList: DoublyLinkedList<Payload<Key, Value>>,
+    frequency: number,
+  ) {
+    if (nodeList.isEmpty) {
+      this.#buckets.delete(frequency);
+    }
   }
 
   #deleteRefByKey(key: Key) {
     this.#keyRefMap.delete(key);
+  }
+
+  #deleteFrequencyByKey(key: Key) {
+    this.#keyFrequencyMap.delete(key);
   }
 
   #addItem(key: Key, value: Value) {
