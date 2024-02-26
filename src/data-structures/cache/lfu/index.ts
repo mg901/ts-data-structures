@@ -54,7 +54,7 @@ export class LFUCache<Key, Value> {
     const frequency = this.#getFrequencyByKey(key);
     this.#deleteNodeInList(key, frequency);
     this.#deleteRefByKey(key);
-    this.#setFrequency(key, frequency + 1);
+    this.#setFrequencyByKey(key, frequency + 1);
     this.#updateMinFrequencyByKey(key);
   }
 
@@ -92,8 +92,8 @@ export class LFUCache<Key, Value> {
   }
 
   #addItem(key: Key, value: Value) {
-    let frequency = this.#getFrequencyByKey(key);
-    this.#setFrequency(key, frequency);
+    const frequency = this.#getFrequencyByKey(key);
+    this.#setFrequencyByKey(key, frequency);
 
     const nodesList = this.#getNodeListByFrequency(frequency);
 
@@ -106,7 +106,7 @@ export class LFUCache<Key, Value> {
     this.#size += 1;
   }
 
-  #setFrequency(key: Key, frequency: number) {
+  #setFrequencyByKey(key: Key, frequency: number) {
     this.#keyFrequencyMap.set(key, frequency);
   }
 
