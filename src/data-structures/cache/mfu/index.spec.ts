@@ -138,8 +138,7 @@ describe('MFUCache', () => {
       expect(cache.get('one')).toBeNull();
       expect(cache.get('two')).toBeNull();
       expect(cache.get('three')).toBeNull();
-      // FIXME: replace toBe with toEqual
-      expect(cache.toArray()).toBe([]);
+      expect(cache.toArray()).toEqual([]);
       expect(cache.size).toBe(0);
     });
   });

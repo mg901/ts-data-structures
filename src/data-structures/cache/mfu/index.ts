@@ -41,7 +41,6 @@ export class MFUCache<Key extends string | number | symbol, Value>
   }
 
   toArray(): Value[] {
-    // FIXME: rewrite from O(n2) to O(n) time
     return Object.values(this.#buckets).flatMap((list) =>
       list!.toArray().map((node) => node.value),
     );
