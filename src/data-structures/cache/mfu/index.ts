@@ -55,7 +55,7 @@ export class MFUCache<Key extends string | number | symbol, Value>
     }
 
     if (this.#size === this.#capacity) {
-      this.#evictLeastFrequentKey();
+      this.#evictMostFrequentlyUsedItem();
     }
 
     this.#addItem(key, value);
@@ -83,7 +83,7 @@ export class MFUCache<Key extends string | number | symbol, Value>
     this.#keyFrequencyMap[key] = oldFreq + 1;
   }
 
-  #evictLeastFrequentKey(): void {
+  #evictMostFrequentlyUsedItem(): void {
     // Get the most frequently bucket
     const bucket = this.#buckets[this.#maxFrequency];
 
