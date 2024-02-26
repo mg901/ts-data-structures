@@ -31,6 +31,10 @@ export class LFUCache<Key, Value> {
       .map((pair) => pair.value);
   }
 
+  get isEmpty() {
+    return this.toArray().length === 0;
+  }
+
   put(key: Key, value: Value) {
     if (this.#keyRefMap.has(key)) {
       this.#updateItemByKey(key);

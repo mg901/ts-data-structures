@@ -11,7 +11,7 @@ describe('LFUCache', () => {
 
   it('returns initial state correctly', () => {
     expect(cache.size).toBe(0);
-    expect(cache.toArray()).toBe([]);
+    expect(cache.isEmpty).toBeTruthy();
   });
 
   describe('put', () => {
@@ -21,6 +21,7 @@ describe('LFUCache', () => {
 
       // Assert
       expect(cache.toArray()).toEqual([1]);
+      expect(cache.isEmpty).toBeFalsy();
       expect(cache.size).toBe(1);
     });
 
