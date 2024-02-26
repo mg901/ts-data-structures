@@ -24,6 +24,10 @@ export class LFUCache<Key extends KeyType, Value> {
   }
 
   put(key: Key, value: Value) {
+    if (this.#size === this.#capacity) {
+      this.#size -= 1;
+    }
+
     this.#addItem(key, value);
 
     return this;

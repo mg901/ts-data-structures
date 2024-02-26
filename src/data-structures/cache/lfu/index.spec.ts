@@ -22,4 +22,17 @@ describe('LFUCache', () => {
       expect(cache.size).toBe(1);
     });
   });
+
+  it(`doesn't increase size on the cache overflow`, () => {
+    // Arrange
+    cache.put('one', 1);
+    cache.put('two', 2);
+    cache.put('three', 3);
+
+    // Act
+    cache.put('four', 4);
+
+    // Assert
+    expect(cache.size).toBe(3);
+  });
 });
