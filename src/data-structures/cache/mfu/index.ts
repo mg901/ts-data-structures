@@ -41,9 +41,9 @@ export class MFUCache<Key extends string | number | symbol, Value>
   }
 
   toArray(): Value[] {
-    return Object.values(this.#buckets).flatMap((list) =>
-      list!.toArray().map((node) => node.value),
-    );
+    return Object.values(this.#buckets)
+      .flatMap((list) => list!.toArray())
+      .map((node) => node.value);
   }
 
   put(key: Key, value: Value): this {
