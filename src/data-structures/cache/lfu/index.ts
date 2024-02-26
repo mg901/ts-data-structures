@@ -22,4 +22,15 @@ export class LFUCache<Key extends KeyType, Value> {
   get size() {
     return this.#size;
   }
+
+  put(key: Key, value: Value) {
+    this.#addItem(key, value);
+
+    return this;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  #addItem(key: Key, value: Value) {
+    this.#size += 1;
+  }
 }
