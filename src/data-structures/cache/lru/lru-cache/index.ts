@@ -1,5 +1,7 @@
-import { DoublyLinkedList } from '@/data-structures/linked-lists/doubly-linked-list';
-import { DoublyLinkedListNode } from '@/data-structures/linked-lists/doubly-linked-list/node';
+import {
+  DoublyLinkedList,
+  DoublyLinkedListNode,
+} from '@/data-structures/linked-lists/doubly-linked-list';
 import { ILRUCache } from '../types';
 
 type Payload<Key, Val> = {

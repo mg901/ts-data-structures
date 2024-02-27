@@ -8,6 +8,7 @@ interface IHashTable<Key, Value> {
   clear(): void;
 }
 
+// FIXME: replace with private prop (initialCapacity)
 const INITIAL_CAPACITY = 5;
 
 export class HashTable<Key extends number | string | symbol, Value = any>

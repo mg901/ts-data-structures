@@ -1,5 +1,7 @@
-import { DoublyLinkedList } from '../../linked-lists/doubly-linked-list';
-import { DoublyLinkedListNode } from '../../linked-lists/doubly-linked-list/node';
+import {
+  DoublyLinkedList,
+  DoublyLinkedListNode,
+} from '@/data-structures/linked-lists/doubly-linked-list';
 
 interface IMFUCache<Key, Value> {
   get size(): number;

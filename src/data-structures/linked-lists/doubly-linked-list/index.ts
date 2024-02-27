@@ -6,6 +6,8 @@ import { Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 import { DoublyLinkedListNode } from './node';
 
+export { DoublyLinkedListNode };
+
 export class DoublyLinkedList<T = any> extends LinkedList<
   T,
   DoublyLinkedListNode<T>

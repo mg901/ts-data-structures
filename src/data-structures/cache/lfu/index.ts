@@ -1,5 +1,7 @@
-import { DoublyLinkedList } from '@/data-structures/linked-lists/doubly-linked-list';
-import { DoublyLinkedListNode } from '@/data-structures/linked-lists/doubly-linked-list/node';
+import {
+  DoublyLinkedList,
+  DoublyLinkedListNode,
+} from '@/data-structures/linked-lists/doubly-linked-list';
 import type { Payload } from '../types';
 
 export class LFUCache<Key, Value> {
@@ -10,6 +12,8 @@ export class LFUCache<Key, Value> {
   #buckets = new Map<number, DoublyLinkedList<Payload<Key, Value>>>();
 
   #keyRefMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
+
+  #INITIAL_FREQUENCY = 1;
 
   #minFrequency = 1;
 
@@ -46,6 +50,7 @@ export class LFUCache<Key, Value> {
     }
 
     this.#addItem(key, value);
+    this.#size += 1;
 
     return this;
   }
@@ -110,8 +115,6 @@ export class LFUCache<Key, Value> {
 
     const newRef = nodesList.tail!;
     this.#keyRefMap.set(key, newRef);
-
-    this.#size += 1;
   }
 
   #setFrequencyByKey(key: Key, frequency: number) {
@@ -119,9 +122,7 @@ export class LFUCache<Key, Value> {
   }
 
   #getFrequencyByKey(key: Key) {
-    const INITIAL_FREQUENCY = 1;
-
-    return this.#keyFrequencyMap.get(key) ?? INITIAL_FREQUENCY;
+    return this.#keyFrequencyMap.get(key) ?? this.#INITIAL_FREQUENCY;
   }
 
   #getNodeListByFrequency(freq: number) {
