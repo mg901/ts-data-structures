@@ -9,7 +9,7 @@ interface IQueue<T> {
   peek(value: T): T | undefined;
   clear(): void;
   toArray(): T[];
-  toString(): string;
+  toString(callback?: Callback<T>): string;
 }
 
 export class Queue<T = any> implements IQueue<T> {
