@@ -82,7 +82,7 @@ describe('SinglyLinkedList', () => {
       singlyList.fromArray([1, 2, 3]);
 
       // Act and Assert
-      expect(singlyList.toString()).toBe('1 -> 2 -> 3');
+      expect(singlyList.toString()).toBe('1,2,3');
     });
 
     it('converts to list to string with custom callback', () => {
@@ -101,7 +101,7 @@ describe('SinglyLinkedList', () => {
       const received = list.toString((node) => `${node.value}`);
 
       // Assert
-      expect(received).toBe('1 -> 2');
+      expect(received).toBe('1,2');
     });
   });
 
@@ -126,7 +126,7 @@ describe('SinglyLinkedList', () => {
       expect(singlyList.tail?.data).toBe(3);
       expect(singlyList.tail?.next).toBeNull();
 
-      expect(singlyList.toString()).toBe('1 -> 2 -> 3');
+      expect(singlyList.toString()).toBe('1,2,3');
       expect(singlyList.size).toBe(3);
     });
   });
@@ -195,7 +195,7 @@ describe('SinglyLinkedList', () => {
       singlyList.prepend(1);
 
       // Assert
-      expect(singlyList.toString()).toBe('1 -> 2');
+      expect(singlyList.toString()).toBe('1,2');
       expect(singlyList.tail?.data).toBe(2);
       expect(singlyList.tail?.next).toBeNull();
 
@@ -207,7 +207,7 @@ describe('SinglyLinkedList', () => {
       singlyList.prepend(3).prepend(2).prepend(1);
 
       // Assert
-      expect(singlyList.toString()).toBe('1 -> 2 -> 3');
+      expect(singlyList.toString()).toBe('1,2,3');
       expect(singlyList.size).toBe(3);
     });
   });
@@ -230,7 +230,7 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedNode).toBeNull();
-      expect(singlyList.toString()).toBe('1 -> 2');
+      expect(singlyList.toString()).toBe('1,2');
       expect(singlyList.tail?.data).toBe(2);
       expect(singlyList.size).toBe(2);
     });
@@ -259,7 +259,7 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data).toBe(1);
-      expect(singlyList.toString()).toEqual('2 -> 3');
+      expect(singlyList.toString()).toEqual('2,3');
       expect(singlyList.tail?.data).toBe(3);
       expect(singlyList.size).toBe(2);
     });
@@ -273,7 +273,7 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedElement?.data).toBe(2);
-      expect(singlyList.toString()).toBe('1 -> 3');
+      expect(singlyList.toString()).toBe('1,3');
       expect(singlyList.tail?.data).toBe(3);
       expect(singlyList.size).toBe(2);
     });
@@ -311,7 +311,7 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data.value).toBe(2);
-      expect(list.toString((node) => `${node.value}`)).toBe('1 -> 3');
+      expect(list.toString((node) => `${node.value}`)).toBe('1,3');
       expect(list.size).toBe(2);
     });
   });
@@ -345,7 +345,7 @@ describe('SinglyLinkedList', () => {
       // Arrange
       singlyList.fromArray([1, 2, 3]);
 
-      expect(singlyList.toString()).toEqual('1 -> 2 -> 3');
+      expect(singlyList.toString()).toEqual('1,2,3');
       expect(singlyList.tail?.data).toBe(3);
       expect(singlyList.tail?.next).toBeNull();
       expect(singlyList.size).toBe(3);
@@ -354,7 +354,7 @@ describe('SinglyLinkedList', () => {
       singlyList.reverse();
 
       // Assert
-      expect(singlyList.toString()).toEqual('3 -> 2 -> 1');
+      expect(singlyList.toString()).toEqual('3,2,1');
       expect(singlyList.tail?.data).toBe(1);
       expect(singlyList.tail?.next).toBeNull();
       expect(singlyList.size).toBe(3);
@@ -368,7 +368,7 @@ describe('SinglyLinkedList', () => {
       expect(singlyList.head?.data).toBe(1);
       expect(singlyList.tail?.data).toBe(3);
 
-      expect(singlyList.toString()).toBe('1 -> 2 -> 3');
+      expect(singlyList.toString()).toBe('1,2,3');
       expect(singlyList.size).toBe(3);
     });
   });
@@ -415,7 +415,7 @@ describe('SinglyLinkedList', () => {
       singlyList.insertAt(0, 1);
 
       // Assert
-      expect(singlyList.toString()).toBe('1 -> 2');
+      expect(singlyList.toString()).toBe('1,2');
       expect(singlyList.tail?.data).toBe(2);
       expect(singlyList.tail?.next).toBeNull();
       expect(singlyList.size).toBe(2);
@@ -429,7 +429,7 @@ describe('SinglyLinkedList', () => {
       singlyList.insertAt(1, 2);
 
       // Assert
-      expect(singlyList.toString()).toBe('1 -> 2 -> 3');
+      expect(singlyList.toString()).toBe('1,2,3');
       expect(singlyList.tail?.data).toBe(3);
       expect(singlyList.tail?.next).toBeNull();
       expect(singlyList.size).toBe(3);
@@ -443,7 +443,7 @@ describe('SinglyLinkedList', () => {
       singlyList.insertAt(1, 2);
 
       // Assert
-      expect(singlyList.toString()).toBe('1 -> 2');
+      expect(singlyList.toString()).toBe('1,2');
       expect(singlyList.tail?.data).toBe(2);
       expect(singlyList.tail?.next).toBeNull();
       expect(singlyList.size).toBe(2);
@@ -454,7 +454,7 @@ describe('SinglyLinkedList', () => {
       singlyList.insertAt(0, 1).insertAt(1, 2);
 
       // Assert
-      expect(singlyList.toString()).toBe('1 -> 2');
+      expect(singlyList.toString()).toBe('1,2');
       expect(singlyList.tail?.data).toBe(2);
       expect(singlyList.tail?.next).toBeNull();
       expect(singlyList.size).toBe(2);

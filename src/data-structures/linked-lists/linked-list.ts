@@ -63,8 +63,8 @@ export abstract class LinkedList<
     return currentNode;
   }
 
-  toArrayOfStringifiedNodes(callback?: Callback<T>) {
-    return Array.from(this, (node) => node.toString(callback));
+  toString(callback?: Callback<T>) {
+    return Array.from(this, (node) => node.toString(callback)).toString();
   }
 
   toArray() {

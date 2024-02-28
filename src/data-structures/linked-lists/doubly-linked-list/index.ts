@@ -2,7 +2,6 @@ import {
   LinkedList,
   Predicate,
 } from '@/data-structures/linked-lists/linked-list';
-import { Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 import { DoublyLinkedListNode } from './node';
 
@@ -12,10 +11,6 @@ export class DoublyLinkedList<T = any> extends LinkedList<
   T,
   DoublyLinkedListNode<T>
 > {
-  toString(callback?: Callback<T>) {
-    return this.toArrayOfStringifiedNodes(callback).join(' <-> ');
-  }
-
   append(value: T) {
     const newNode = new DoublyLinkedListNode(value);
 

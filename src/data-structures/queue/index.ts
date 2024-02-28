@@ -42,6 +42,6 @@ export class Queue<T = any> {
   }
 
   toString(callback?: Callback<T>) {
-    return this.#sll.toArrayOfStringifiedNodes(callback).toString();
+    return this.#sll.toString(callback);
   }
 }
