@@ -1,6 +1,6 @@
-import type { ILRUCache } from '../types';
+import type { ICache } from '../../types';
 
-export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
+export class LRUCache<Key = any, Value = any> implements ICache<Key, Value> {
   #capacity: number;
 
   #cache = new Map<Key, Value>();
@@ -13,6 +13,10 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
     return this.#cache.size;
   }
 
+  get isEmpty() {
+    return this.toArray().length === 0;
+  }
+
   toArray() {
     return Array.from(this.#cache, ([, value]) => value);
   }
@@ -23,7 +27,7 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
     }
 
     if (this.#capacity === this.#cache.size) {
-      this.#evictLastRecentlyUsed();
+      this.#evictLeastRecentlyUsed();
     }
 
     this.#cache.set(key, value);
@@ -31,7 +35,7 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
     return this;
   }
 
-  #evictLastRecentlyUsed() {
+  #evictLeastRecentlyUsed() {
     const firstKey = this.#cache.keys().next().value;
     this.#cache.delete(firstKey);
   }
@@ -49,6 +53,10 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
 
     this.#cache.delete(key);
     this.#cache.set(key, value);
+  }
+
+  clear() {
+    this.#cache.clear();
   }
 
   // eslint-disable-next-line class-methods-use-this
