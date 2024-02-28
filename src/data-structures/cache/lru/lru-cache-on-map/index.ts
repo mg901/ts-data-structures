@@ -1,6 +1,6 @@
-import { ILRUCache } from '../types';
+import type { ICache } from '@/data-structures/cache/types';
 
-export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
+export class LRUCache<Key = any, Value = any> implements ICache<Key, Value> {
   #capacity: number;
 
   #cache = new Map<Key, Value>();
@@ -13,8 +13,31 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
     return this.#cache.size;
   }
 
+  get isEmpty() {
+    return this.toArray().length === 0;
+  }
+
   toArray() {
     return Array.from(this.#cache, ([, value]) => value);
+  }
+
+  put(key: Key, value: Value) {
+    if (this.#cache.has(key)) {
+      this.#cache.delete(key);
+    }
+
+    if (this.#capacity === this.#cache.size) {
+      this.#evictLeastRecentlyUsed();
+    }
+
+    this.#cache.set(key, value);
+
+    return this;
+  }
+
+  #evictLeastRecentlyUsed() {
+    const firstKey = this.#cache.keys().next().value;
+    this.#cache.delete(firstKey);
   }
 
   get(key: Key): Value | null {
@@ -32,23 +55,8 @@ export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
     this.#cache.set(key, value);
   }
 
-  put(key: Key, value: Value) {
-    if (this.#cache.has(key)) {
-      this.#cache.delete(key);
-    }
-
-    if (this.#capacity === this.#cache.size) {
-      this.#evictLastRecentlyUsed();
-    }
-
-    this.#cache.set(key, value);
-
-    return this;
-  }
-
-  #evictLastRecentlyUsed() {
-    const firstKey = this.#cache.keys().next().value;
-    this.#cache.delete(firstKey);
+  clear() {
+    this.#cache.clear();
   }
 
   // eslint-disable-next-line class-methods-use-this

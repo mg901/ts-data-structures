@@ -1,20 +1,17 @@
-import { DoublyLinkedList } from '@/data-structures/linked-lists/doubly-linked-list';
-import { DoublyLinkedListNode } from '@/data-structures/linked-lists/doubly-linked-list/node';
-import { ILRUCache } from '../types';
-
-type Payload<Key, Val> = {
-  key: Key;
-  value: Val;
-};
+import type { ICache, Payload } from '@/data-structures/cache/types';
+import {
+  DoublyLinkedList,
+  DoublyLinkedListNode,
+} from '@/data-structures/linked-lists/doubly-linked-list';
 
 export class LRUCache<Key extends string | number | symbol, Value>
-  implements ILRUCache<Key, Value>
+  implements ICache<Key, Value>
 {
   #capacity: number;
 
   #cache = new DoublyLinkedList<Payload<Key, Value>>();
 
-  #keyNodeMap = {} as Record<Key, DoublyLinkedListNode<Payload<Key, Value>>>;
+  #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
 
   constructor(capacity: number) {
     this.#capacity = capacity;
@@ -24,40 +21,21 @@ export class LRUCache<Key extends string | number | symbol, Value>
     return this.#cache.size;
   }
 
+  get isEmpty(): boolean {
+    return this.toArray().length === 0;
+  }
+
   toArray(): Value[] {
     return Array.from(this.#cache, ({ data }) => data.value);
   }
 
-  get(key: Key) {
-    const node = this.#keyNodeMap[key];
-
-    if (!node) return null;
-
-    this.#updateAccessOrderByKey(key);
-
-    return node.data.value;
-  }
-
-  #updateAccessOrderByKey(key: Key) {
-    const node = this.#keyNodeMap[key];
-    const cache = this.#cache;
-
-    cache.deleteByRef(node);
-    cache.append({
-      key,
-      value: node.data.value,
-    });
-
-    this.#keyNodeMap[key] = cache.tail!;
-  }
-
   put(key: Key, value: Value): this {
-    if (this.#keyNodeMap[key]) {
-      this.#deleteItemByKey(key);
+    if (this.#keyNodeMap.has(key)) {
+      this.#deleteItem(key);
     }
 
     if (this.#cache.size === this.#capacity) {
-      this.#evictLastRecentlyUsed();
+      this.#evictLeastRecentlyUsed();
     }
 
     this.#addItem(key, value);
@@ -65,20 +43,40 @@ export class LRUCache<Key extends string | number | symbol, Value>
     return this;
   }
 
-  #deleteItemByKey(key: Key) {
-    const node = this.#keyNodeMap[key];
-    this.#cache.deleteByRef(node!);
+  get(key: Key) {
+    const node = this.#keyNodeMap.get(key);
+
+    if (!node) return null;
+
+    this.#cache.deleteByRef(node);
+    this.#addItem(key, node.data.value);
+
+    return node.data.value;
   }
 
-  #evictLastRecentlyUsed() {
-    const head = this.#cache.head as DoublyLinkedListNode<Payload<Key, Value>>;
+  #deleteItem(key: Key) {
+    const node = this.#keyNodeMap.get(key)!;
+    this.#cache.deleteByRef(node);
+  }
 
-    delete this.#keyNodeMap[head.data.key];
-    this.#cache.deleteByRef(head);
+  #evictLeastRecentlyUsed() {
+    const leastRecentlyUsed = this.#cache.head!;
+
+    this.#keyNodeMap.delete(leastRecentlyUsed.data.key);
+    this.#cache.deleteByRef(leastRecentlyUsed);
   }
 
   #addItem(key: Key, value: Value) {
-    this.#keyNodeMap[key] = this.#cache.append({ key, value }).tail!;
+    this.#cache.append({ key, value });
+
+    const newNode = this.#cache.tail!;
+    this.#keyNodeMap.set(key, newNode);
+  }
+
+  clear() {
+    this.#cache = new DoublyLinkedList();
+    // @ts-ignore
+    this.#keyNodeMap = {};
   }
 
   // eslint-disable-next-line class-methods-use-this

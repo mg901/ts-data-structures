@@ -12,6 +12,7 @@ describe('LRUCache', () => {
   it('returns initial state correctly', () => {
     // Act and Assert
     expect(cache.toArray()).toEqual([]);
+    expect(cache.isEmpty).toBeTruthy();
     expect(cache.size).toBe(0);
   });
 
@@ -22,6 +23,7 @@ describe('LRUCache', () => {
 
       // Assert
       expect(cache.toArray()).toEqual([1]);
+      expect(cache.isEmpty).toBeFalsy();
       expect(cache.size).toBe(1);
     });
 
@@ -92,6 +94,21 @@ describe('LRUCache', () => {
       expect(cache.toArray()).toEqual([3, 1, 4]);
       expect(cache.size).toBe(3);
     });
+  });
+
+  it('clears cache', () => {
+    // Arrange
+    const lfu = new LRUCache<string, number>(3);
+    lfu.put('a', 1);
+    lfu.put('b', 2);
+    lfu.put('c', 3);
+
+    // Act
+    lfu.clear();
+
+    expect(lfu.toArray()).toEqual([]);
+    expect(lfu.isEmpty).toBeTruthy();
+    expect(lfu.size).toBe(0);
   });
 
   describe('toStringTag', () => {
