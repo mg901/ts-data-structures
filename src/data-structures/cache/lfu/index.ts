@@ -1,8 +1,8 @@
+import type { ICache, Payload } from '@/data-structures/cache/types';
 import {
   DoublyLinkedList,
   DoublyLinkedListNode,
 } from '@/data-structures/linked-lists/doubly-linked-list';
-import type { ICache, Payload } from '../types';
 
 export class LFUCache<Key extends string | number | symbol, Value>
   implements ICache<Key, Value>
@@ -131,5 +131,10 @@ export class LFUCache<Key extends string | number | symbol, Value>
 
   #safeGetNodeList(freq: number) {
     return this.#buckets[freq] ?? new DoublyLinkedList();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'LFUCache';
   }
 }

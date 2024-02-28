@@ -137,4 +137,13 @@ describe('LFUCache', () => {
     expect(cache.isEmpty).toBeTruthy();
     expect(cache.size).toBe(0);
   });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new LFUCache(6))).toBe(
+        '[object LFUCache]',
+      );
+    });
+  });
 });
