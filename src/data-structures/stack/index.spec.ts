@@ -6,7 +6,7 @@ describe('Stack', () => {
 
   // Arrange
   beforeEach(() => {
-    stack = new Stack();
+    stack = new Stack<number>();
   });
 
   it('returns the initial state of the stack correctly', () => {
@@ -14,15 +14,6 @@ describe('Stack', () => {
     expect(stack).toBeDefined();
     expect(stack.isEmpty).toBeTruthy();
     expect(stack.size).toBe(0);
-  });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new Stack())).toBe(
-        '[object Stack]',
-      );
-    });
   });
 
   describe('push', () => {
@@ -42,6 +33,21 @@ describe('Stack', () => {
       // Assert
       expect(stack.toString()).toBe('10,20,30');
       expect(stack.size).toBe(3);
+    });
+  });
+
+  describe('peek', () => {
+    it('returns undefined for an empty stack', () => {
+      // Act and Assert
+      expect(stack.peek()).toBeUndefined();
+    });
+
+    it('returns the value of top element', () => {
+      // Arrange
+      stack.push(1).push(2).push(3);
+
+      // Act and Assert
+      expect(stack.peek()).toBe(3);
     });
   });
 
@@ -80,6 +86,15 @@ describe('Stack', () => {
       // Assert
       expect(stack.isEmpty).toBeTruthy();
       expect(stack.size).toBe(0);
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new Stack())).toBe(
+        '[object Stack]',
+      );
     });
   });
 });
