@@ -2,20 +2,22 @@ import {
   DoublyLinkedList,
   DoublyLinkedListNode,
 } from '@/data-structures/linked-lists/doubly-linked-list';
-import type { Payload } from '../types';
+import type { ICache, Payload } from '../types';
 
-export class LFUCache<Key, Value> {
+export class LFUCache<Key extends string | number | symbol, Value>
+  implements ICache<Key, Value>
+{
   #capacity: number;
 
   #keyFrequencyMap = new Map<Key, number>();
 
-  #buckets = new Map<number, DoublyLinkedList<Payload<Key, Value>>>();
+  #buckets = {} as Record<number, DoublyLinkedList<Payload<Key, Value>>>;
 
-  #keyRefMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
+  #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
 
   #INITIAL_FREQUENCY = 1;
 
-  #minFrequency = 1;
+  #minFrequency = this.#INITIAL_FREQUENCY;
 
   #size = 0;
 
@@ -27,10 +29,8 @@ export class LFUCache<Key, Value> {
     return this.#size;
   }
 
-  toArray(): Value[] {
-    const lists = this.#buckets.values();
-
-    return Array.from(lists)
+  toArray() {
+    return Object.values(this.#buckets)
       .flatMap((list) => list?.toArray())
       .map((pair) => pair.value);
   }
@@ -40,92 +40,96 @@ export class LFUCache<Key, Value> {
   }
 
   put(key: Key, value: Value) {
-    if (this.#keyRefMap.has(key)) {
-      this.#updateItemByKey(key);
-      this.#size -= 1;
+    if (this.#keyNodeMap.has(key)) {
+      this.#removeItem(key);
     }
 
     if (this.#size === this.#capacity) {
-      this.#evictLastFrequentlyUsed();
+      this.#evictLeastFrequentlyUsed();
     }
 
     this.#addItem(key, value);
-    this.#size += 1;
 
     return this;
   }
 
-  #updateItemByKey(key: Key) {
-    const frequency = this.#getFrequencyByKey(key);
-    this.#deleteNodeByRef(key, frequency);
-    this.#deleteRefByKey(key);
-    this.#setFrequencyByKey(key, frequency + 1);
-    this.#updateMinFrequencyByKey(key);
+  get(key: Key) {
+    if (!this.#keyNodeMap.has(key)) return null;
+
+    const node = this.#getNodeByKey(key)!;
+    const { value } = node.data;
+    this.#removeItem(key);
+    this.#addItem(key, value);
+
+    return node.data.value;
   }
 
-  #deleteNodeByRef(key: Key, frequency: number) {
-    const nodeList = this.#getNodeListByFrequency(frequency);
-    const ref = this.#keyRefMap.get(key)!;
-    nodeList.deleteByRef(ref);
-
-    this.#deleteIfBucketIsEmpty(nodeList, frequency);
+  clear() {
+    this.#keyFrequencyMap.clear();
+    this.#buckets = {};
+    this.#keyNodeMap.clear();
+    this.#minFrequency = this.#INITIAL_FREQUENCY;
+    this.#size = 0;
   }
 
-  #updateMinFrequencyByKey(key: Key) {
-    const newFreq = this.#getFrequencyByKey(key);
-    this.#minFrequency = Math.min(this.#minFrequency, newFreq);
-  }
+  #removeItem(key: Key) {
+    const node = this.#getNodeByKey(key)!;
+    const freq = this.#safeGetFrequency(key);
+    const nodeList = this.#safeGetNodeList(freq);
 
-  #evictLastFrequentlyUsed() {
-    const minFreq = this.#minFrequency;
-    const list = this.#getNodeListByFrequency(minFreq);
-    const deletedNode = list.deleteHead();
-    const { key } = deletedNode!.data;
-
-    this.#deleteIfBucketIsEmpty(list, minFreq);
-    this.#deleteRefByKey(key);
-    this.#deleteFrequencyByKey(key);
+    nodeList.deleteByRef(node);
     this.#size -= 1;
+
+    if (nodeList.isEmpty) {
+      delete this.#buckets[freq];
+
+      this.#increaseMinFrequencyIfNeeded(freq);
+    }
+
+    this.#keyFrequencyMap.set(key, freq + 1);
   }
 
-  #deleteIfBucketIsEmpty(
-    nodeList: DoublyLinkedList<Payload<Key, Value>>,
-    frequency: number,
-  ) {
-    if (nodeList.isEmpty) {
-      this.#buckets.delete(frequency);
+  #increaseMinFrequencyIfNeeded(freq: number) {
+    if (this.#minFrequency === freq) {
+      this.#minFrequency += 1;
     }
   }
 
-  #deleteRefByKey(key: Key) {
-    this.#keyRefMap.delete(key);
-  }
+  #evictLeastFrequentlyUsed() {
+    const minFreq = this.#minFrequency;
+    const nodeList = this.#buckets[minFreq];
 
-  #deleteFrequencyByKey(key: Key) {
+    const leastFrequentNode = nodeList.deleteHead()!;
+    const { key } = leastFrequentNode.data;
+    this.#keyNodeMap.delete(key);
     this.#keyFrequencyMap.delete(key);
+    this.#size -= 1;
   }
 
   #addItem(key: Key, value: Value) {
-    const frequency = this.#getFrequencyByKey(key);
-    this.#setFrequencyByKey(key, frequency);
-    const nodesList = this.#getNodeListByFrequency(frequency);
+    const freq = this.#safeGetFrequency(key);
 
-    nodesList.append({ key, value });
-    this.#buckets.set(frequency, nodesList);
+    if (freq === this.#INITIAL_FREQUENCY) {
+      this.#minFrequency = this.#INITIAL_FREQUENCY;
+    }
 
-    const newRef = nodesList.tail!;
-    this.#keyRefMap.set(key, newRef);
+    const nodeList = this.#safeGetNodeList(freq);
+    nodeList.append({ key, value });
+    this.#buckets[freq] = nodeList;
+    this.#keyNodeMap.set(key, nodeList.tail!);
+    this.#keyFrequencyMap.set(key, freq);
+    this.#size += 1;
   }
 
-  #setFrequencyByKey(key: Key, frequency: number) {
-    this.#keyFrequencyMap.set(key, frequency);
+  #getNodeByKey(key: Key) {
+    return this.#keyNodeMap.get(key);
   }
 
-  #getFrequencyByKey(key: Key) {
+  #safeGetFrequency(key: Key) {
     return this.#keyFrequencyMap.get(key) ?? this.#INITIAL_FREQUENCY;
   }
 
-  #getNodeListByFrequency(freq: number) {
-    return this.#buckets.get(freq) ?? new DoublyLinkedList();
+  #safeGetNodeList(freq: number) {
+    return this.#buckets[freq] ?? new DoublyLinkedList();
   }
 }

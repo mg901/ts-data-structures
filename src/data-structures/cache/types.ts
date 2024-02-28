@@ -1,7 +1,7 @@
 export interface ICache<Key, Value> {
   get size(): number;
+  get isEmpty(): boolean;
   toArray(): Value[];
-  isEmpty(): boolean;
   put(key: Key, value: Value): this;
   get(key: Key): Value | null;
   clear(): void;

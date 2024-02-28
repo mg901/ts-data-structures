@@ -1,4 +1,4 @@
-import { ILRUCache } from '../types';
+import type { ILRUCache } from '../types';
 
 export class LRUCache<Key = any, Value = any> implements ILRUCache<Key, Value> {
   #capacity: number;

@@ -69,6 +69,7 @@ describe('MFUCache', () => {
       expect(cache.get('one')).toBeNull();
     });
 
+    // FIXME: replace with `updates frequency of received item`
     it('returns value of existing item', () => {
       // Arrange
       cache.put('one', 1);
