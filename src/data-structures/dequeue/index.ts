@@ -41,7 +41,7 @@ export class Dequeue<T = any> {
   }
 
   toString(callback?: Callback<T>) {
-    return this.#dll.toArrayOfStringifiedNodes(callback).toString();
+    return this.#dll.toString(callback);
   }
 
   // eslint-disable-next-line class-methods-use-this

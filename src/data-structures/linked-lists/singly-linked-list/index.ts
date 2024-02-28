@@ -3,7 +3,6 @@ import {
   type Predicate,
 } from '@/data-structures/linked-lists/linked-list';
 import { SinglyLinkedListNode } from '@/data-structures/linked-lists/singly-linked-list/node';
-import { Callback } from '@/shared/node';
 import { type Nullable } from '@/shared/types';
 
 export class SinglyLinkedList<T = any> extends LinkedList<
@@ -24,10 +23,6 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     this._size += 1;
 
     return this;
-  }
-
-  toString(callback?: Callback<T>) {
-    return this.toArrayOfStringifiedNodes(callback).join(' -> ');
   }
 
   fromArray(array: T[]) {
