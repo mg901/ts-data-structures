@@ -16,15 +16,6 @@ describe('Queue', () => {
     expect(queue.size).toBe(0);
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new Queue())).toBe(
-        '[object Queue]',
-      );
-    });
-  });
-
   describe('enqueue', () => {
     it('adds an element to the queue', () => {
       // Act
@@ -109,6 +100,16 @@ describe('Queue', () => {
     });
   });
 
+  it('converts queue to array', () => {
+    // Arrange
+    queue.enqueue(1);
+    queue.enqueue(2);
+    queue.enqueue(3);
+
+    // Act and Assert
+    expect(queue.toArray()).toEqual([1, 2, 3]);
+  });
+
   describe('clear', () => {
     it('removes all elements from the queue', () => {
       // Arrange
@@ -120,7 +121,17 @@ describe('Queue', () => {
 
       // Assert
       expect(queue.isEmpty).toBeTruthy();
+      expect(queue.toArray()).toEqual([]);
       expect(queue.size).toBe(0);
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(new Queue())).toBe(
+        '[object Queue]',
+      );
     });
   });
 });
