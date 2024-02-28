@@ -1,4 +1,4 @@
-import type { ICache } from '../../types';
+import type { ICache } from '@/data-structures/cache/types';
 
 export class LRUCache<Key = any, Value = any> implements ICache<Key, Value> {
   #capacity: number;
