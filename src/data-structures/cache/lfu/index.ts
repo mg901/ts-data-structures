@@ -1,36 +1,27 @@
-import type { ICache, Payload } from '@/data-structures/cache/types';
+/* eslint-disable max-classes-per-file */
+import type { ICache } from '@/data-structures/cache/types';
 import {
   DoublyLinkedList,
   DoublyLinkedListNode,
 } from '@/data-structures/linked-lists/doubly-linked-list';
 
-export class LFUCache<Key extends string | number | symbol, Value>
+export class LFUCache<Key extends keyof any, Value>
   implements ICache<Key, Value>
 {
   #capacity: number;
 
-  #keyFrequencyMap = new Map<Key, number>();
-
-  #buckets = {} as Record<number, DoublyLinkedList<Payload<Key, Value>>>;
-
-  #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
-
-  #INITIAL_FREQUENCY = 1;
-
-  #minFrequency = this.#INITIAL_FREQUENCY;
-
-  #size = 0;
+  #storage = new Storage<Key, Value>();
 
   constructor(capacity: number) {
     this.#capacity = capacity;
   }
 
   get size() {
-    return this.#size;
+    return this.#storage.size;
   }
 
   toArray() {
-    return Object.values(this.#buckets)
+    return Object.values(this.#storage.frequencyBuckets)
       .flatMap((list) => list?.toArray())
       .map((pair) => pair.value);
   }
@@ -40,101 +31,142 @@ export class LFUCache<Key extends string | number | symbol, Value>
   }
 
   put(key: Key, value: Value) {
-    if (this.#keyNodeMap.has(key)) {
-      this.#removeItem(key);
+    const storage = this.#storage;
+
+    if (storage.hasItem(key)) {
+      storage.deleteItem(key);
     }
 
-    if (this.#size === this.#capacity) {
-      this.#evictLeastFrequentlyUsed();
+    if (storage.size === this.#capacity) {
+      storage.evictLeastFrequent();
     }
 
-    this.#addItem(key, value);
+    storage.addItem(key, value);
 
     return this;
   }
 
   get(key: Key) {
-    if (!this.#keyNodeMap.has(key)) return null;
+    const storage = this.#storage;
 
-    const node = this.#getNodeByKey(key)!;
-    const { value } = node.data;
-    this.#removeItem(key);
-    this.#addItem(key, value);
+    if (!storage.hasItem(key)) return null;
+
+    const node = storage.getItem(key)!;
+    storage.deleteItem(key);
+
+    storage.addItem(key, node.data.value);
 
     return node.data.value;
   }
 
   clear() {
-    this.#keyFrequencyMap.clear();
-    this.#buckets = {};
-    this.#keyNodeMap.clear();
-    this.#minFrequency = this.#INITIAL_FREQUENCY;
-    this.#size = 0;
-  }
-
-  #removeItem(key: Key) {
-    const node = this.#getNodeByKey(key)!;
-    const freq = this.#safeGetFrequency(key);
-    const nodeList = this.#safeGetNodeList(freq);
-
-    nodeList.deleteByRef(node);
-    this.#size -= 1;
-
-    if (nodeList.isEmpty) {
-      delete this.#buckets[freq];
-
-      this.#increaseMinFrequencyIfNeeded(freq);
-    }
-
-    this.#keyFrequencyMap.set(key, freq + 1);
-  }
-
-  #increaseMinFrequencyIfNeeded(freq: number) {
-    if (this.#minFrequency === freq) {
-      this.#minFrequency += 1;
-    }
-  }
-
-  #evictLeastFrequentlyUsed() {
-    const minFreq = this.#minFrequency;
-    const nodeList = this.#buckets[minFreq];
-
-    const leastFrequentNode = nodeList.deleteHead()!;
-    const { key } = leastFrequentNode.data;
-    this.#keyNodeMap.delete(key);
-    this.#keyFrequencyMap.delete(key);
-    this.#size -= 1;
-  }
-
-  #addItem(key: Key, value: Value) {
-    const freq = this.#safeGetFrequency(key);
-
-    if (freq === this.#INITIAL_FREQUENCY) {
-      this.#minFrequency = this.#INITIAL_FREQUENCY;
-    }
-
-    const nodeList = this.#safeGetNodeList(freq);
-    nodeList.append({ key, value });
-    this.#buckets[freq] = nodeList;
-    this.#keyNodeMap.set(key, nodeList.tail!);
-    this.#keyFrequencyMap.set(key, freq);
-    this.#size += 1;
-  }
-
-  #getNodeByKey(key: Key) {
-    return this.#keyNodeMap.get(key);
-  }
-
-  #safeGetFrequency(key: Key) {
-    return this.#keyFrequencyMap.get(key) ?? this.#INITIAL_FREQUENCY;
-  }
-
-  #safeGetNodeList(freq: number) {
-    return this.#buckets[freq] ?? new DoublyLinkedList();
+    this.#storage.clear();
   }
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
     return 'LFUCache';
+  }
+}
+
+type FrequencyBucket<Key, Value> = DoublyLinkedList<{ key: Key; value: Value }>;
+type Node<Key, Value> = DoublyLinkedListNode<{ key: Key; value: Value }>;
+
+class Storage<Key extends keyof any, Value> {
+  #keyFrequencyMap = new Map<Key, number>();
+
+  frequencyBuckets = {} as Record<number, FrequencyBucket<Key, Value>>;
+
+  #keyNodeMap = new Map<Key, Node<Key, Value>>();
+
+  #INITIAL_FREQUENCY_VALUE = 0;
+
+  #INITIAL_MIN_FREQUENCY_VALUE = 1;
+
+  #currentMinFrequency = this.#INITIAL_MIN_FREQUENCY_VALUE;
+
+  get size() {
+    return this.#keyNodeMap.size;
+  }
+
+  hasItem(key: Key) {
+    return this.#keyNodeMap.has(key);
+  }
+
+  getItem(key: Key) {
+    return this.#keyNodeMap.get(key);
+  }
+
+  addItem(key: Key, value: Value) {
+    this.#increaseFrequency(key);
+    this.#resetMinFrequencyIfNeeded(key);
+
+    const frequency = this.#keyFrequencyMap.get(key)!;
+    const bucket = this.#getOrCreateBucket(frequency);
+
+    bucket.append({ key, value });
+    this.frequencyBuckets[frequency] = bucket;
+
+    const newNode = bucket.tail!;
+    this.#keyNodeMap.set(key, newNode);
+    this.#keyFrequencyMap.set(key, frequency);
+  }
+
+  #increaseFrequency(key: Key) {
+    const frequency =
+      this.#keyFrequencyMap.get(key) ?? this.#INITIAL_FREQUENCY_VALUE;
+
+    this.#keyFrequencyMap.set(key, frequency + 1);
+  }
+
+  #resetMinFrequencyIfNeeded(key: Key) {
+    const frequency = this.#keyFrequencyMap.get(key);
+
+    if (frequency === this.#INITIAL_MIN_FREQUENCY_VALUE) {
+      this.#currentMinFrequency = frequency;
+    }
+  }
+
+  #getOrCreateBucket(frequency: number) {
+    return this.frequencyBuckets[frequency] ?? new DoublyLinkedList();
+  }
+
+  deleteItem(key: Key) {
+    const node = this.#keyNodeMap.get(key)!;
+    const frequency = this.#keyFrequencyMap.get(key)!;
+    const bucket = this.frequencyBuckets[frequency];
+
+    bucket.deleteByRef(node);
+    this.#keyNodeMap.delete(key);
+
+    if (bucket.isEmpty) {
+      delete this.frequencyBuckets[frequency];
+
+      this.#increaseMinFrequencyIfBucketIsEmpty(frequency);
+    }
+  }
+
+  #increaseMinFrequencyIfBucketIsEmpty(frequency: number) {
+    if (frequency === this.#currentMinFrequency) {
+      this.#currentMinFrequency += 1;
+    }
+  }
+
+  evictLeastFrequent() {
+    const minFreq = this.#currentMinFrequency;
+    const bucket = this.frequencyBuckets[minFreq];
+
+    const leastFrequentNode = bucket.deleteHead()!;
+    const { key } = leastFrequentNode.data;
+
+    this.#keyNodeMap.delete(key);
+    this.#keyFrequencyMap.delete(key);
+  }
+
+  clear() {
+    this.#keyFrequencyMap.clear();
+    this.frequencyBuckets = {};
+    this.#keyNodeMap.clear();
+    this.#currentMinFrequency = this.#INITIAL_MIN_FREQUENCY_VALUE;
   }
 }
