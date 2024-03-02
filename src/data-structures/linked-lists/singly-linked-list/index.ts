@@ -1,5 +1,6 @@
 import {
   LinkedList,
+  type LinkedListOptions,
   type Predicate,
 } from '@/data-structures/linked-lists/linked-list';
 import { SinglyLinkedListNode } from '@/data-structures/linked-lists/singly-linked-list/node';
@@ -9,8 +10,15 @@ export class SinglyLinkedList<T = any> extends LinkedList<
   T,
   SinglyLinkedListNode<T>
 > {
+  #NodeInstance: new (data: T) => SinglyLinkedListNode<T>;
+
+  constructor(options: LinkedListOptions<T, SinglyLinkedListNode> = {}) {
+    super(options?.compareFunction);
+    this.#NodeInstance = options.NodeInstance ?? SinglyLinkedListNode;
+  }
+
   append(value: T) {
-    const newNode = new SinglyLinkedListNode(value);
+    const newNode = new this.#NodeInstance(value);
 
     if (this._head === null) {
       this._head = newNode;
@@ -34,7 +42,7 @@ export class SinglyLinkedList<T = any> extends LinkedList<
   }
 
   prepend(value: T) {
-    const newNode = new SinglyLinkedListNode(value);
+    const newNode = new this.#NodeInstance(value);
 
     if (this._head === null) {
       this._head = newNode;
@@ -45,6 +53,35 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     }
 
     this._size += 1;
+
+    return this;
+  }
+
+  insertAt(index: number, value: T) {
+    const isInvalidIndex = index < 0 || index > this._size;
+
+    if (isInvalidIndex) {
+      throw new RangeError(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    }
+
+    if (index === 0) {
+      // Insert at the beginning.
+      this.prepend(value);
+    } else if (index === this._size) {
+      // Insert at the end.
+      this.append(value);
+    } else {
+      // Insert in the middle.
+      const prevNode = this._findNodeByIndex(index - 1);
+      const newNode = new this.#NodeInstance(value);
+
+      newNode.next = prevNode.next;
+      prevNode.next = newNode;
+
+      this._size += 1;
+    }
 
     return this;
   }
@@ -92,57 +129,6 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     }
   }
 
-  reverse() {
-    if (this._head === null || this._head.next === null) {
-      return this;
-    }
-
-    let currentNode = this._head as Nullable<SinglyLinkedListNode<T>>;
-    let prevNode = null;
-
-    while (currentNode !== null) {
-      const nextNode = currentNode.next;
-      currentNode.next = prevNode;
-      prevNode = currentNode;
-
-      currentNode = nextNode;
-    }
-
-    this._tail = this._head;
-    this._head = prevNode;
-
-    return this;
-  }
-
-  insertAt(index: number, value: T) {
-    const isInvalidIndex = index < 0 || index > this._size;
-
-    if (isInvalidIndex) {
-      throw new RangeError(
-        'Index should be greater than or equal to 0 and less than or equal to the list length.',
-      );
-    }
-
-    if (index === 0) {
-      // Insert at the beginning.
-      this.prepend(value);
-    } else if (index === this._size) {
-      // Insert at the end.
-      this.append(value);
-    } else {
-      // Insert in the middle.
-      const prevNode = this._findNodeByIndex(index - 1);
-      const newNode = new SinglyLinkedListNode(value);
-
-      newNode.next = prevNode.next;
-      prevNode.next = newNode;
-
-      this._size += 1;
-    }
-
-    return this;
-  }
-
   deleteHead() {
     if (this._head === null) return null;
 
@@ -188,6 +174,28 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     this._size -= 1;
 
     return deletedTail;
+  }
+
+  reverse() {
+    if (this._head === null || this._head.next === null) {
+      return this;
+    }
+
+    let currentNode = this._head as Nullable<SinglyLinkedListNode<T>>;
+    let prevNode = null;
+
+    while (currentNode !== null) {
+      const nextNode = currentNode.next;
+      currentNode.next = prevNode;
+      prevNode = currentNode;
+
+      currentNode = nextNode;
+    }
+
+    this._tail = this._head;
+    this._head = prevNode;
+
+    return this;
   }
 
   // eslint-disable-next-line class-methods-use-this
