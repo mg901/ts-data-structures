@@ -6,15 +6,47 @@ import { SinglyLinkedListNode } from './singly-linked-list/node';
 
 export type Predicate<T = unknown> = (value: T) => boolean;
 
-export abstract class LinkedList<
+export interface ILinkedList<
   T = any,
   Node extends SinglyLinkedListNode<T> = SinglyLinkedListNode<T>,
 > {
+  get head(): Nullable<Node>;
+  get tail(): Nullable<Node>;
+  get size(): number;
+  get isEmpty(): boolean;
+
+  append(value: T): void;
+  fromArray(array: T[]): this;
+  toArray(): T[];
+  prepend(value: T): this;
+  insertAt(index: number, value: T): this;
+  indexOf(value: T): number;
+  find(value: T | Predicate<T>): Nullable<Node>;
+  deleteByValue(value: T | Predicate<T>): Nullable<Node>;
+  deleteHead(): Nullable<Node>;
+  deleteTail(): Nullable<Node>;
+  reverse(): this;
+  toString(callback?: Callback<T>): string;
+  clear(): void;
+}
+
+export interface LinkedListOptions<T, Node extends SinglyLinkedListNode<T>> {
+  compareFunction?: CompareFunction<T>;
+  NodeInstance?: {
+    new (data: T): Node;
+  };
+}
+
+export abstract class LinkedList<
+  T = any,
+  Node extends SinglyLinkedListNode<T> = SinglyLinkedListNode<T>,
+> implements ILinkedList<T>
+{
   protected _head: Nullable<Node> = null;
 
   protected _tail: Nullable<Node> = null;
 
-  protected _size: number = 0;
+  protected _size = 0;
 
   protected _compare: Comparator<T>;
 
@@ -63,11 +95,11 @@ export abstract class LinkedList<
     return currentNode;
   }
 
-  toString(callback?: Callback<T>) {
+  toString(callback?: Callback<T>): string {
     return Array.from(this, (node) => node.toString(callback)).toString();
   }
 
-  toArray() {
+  toArray(): T[] {
     return Array.from(this, (node) => node.data);
   }
 
@@ -85,7 +117,7 @@ export abstract class LinkedList<
     return null;
   }
 
-  indexOf(value: T) {
+  indexOf(value: T): number {
     let count = 0;
 
     for (const node of this) {
@@ -109,9 +141,9 @@ export abstract class LinkedList<
   abstract append(value: T): this;
   abstract fromArray(array: T[]): this;
   abstract prepend(value: T): this;
-  abstract deleteByValue(value: T | Predicate<T>): Nullable<Node>;
   abstract insertAt(index: number, value: T): this;
-  abstract reverse(): this;
+  abstract deleteByValue(value: T | Predicate<T>): Nullable<Node>;
   abstract deleteHead(): Nullable<Node>;
   abstract deleteTail(): Nullable<Node>;
+  abstract reverse(): this;
 }

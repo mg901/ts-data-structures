@@ -212,6 +212,94 @@ describe('SinglyLinkedList', () => {
     });
   });
 
+  describe('insertAt', () => {
+    it('throws an exception if the index is less than the list length', () => {
+      // Act
+      const received = () => singlyList.insertAt(-1, 1);
+
+      // Assert
+      expect(received).toThrow(RangeError);
+      expect(received).toThrow(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    });
+
+    it('throws an exception if the index is greater than the list length', () => {
+      // Act
+      const received = () => singlyList.insertAt(10, 1);
+
+      // Assert
+      expect(received).toThrow(RangeError);
+      expect(received).toThrow(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    });
+
+    it('inserts into the empty list', () => {
+      // Act
+      singlyList.insertAt(0, 1);
+
+      // Assert
+      expect(singlyList.toString()).toBe('1');
+      expect(singlyList.tail?.data).toBe(1);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(1);
+    });
+
+    it('inserts at the beginning of the list', () => {
+      // Arrange
+      singlyList.append(2);
+
+      // Act
+      singlyList.insertAt(0, 1);
+
+      // Assert
+      expect(singlyList.toString()).toBe('1,2');
+      expect(singlyList.tail?.data).toBe(2);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(2);
+    });
+
+    it('inserts into the middle of the list', () => {
+      // Arrange
+      singlyList.fromArray([1, 3]);
+
+      // Act
+      singlyList.insertAt(1, 2);
+
+      // Assert
+      expect(singlyList.toString()).toBe('1,2,3');
+      expect(singlyList.tail?.data).toBe(3);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(3);
+    });
+
+    it('inserts at the end of the list', () => {
+      // Arrange
+      singlyList.append(1);
+
+      // Act
+      singlyList.insertAt(1, 2);
+
+      // Assert
+      expect(singlyList.toString()).toBe('1,2');
+      expect(singlyList.tail?.data).toBe(2);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(2);
+    });
+
+    it('can be used in a call chain', () => {
+      // Act
+      singlyList.insertAt(0, 1).insertAt(1, 2);
+
+      // Assert
+      expect(singlyList.toString()).toBe('1,2');
+      expect(singlyList.tail?.data).toBe(2);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(2);
+    });
+  });
+
   describe('delete', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
@@ -313,151 +401,6 @@ describe('SinglyLinkedList', () => {
       expect(deletedNode?.data.value).toBe(2);
       expect(list.toString((node) => `${node.value}`)).toBe('1,3');
       expect(list.size).toBe(2);
-    });
-  });
-
-  describe('reverse', () => {
-    it('reverses the empty list', () => {
-      // Act
-      singlyList.reverse();
-
-      // Assert
-      expect(singlyList.head).toBeNull();
-      expect(singlyList.tail).toBeNull();
-      expect(singlyList.size).toBe(0);
-    });
-
-    it('reverses the singular node list', () => {
-      // Arrange
-      singlyList.append(1);
-
-      // Act
-      singlyList.reverse();
-
-      // Assert
-      expect(singlyList.toString()).toBe('1');
-      expect(singlyList.tail?.data).toBe(1);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(1);
-    });
-
-    it('reverses the the multi-node list', () => {
-      // Arrange
-      singlyList.fromArray([1, 2, 3]);
-
-      expect(singlyList.toString()).toEqual('1,2,3');
-      expect(singlyList.tail?.data).toBe(3);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(3);
-
-      // Act
-      singlyList.reverse();
-
-      // Assert
-      expect(singlyList.toString()).toEqual('3,2,1');
-      expect(singlyList.tail?.data).toBe(1);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(3);
-    });
-
-    it('can be used in a call chain', () => {
-      // Act
-      singlyList.fromArray([2, 1]).reverse().append(3);
-
-      // Assert
-      expect(singlyList.head?.data).toBe(1);
-      expect(singlyList.tail?.data).toBe(3);
-
-      expect(singlyList.toString()).toBe('1,2,3');
-      expect(singlyList.size).toBe(3);
-    });
-  });
-
-  describe('insertAt', () => {
-    it('throws an exception if the index is less than the list length', () => {
-      // Act
-      const received = () => singlyList.insertAt(-1, 1);
-
-      // Assert
-      expect(received).toThrow(RangeError);
-      expect(received).toThrow(
-        'Index should be greater than or equal to 0 and less than or equal to the list length.',
-      );
-    });
-
-    it('throws an exception if the index is greater than the list length', () => {
-      // Act
-      const received = () => singlyList.insertAt(10, 1);
-
-      // Assert
-      expect(received).toThrow(RangeError);
-      expect(received).toThrow(
-        'Index should be greater than or equal to 0 and less than or equal to the list length.',
-      );
-    });
-
-    it('inserts into the empty list', () => {
-      // Act
-      singlyList.insertAt(0, 1);
-
-      // Assert
-      expect(singlyList.toString()).toBe('1');
-      expect(singlyList.tail?.data).toBe(1);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(1);
-    });
-
-    it('inserts at the beginning of the list', () => {
-      // Arrange
-      singlyList.append(2);
-
-      // Act
-      singlyList.insertAt(0, 1);
-
-      // Assert
-      expect(singlyList.toString()).toBe('1,2');
-      expect(singlyList.tail?.data).toBe(2);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(2);
-    });
-
-    it('inserts into the middle of the list', () => {
-      // Arrange
-      singlyList.fromArray([1, 3]);
-
-      // Act
-      singlyList.insertAt(1, 2);
-
-      // Assert
-      expect(singlyList.toString()).toBe('1,2,3');
-      expect(singlyList.tail?.data).toBe(3);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(3);
-    });
-
-    it('inserts at the end of the list', () => {
-      // Arrange
-      singlyList.append(1);
-
-      // Act
-      singlyList.insertAt(1, 2);
-
-      // Assert
-      expect(singlyList.toString()).toBe('1,2');
-      expect(singlyList.tail?.data).toBe(2);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(2);
-    });
-
-    it('can be used in a call chain', () => {
-      // Act
-      singlyList.insertAt(0, 1).insertAt(1, 2);
-
-      // Assert
-      expect(singlyList.toString()).toBe('1,2');
-      expect(singlyList.tail?.data).toBe(2);
-      expect(singlyList.tail?.next).toBeNull();
-      expect(singlyList.size).toBe(2);
     });
   });
 
@@ -639,6 +582,63 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(foundedNode?.data).toBe(2);
+    });
+  });
+
+  describe('reverse', () => {
+    it('reverses the empty list', () => {
+      // Act
+      singlyList.reverse();
+
+      // Assert
+      expect(singlyList.head).toBeNull();
+      expect(singlyList.tail).toBeNull();
+      expect(singlyList.size).toBe(0);
+    });
+
+    it('reverses the singular node list', () => {
+      // Arrange
+      singlyList.append(1);
+
+      // Act
+      singlyList.reverse();
+
+      // Assert
+      expect(singlyList.toString()).toBe('1');
+      expect(singlyList.tail?.data).toBe(1);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(1);
+    });
+
+    it('reverses the the multi-node list', () => {
+      // Arrange
+      singlyList.fromArray([1, 2, 3]);
+
+      expect(singlyList.toString()).toEqual('1,2,3');
+      expect(singlyList.tail?.data).toBe(3);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(3);
+
+      // Act
+      singlyList.reverse();
+
+      // Assert
+      expect(singlyList.toString()).toEqual('3,2,1');
+      expect(singlyList.tail?.data).toBe(1);
+      expect(singlyList.tail?.next).toBeNull();
+      expect(singlyList.size).toBe(3);
+    });
+
+    it('can be used in a call chain', () => {
+      // Act
+      singlyList.fromArray([2, 1]).reverse().append(3);
+
+      // Assert
+      expect(singlyList.head?.data).toBe(1);
+      expect(singlyList.tail?.data).toBe(3);
+
+      expect(singlyList.toString()).toBe('1,2,3');
+      expect(singlyList.size).toBe(3);
     });
   });
 
