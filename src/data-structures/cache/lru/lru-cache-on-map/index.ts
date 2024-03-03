@@ -1,16 +1,18 @@
 import type { ICache } from '@/data-structures/cache/types';
 
-export class LRUCache<Key = any, Value = any> implements ICache<Key, Value> {
+export class LRUCache<Key extends keyof any, Value = any>
+  implements ICache<Key, Value>
+{
   #capacity: number;
 
-  #cache = new Map<Key, Value>();
+  #storage = new Map<Key, Value>();
 
   constructor(capacity: number) {
     this.#capacity = capacity;
   }
 
   get size() {
-    return this.#cache.size;
+    return this.#storage.size;
   }
 
   get isEmpty() {
@@ -18,45 +20,45 @@ export class LRUCache<Key = any, Value = any> implements ICache<Key, Value> {
   }
 
   toArray() {
-    return Array.from(this.#cache, ([, value]) => value);
+    return Array.from(this.#storage, ([, value]) => value);
   }
 
   put(key: Key, value: Value) {
-    if (this.#cache.has(key)) {
-      this.#cache.delete(key);
+    if (this.#storage.has(key)) {
+      this.#storage.delete(key);
     }
 
-    if (this.#capacity === this.#cache.size) {
-      this.#evictLeastRecentlyUsed();
+    if (this.#capacity === this.#storage.size) {
+      this.#evictLeastRecentItem();
     }
 
-    this.#cache.set(key, value);
+    this.#storage.set(key, value);
 
     return this;
   }
 
-  #evictLeastRecentlyUsed() {
-    const firstKey = this.#cache.keys().next().value;
-    this.#cache.delete(firstKey);
+  #evictLeastRecentItem() {
+    const firstKey = this.#storage.keys().next().value;
+    this.#storage.delete(firstKey);
   }
 
   get(key: Key): Value | null {
-    if (!this.#cache.has(key)) return null;
+    if (!this.#storage.has(key)) return null;
 
     this.#updateAccessOrderByKey(key);
 
-    return this.#cache.get(key)!;
+    return this.#storage.get(key)!;
   }
 
   #updateAccessOrderByKey(key: Key) {
-    const value = this.#cache.get(key)!;
+    const value = this.#storage.get(key)!;
 
-    this.#cache.delete(key);
-    this.#cache.set(key, value);
+    this.#storage.delete(key);
+    this.#storage.set(key, value);
   }
 
   clear() {
-    this.#cache.clear();
+    this.#storage.clear();
   }
 
   // eslint-disable-next-line class-methods-use-this
