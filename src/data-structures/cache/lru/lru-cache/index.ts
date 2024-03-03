@@ -1,86 +1,111 @@
-import type { ICache, Payload } from '@/data-structures/cache/types';
+import type { ICache } from '@/data-structures/cache/types';
 import {
   DoublyLinkedList,
   DoublyLinkedListNode,
 } from '@/data-structures/linked-lists/doubly-linked-list';
 
-export class LRUCache<Key extends string | number | symbol, Value>
+export class LRUCache<Key extends keyof any, Value>
   implements ICache<Key, Value>
 {
   #capacity: number;
 
-  #cache = new DoublyLinkedList<Payload<Key, Value>>();
-
-  #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
+  #storage = createStorage<Key, Value>();
 
   constructor(capacity: number) {
     this.#capacity = capacity;
   }
 
   get size() {
-    return this.#cache.size;
+    return this.#storage.size;
   }
 
-  get isEmpty(): boolean {
-    return this.toArray().length === 0;
+  get isEmpty() {
+    return this.#storage.size === 0;
   }
 
   toArray(): Value[] {
-    return Array.from(this.#cache, ({ data }) => data.value);
+    return Array.from(this.#storage.linkedList, ({ data }) => data.value);
   }
 
   put(key: Key, value: Value): this {
-    if (this.#keyNodeMap.has(key)) {
-      this.#deleteItem(key);
+    const { hasItem, deleteItem, size, evictLeastRecentItem, addItem } =
+      this.#storage;
+
+    if (hasItem(key)) {
+      deleteItem(key);
     }
 
-    if (this.#cache.size === this.#capacity) {
-      this.#evictLeastRecentlyUsed();
+    if (size === this.#capacity) {
+      evictLeastRecentItem();
     }
 
-    this.#addItem(key, value);
+    addItem(key, value);
 
     return this;
   }
 
   get(key: Key) {
-    const node = this.#keyNodeMap.get(key);
+    const { hasItem, getItem, deleteItem, addItem } = this.#storage;
 
-    if (!node) return null;
+    if (!hasItem(key)) return null;
 
-    this.#cache.deleteByRef(node);
-    this.#addItem(key, node.data.value);
+    const node = getItem(key)!;
+    deleteItem(key);
+    addItem(key, node.data.value);
 
     return node.data.value;
   }
 
-  #deleteItem(key: Key) {
-    const node = this.#keyNodeMap.get(key)!;
-    this.#cache.deleteByRef(node);
-  }
-
-  #evictLeastRecentlyUsed() {
-    const leastRecentlyUsed = this.#cache.head!;
-
-    this.#keyNodeMap.delete(leastRecentlyUsed.data.key);
-    this.#cache.deleteByRef(leastRecentlyUsed);
-  }
-
-  #addItem(key: Key, value: Value) {
-    this.#cache.append({ key, value });
-
-    const newNode = this.#cache.tail!;
-    this.#keyNodeMap.set(key, newNode);
-  }
-
   clear() {
-    this.#cache = new DoublyLinkedList();
-    // @ts-ignore
-    this.#keyNodeMap = {};
+    this.#storage.clear();
   }
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
     return 'LRUCache';
   }
+}
+
+function createStorage<Key extends keyof any, Value = any>() {
+  const linkedList = new DoublyLinkedList<{ key: Key; value: Value }>();
+  const keyNodeMap = new Map<
+    Key,
+    DoublyLinkedListNode<{ key: Key; value: Value }>
+  >();
+
+  return {
+    linkedList,
+    get size() {
+      return keyNodeMap.size;
+    },
+
+    hasItem(key: Key) {
+      return keyNodeMap.has(key);
+    },
+
+    getItem(key: Key) {
+      return keyNodeMap.get(key);
+    },
+    addItem(key: Key, value: Value) {
+      linkedList.append({ key, value });
+
+      const newNode = linkedList.tail!;
+      keyNodeMap.set(key, newNode);
+    },
+
+    deleteItem(key: Key) {
+      const node = keyNodeMap.get(key)!;
+      linkedList.deleteByRef(node);
+    },
+    evictLeastRecentItem() {
+      const leastRecentNode = linkedList.head!;
+
+      keyNodeMap.delete(leastRecentNode.data.key);
+      linkedList.deleteByRef(leastRecentNode);
+    },
+    clear() {
+      linkedList.clear();
+      keyNodeMap.clear();
+    },
+  };
 }
