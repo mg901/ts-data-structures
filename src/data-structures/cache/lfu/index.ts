@@ -69,15 +69,18 @@ export class LFUCache<Key extends keyof any, Value>
   }
 }
 
-type FrequencyBucket<Key, Value> = DoublyLinkedList<{ key: Key; value: Value }>;
-type Node<Key, Value> = DoublyLinkedListNode<{ key: Key; value: Value }>;
-
 class Storage<Key extends keyof any, Value> {
   #keyFrequencyMap = new Map<Key, number>();
 
-  frequencyBuckets = {} as Record<number, FrequencyBucket<Key, Value>>;
+  frequencyBuckets = {} as Record<
+    number,
+    DoublyLinkedList<{ key: Key; value: Value }>
+  >;
 
-  #keyNodeMap = new Map<Key, Node<Key, Value>>();
+  #keyNodeMap = new Map<
+    Key,
+    DoublyLinkedListNode<{ key: Key; value: Value }>
+  >();
 
   #INITIAL_FREQUENCY_VALUE = 0;
 
@@ -139,15 +142,7 @@ class Storage<Key extends keyof any, Value> {
     bucket.deleteByRef(node);
     this.#keyNodeMap.delete(key);
 
-    if (bucket.isEmpty) {
-      delete this.frequencyBuckets[frequency];
-
-      this.#increaseMinFrequencyIfBucketIsEmpty(frequency);
-    }
-  }
-
-  #increaseMinFrequencyIfBucketIsEmpty(frequency: number) {
-    if (frequency === this.#currentMinFrequency) {
+    if (bucket.isEmpty && frequency === this.#currentMinFrequency) {
       this.#currentMinFrequency += 1;
     }
   }
@@ -157,16 +152,16 @@ class Storage<Key extends keyof any, Value> {
     const bucket = this.frequencyBuckets[minFreq];
 
     const leastFrequentNode = bucket.deleteHead()!;
-    const { key } = leastFrequentNode.data;
 
+    const { key } = leastFrequentNode.data;
     this.#keyNodeMap.delete(key);
     this.#keyFrequencyMap.delete(key);
   }
 
   clear() {
-    this.#keyFrequencyMap.clear();
     this.frequencyBuckets = {};
     this.#keyNodeMap.clear();
+    this.#keyFrequencyMap.clear();
     this.#currentMinFrequency = this.#INITIAL_MIN_FREQUENCY_VALUE;
   }
 }
