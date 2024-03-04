@@ -1,4 +1,4 @@
-import type { ICache } from '@/data-structures/cache/types';
+import type { ICache, Payload } from '@/data-structures/cache/types';
 
 export class LRUCache<Key extends keyof any, Value = any>
   implements ICache<Key, Value>
@@ -19,8 +19,15 @@ export class LRUCache<Key extends keyof any, Value = any>
     return this.toArray().length === 0;
   }
 
-  toArray() {
-    return Array.from(this.#storage, ([, value]) => value);
+  toArray<T>(
+    callbackfn: (item: Payload<Key, Value>) => T = (item) =>
+      item.value as unknown as T,
+  ) {
+    const iterable = this.#storage;
+
+    return Array.from(iterable, ([key, value]) => ({ key, value })).map(
+      callbackfn,
+    );
   }
 
   put(key: Key, value: Value) {
