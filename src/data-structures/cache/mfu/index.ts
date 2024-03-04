@@ -70,20 +70,20 @@ export class MFUCache<Key extends keyof any, Value = any>
 }
 
 class Storage<Key extends keyof any, Value = any> {
+  #keyFrequencyMap = new Map<Key, number>();
+
   #frequencyNodes = new DoublyLinkedList<number>();
 
   #frequencyFrequencyNodeMap = new Map<number, DoublyLinkedListNode<number>>();
 
-  #bucket = new DoublyLinkedList<Payload<Key, Value>>();
+  #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
+
+  // #bucket = new DoublyLinkedList<Payload<Key, Value>>();
 
   #frequencyBucketMap = {} as Record<
     number,
     DoublyLinkedList<Payload<Key, Value>>
   >;
-
-  #keyFrequencyMap = new Map<Key, number>();
-
-  #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
 
   #INITIAL_FREQUENCY_VALUE = 0;
 
@@ -192,7 +192,6 @@ class Storage<Key extends keyof any, Value = any> {
   clear() {
     this.#frequencyNodes.clear();
     this.#frequencyFrequencyNodeMap.clear();
-    this.#bucket.clear();
     this.#frequencyBucketMap = {};
     this.#keyFrequencyMap.clear();
     this.#keyNodeMap.clear();
