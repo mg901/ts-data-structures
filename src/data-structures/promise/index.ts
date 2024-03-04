@@ -2,6 +2,48 @@ import { Queue } from '@/data-structures/queue';
 import isFunction from 'lodash.isfunction';
 import { ValuesType } from 'utility-types';
 
+/**
+ * Represents the completion of an asynchronous operation
+ */
+interface IMyPromise<T> {
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the MyPromise.
+   * @param onfulfilled The callback to execute when the MyPromise is resolved.
+   * @param onrejected The callback to execute when the MyPromise is rejected.
+   * @returns A MyPromise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(
+    onfulfilled?:
+      | ((value: T) => TResult1 | PromiseLike<TResult1>)
+      | undefined
+      | null,
+    onrejected?:
+      | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+      | undefined
+      | null,
+  ): IMyPromise<TResult1 | TResult2>;
+
+  /**
+   * Attaches a callback for only the rejection of the MyPromise.
+   * @param onrejected The callback to execute when the MyPromise is rejected.
+   * @returns A MyPromise for the completion of the callback.
+   */
+  catch<TResult = never>(
+    onrejected?:
+      | ((reason: any) => TResult | PromiseLike<TResult>)
+      | undefined
+      | null,
+  ): IMyPromise<T | TResult>;
+
+  /**
+   * Attaches a callback that is invoked when the MyPromise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the MyPromise is settled (fulfilled or rejected).
+   * @returns A MyPromise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): IMyPromise<T>;
+}
+
 const STATE = {
   PENDING: 'pending',
   FULFILLED: 'fulfilled',
@@ -26,7 +68,7 @@ type PromiseSettledResult<T> =
   | PromiseFulfilledResult<T>
   | PromiseRejectedResult;
 
-export class MyPromise<T = any> {
+export class MyPromise<T = any> implements IMyPromise<T> {
   #state: ValuesType<typeof STATE> = STATE.PENDING;
 
   #value?: Value<T>;
