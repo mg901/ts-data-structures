@@ -1,9 +1,9 @@
 /* eslint-disable max-classes-per-file */
+import type { ICache, Payload } from '@/data-structures/cache/types';
 import {
   DoublyLinkedList,
   DoublyLinkedListNode,
 } from '@/data-structures/linked-lists/doubly-linked-list';
-import type { ICache, Payload } from '../types';
 
 export class MFUCache<Key extends keyof any, Value = any>
   implements ICache<Key, Value>
