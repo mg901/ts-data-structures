@@ -6,13 +6,13 @@ import {
 import { SinglyLinkedListNode } from '@/data-structures/linked-lists/singly-linked-list/node';
 import { type Nullable } from '@/shared/types';
 
-export class SinglyLinkedList<T = any> extends LinkedList<
-  T,
-  SinglyLinkedListNode<T>
-> {
+export class SinglyLinkedList<
+  T = any,
+  Node extends SinglyLinkedListNode<T> = SinglyLinkedListNode<T>,
+> extends LinkedList<T> {
   #NodeInstance: new (data: T) => SinglyLinkedListNode<T>;
 
-  constructor(options: LinkedListOptions<T, SinglyLinkedListNode> = {}) {
+  constructor(options: LinkedListOptions<T, Node> = {}) {
     super(options?.compareFunction);
     this.#NodeInstance = options.NodeInstance ?? SinglyLinkedListNode;
   }
@@ -86,22 +86,22 @@ export class SinglyLinkedList<T = any> extends LinkedList<
     return this;
   }
 
-  deleteByValue(value: T): Nullable<SinglyLinkedListNode<T>>;
-  deleteByValue(predicate: Predicate<T>): Nullable<SinglyLinkedListNode<T>>;
+  deleteByValue(value: T): Nullable<Node>;
+  deleteByValue(predicate: Predicate<T>): Nullable<Node>;
   deleteByValue(arg: T | Predicate<T>) {
     if (this._head === null) return null;
 
-    let deletedNode: Nullable<SinglyLinkedListNode<T>> = null;
-    let prevNode: Nullable<SinglyLinkedListNode<T>> = null;
+    let deletedNode: Nullable<Node> = null;
+    let prevNode: Nullable<Node> = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
-        deletedNode = currentNode;
+        deletedNode = currentNode as Node;
 
         break;
       }
 
-      prevNode = currentNode;
+      prevNode = currentNode as Node;
     }
 
     if (deletedNode) {
@@ -116,7 +116,7 @@ export class SinglyLinkedList<T = any> extends LinkedList<
 
   #deleteNodeAndUpdateTail(
     deletedNode: SinglyLinkedListNode,
-    prevNode: Nullable<SinglyLinkedListNode<T>>,
+    prevNode: Nullable<Node>,
   ) {
     if (prevNode === null) {
       this._head = deletedNode.next;
@@ -157,11 +157,11 @@ export class SinglyLinkedList<T = any> extends LinkedList<
       this._tail = null;
     } else {
       // // If multiple nodes.
-      let prevNode: Nullable<SinglyLinkedListNode<T>> = null;
+      let prevNode: Nullable<Node> = null;
 
       for (const currentNode of this) {
         if (currentNode.next) {
-          prevNode = currentNode;
+          prevNode = currentNode as Node;
         } else {
           prevNode!.next = null;
           this._tail = prevNode;
@@ -181,7 +181,7 @@ export class SinglyLinkedList<T = any> extends LinkedList<
       return this;
     }
 
-    let currentNode = this._head as Nullable<SinglyLinkedListNode<T>>;
+    let currentNode = this._head as Nullable<Node>;
     let prevNode = null;
 
     while (currentNode !== null) {
@@ -189,7 +189,7 @@ export class SinglyLinkedList<T = any> extends LinkedList<
       currentNode.next = prevNode;
       prevNode = currentNode;
 
-      currentNode = nextNode;
+      currentNode = nextNode as Node;
     }
 
     this._tail = this._head;
