@@ -69,19 +69,17 @@ export class MFUCache<Key extends keyof any, Value = any>
   }
 }
 
+interface FrequencyNode extends DoublyLinkedListNode<number> {}
+interface Bucket<Key, Value> extends DoublyLinkedList<Payload<Key, Value>> {}
+
 class Storage<Key extends keyof any, Value = any> {
+  #keyFrequencyMap = new Map<Key, number>();
+
+  #frequencyFrequencyNodeMap = new Map<number, FrequencyNode>();
+
   #frequencyNodes = new DoublyLinkedList<number>();
 
-  #frequencyFrequencyNodeMap = new Map<number, DoublyLinkedListNode<number>>();
-
-  #bucket = new DoublyLinkedList<Payload<Key, Value>>();
-
-  #frequencyBucketMap = {} as Record<
-    number,
-    DoublyLinkedList<Payload<Key, Value>>
-  >;
-
-  #keyFrequencyMap = new Map<Key, number>();
+  #frequencyBucketMap = {} as Record<number, Bucket<Key, Value>>;
 
   #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
 
@@ -100,9 +98,9 @@ class Storage<Key extends keyof any, Value = any> {
   setItem(key: Key, value: Value) {
     this.#increaseFrequency(key);
 
-    const currentFreq = this.#keyFrequencyMap.get(key)!;
-    if (!this.#frequencyFrequencyNodeMap.has(currentFreq)) {
-      this.#addFrequencyNode(currentFreq);
+    const frequency = this.#getFrequency(key)!;
+    if (!this.#frequencyFrequencyNodeMap.has(frequency)) {
+      this.#addNewFrequencyNode(frequency);
 
       this.#maxFrequency = this.#frequencyNodes.tail!.data;
     }
@@ -110,19 +108,14 @@ class Storage<Key extends keyof any, Value = any> {
     this.#addNewNodeToBucket(key, value);
   }
 
-  getItem(key: Key) {
-    return this.#keyNodeMap.get(key);
-  }
-
   #increaseFrequency(key: Key) {
-    const frequency =
-      this.#keyFrequencyMap.get(key) ?? this.#INITIAL_FREQUENCY_VALUE;
+    const frequency = this.#getFrequency(key) ?? this.#INITIAL_FREQUENCY_VALUE;
 
     this.#keyFrequencyMap.set(key, frequency + 1);
   }
 
   #addNewNodeToBucket(key: Key, value: Value) {
-    const frequency = this.#keyFrequencyMap.get(key)!;
+    const frequency = this.#getFrequency(key)!;
     const bucket = this.#getOrCreateNewBucket(frequency);
 
     bucket.append({ key, value });
@@ -132,6 +125,10 @@ class Storage<Key extends keyof any, Value = any> {
     this.#frequencyBucketMap[frequency] = bucket;
   }
 
+  getItem(key: Key) {
+    return this.#keyNodeMap.get(key);
+  }
+
   #getOrCreateNewBucket(frequency: number) {
     return (
       this.#frequencyBucketMap[frequency] ??
@@ -139,19 +136,13 @@ class Storage<Key extends keyof any, Value = any> {
     );
   }
 
-  #addFrequencyNode(frequency: number) {
-    const frequencyNodes = this.#frequencyNodes;
-    let newFrequencyNode: DoublyLinkedListNode<number>;
+  #addNewFrequencyNode(frequency: number) {
+    const newNode =
+      frequency === 1
+        ? this.#frequencyNodes.prepend(frequency).head!
+        : this.#frequencyNodes.append(frequency).tail!;
 
-    if (frequency === 1) {
-      frequencyNodes.prepend(frequency);
-      newFrequencyNode = frequencyNodes.head!;
-    } else {
-      frequencyNodes.append(frequency);
-      newFrequencyNode = frequencyNodes.tail!;
-    }
-
-    this.#frequencyFrequencyNodeMap.set(frequency, newFrequencyNode);
+    this.#frequencyFrequencyNodeMap.set(frequency, newNode);
   }
 
   hasItem(key: Key) {
@@ -159,7 +150,7 @@ class Storage<Key extends keyof any, Value = any> {
   }
 
   removeItem(key: Key) {
-    const frequency = this.#keyFrequencyMap.get(key)!;
+    const frequency = this.#getFrequency(key)!;
     const bucket = this.#frequencyBucketMap[frequency]!;
     const node = this.#keyNodeMap.get(key)!;
 
@@ -175,26 +166,31 @@ class Storage<Key extends keyof any, Value = any> {
     }
   }
 
+  #getFrequency(key: Key) {
+    return this.#keyFrequencyMap.get(key);
+  }
+
   evictTheMostFrequentItem() {
-    const maxFreq = this.#maxFrequency;
-    const bucket = this.#frequencyBucketMap[maxFreq]!;
-    const { key } = bucket.deleteTail()!.data;
-    this.#keyNodeMap.delete(key);
-    this.#keyFrequencyMap.delete(key);
+    const maxFrequency = this.#maxFrequency;
+    const bucket = this.#frequencyBucketMap[maxFrequency]!;
+
+    const deletedNode = bucket.deleteTail()!.data;
+
+    this.#keyNodeMap.delete(deletedNode.key);
+    this.#keyFrequencyMap.delete(deletedNode.key);
 
     if (bucket.isEmpty) {
       this.#frequencyNodes.deleteTail();
-      this.#frequencyFrequencyNodeMap.delete(maxFreq);
-      delete this.#frequencyBucketMap[maxFreq];
+      this.#frequencyFrequencyNodeMap.delete(maxFrequency);
+      delete this.#frequencyBucketMap[maxFrequency];
     }
   }
 
   clear() {
-    this.#frequencyNodes.clear();
-    this.#frequencyFrequencyNodeMap.clear();
-    this.#bucket.clear();
-    this.#frequencyBucketMap = {};
     this.#keyFrequencyMap.clear();
+    this.#frequencyFrequencyNodeMap.clear();
+    this.#frequencyNodes.clear();
+    this.#frequencyBucketMap = {};
     this.#keyNodeMap.clear();
     this.#maxFrequency = this.#INITIAL_FREQUENCY_VALUE;
   }
