@@ -82,8 +82,6 @@ class Storage<Key extends keyof any, Value> {
 
   #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
 
-  #INITIAL_FREQUENCY_VALUE = 0;
-
   #INITIAL_MIN_FREQUENCY_VALUE = 1;
 
   #currentMinFrequency = this.#INITIAL_MIN_FREQUENCY_VALUE;
@@ -116,8 +114,8 @@ class Storage<Key extends keyof any, Value> {
   }
 
   #increaseFrequency(key: Key) {
-    const frequency =
-      this.#keyFrequencyMap.get(key) ?? this.#INITIAL_FREQUENCY_VALUE;
+    const INITIAL_FREQUENCY_VALUE = 0;
+    const frequency = this.#keyFrequencyMap.get(key) ?? INITIAL_FREQUENCY_VALUE;
 
     this.#keyFrequencyMap.set(key, frequency + 1);
   }

@@ -1,3 +1,8 @@
+export type Payload<Key, Value> = {
+  key: Key;
+  value: Value;
+};
+
 export interface ICache<Key extends keyof any, Value> {
   get size(): number;
   get isEmpty(): boolean;
@@ -7,8 +12,3 @@ export interface ICache<Key extends keyof any, Value> {
   get(key: Key): Value | null;
   clear(): void;
 }
-
-export type Payload<Key, Value> = {
-  key: Key;
-  value: Value;
-};
