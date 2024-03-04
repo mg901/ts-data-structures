@@ -6,60 +6,138 @@ describe('MFUCache', () => {
 
   // Arrange
   beforeEach(() => {
-    cache = new MFUCache(3);
+    cache = new MFUCache(2);
   });
 
   it('returns initial state correctly', () => {
     // Assert
+    expect(cache.isEmpty).toBeTruthy();
+    expect(cache.toArray()).toEqual([]);
     expect(cache.size).toBe(0);
   });
 
+  describe('toArray', () => {
+    it('returns values of items', () => {
+      // Arrange
+      cache.put('a', 1);
+      cache.put('b', 2);
+
+      // Act and Assert
+      expect(cache.toArray()).toEqual([1, 2]);
+    });
+
+    it('returns keys of items', () => {
+      // Arrange
+      cache.put('a', 1);
+      cache.put('b', 2);
+
+      // Act and Assert
+      expect(cache.toArray(({ key }) => key)).toEqual(['a', 'b']);
+    });
+  });
+
   describe('put', () => {
-    it('adds item to the cache', () => {
+    it('adds first item', () => {
       // Act
-      cache.put('one', 1);
+      cache.put('a', 1);
+      // [1] -> 1
 
       // Assert
+      expect(cache.isEmpty).toBeFalsy();
       expect(cache.toArray()).toEqual([1]);
       expect(cache.size).toBe(1);
     });
 
-    it('fills the cache', () => {
+    it('adds second item', () => {
+      // Arrange
+      cache.put('a', 1);
+
       // Act
-      cache.put('one', 1);
-      cache.put('two', 2);
-      cache.put('three', 3);
+      cache.put('b', 2);
+      // [1] -> 1, 2
 
       // Assert
-      expect(cache.toArray()).toEqual([1, 2, 3]);
-      expect(cache.size).toBe(3);
+      expect(cache.toArray()).toEqual([1, 2]);
+      expect(cache.size).toBe(2);
     });
 
-    // FIXME: replace by with of
-    it('overwrites the value by the key', () => {
+    it('updates value of existing item', () => {
       // Arrange
-      cache.put('one', 1);
+      cache.put('a', 1);
 
       // Act
-      cache.put('one', 2);
+      cache.put('a', 2);
+      // [2] -> 2
 
       // Assert
       expect(cache.toArray()).toEqual([2]);
       expect(cache.size).toBe(1);
     });
 
-    it('evicts the most frequently used item', () => {
+    it('updates first item', () => {
+      // Arrange
+      cache.put('a', 1);
+      cache.put('b', 2);
+      //
+
+      // Act
+      cache.put('a', 3);
+      // [1] -> 2
+      // [2] -> 3
+
+      // Assert
+      expect(cache.toArray()).toEqual([2, 3]);
+      expect(cache.size).toBe(2);
+    });
+
+    it('updates existing items', () => {
+      // Arrange
+      const mfu = new MFUCache(3);
+
+      // Act
+      mfu.put('a', 1);
+      mfu.put('b', 2).put('b', 2).put('b', 2);
+      mfu.put('c', 3).put('c', 3).put('c', 3).put('c', 3).put('c', 3);
+      // [1] -> 1
+      // [3] -> 2
+      // [5] -> 3
+
+      // Assert
+      expect(mfu.toArray()).toEqual([1, 2, 3]);
+      expect(mfu.size).toBe(3);
+    });
+
+    it('evicts the previous one item before the newest one item when capacity reached', () => {
       // Arrange
       cache.put('one', 1);
       cache.put('two', 2);
-      cache.put('three', 3);
+      // [1] -> 1, 2
 
       // Act
-      cache.put('four', 4); // Should evict 3
+      cache.put('three', 3); // Should evict 2
+      // [1] -> 1, 3
 
       // Assert
-      expect(cache.toArray()).toEqual([1, 2, 4]);
-      expect(cache.size).toBe(3);
+      expect(cache.toArray()).toEqual([1, 3]);
+      expect(cache.size).toBe(2);
+    });
+
+    it('evicts the most frequently used item when capacity reached', () => {
+      // Arrange
+      const mfu = new MFUCache<string, number>(2);
+      mfu.put('one', 1).put('one', 1);
+      mfu.put('two', 2).put('two', 2).put('two', 2).put('two', 2);
+      // [2] -> 1
+      // [4] -> 2
+
+      // Act
+      mfu.put('three', 3); // Should evict 2
+      // [1] -> 3
+      // [2] -> 1
+
+      // Assert
+      expect(mfu.toArray()).toEqual([3, 1]);
+      expect(mfu.size).toBe(2);
     });
   });
 
@@ -69,14 +147,17 @@ describe('MFUCache', () => {
       expect(cache.get('one')).toBeNull();
     });
 
-    // FIXME: replace with `updates frequency of received item`
     it('returns value of existing item', () => {
       // Arrange
       cache.put('one', 1);
       cache.put('two', 2);
+      // [1] -> 1, 2
 
       // Act and Assert
       expect(cache.get('one')).toBe(1);
+      // [1] -> 2
+      // [2] -> 1
+
       expect(cache.toArray()).toEqual([2, 1]);
       expect(cache.size).toBe(2);
     });
@@ -85,44 +166,38 @@ describe('MFUCache', () => {
       // Arrange
       cache.put('one', 1);
       cache.put('two', 2);
+      // [1] -> 1, 2
 
       // Act and Assert
       expect(cache.get('one')).toBe(1);
       expect(cache.get('two')).toBe(2);
+      // [2] -> 1, 2
+
       expect(cache.toArray()).toEqual([1, 2]);
       expect(cache.size).toBe(2);
     });
 
-    it('evicts the most frequently item', () => {
+    it('evicts the most frequently used item', () => {
       // Arrange
-      cache.put('one', 1);
-      cache.put('two', 2);
-      cache.put('three', 3);
-      // [1] -> 1, 2, 3
-      expect(cache.toArray()).toEqual([1, 2, 3]);
+      const mfu = new MFUCache<string, number>(2);
+      mfu.put('one', 1);
+      mfu.get('one');
 
-      cache.get('one');
-      cache.get('three');
-      cache.get('three');
-      // [1] -> 2
+      mfu.put('two', 1);
+      mfu.get('two');
+      mfu.get('two');
+      mfu.get('two');
       // [2] -> 1
-      // [3] -> 3
-      expect(cache.toArray()).toEqual([2, 1, 3]);
-
-      cache.get('two');
-      // [2] -> 1, 2
-      // [3] -> 3
-      expect(cache.toArray()).toEqual([1, 2, 3]);
+      // [4] -> 2
 
       // Act
-      cache.put('four', 4); // Should evict 3
-      // [1] -> 4
-      // [2] -> 1, 2
+      mfu.put('three', 3); // Should evict 2
+      // [1] -> 3
+      // [2] -> 1
 
       // Assert
-      expect(cache.get('three')).toBeNull();
-      expect(cache.toArray()).toEqual([4, 1, 2]);
-      expect(cache.size).toBe(3);
+      expect(mfu.toArray()).toEqual([3, 1]);
+      expect(mfu.size).toBe(2);
     });
   });
 
@@ -140,6 +215,8 @@ describe('MFUCache', () => {
       expect(cache.get('one')).toBeNull();
       expect(cache.get('two')).toBeNull();
       expect(cache.get('three')).toBeNull();
+
+      expect(cache.isEmpty).toBeTruthy();
       expect(cache.toArray()).toEqual([]);
       expect(cache.size).toBe(0);
     });

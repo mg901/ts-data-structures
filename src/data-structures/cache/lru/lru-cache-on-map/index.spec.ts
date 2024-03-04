@@ -16,6 +16,26 @@ describe('LRUCacheOnMap', () => {
     expect(cache.size).toBe(0);
   });
 
+  describe('toArray', () => {
+    it('returns values of items', () => {
+      // Arrange
+      cache.put('a', 1);
+      cache.put('b', 2);
+
+      // Act and Assert
+      expect(cache.toArray()).toEqual([1, 2]);
+    });
+
+    it('returns keys of items', () => {
+      // Arrange
+      cache.put('a', 1);
+      cache.put('b', 2);
+
+      // Act and Assert
+      expect(cache.toArray(({ key }) => key)).toEqual(['a', 'b']);
+    });
+  });
+
   describe('put', () => {
     it('adds item correctly', () => {
       // Act

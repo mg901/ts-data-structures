@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import type { ICache } from '@/data-structures/cache/types';
+import type { ICache, Payload } from '@/data-structures/cache/types';
 import {
   DoublyLinkedList,
   DoublyLinkedListNode,
@@ -20,10 +20,13 @@ export class LFUCache<Key extends keyof any, Value>
     return this.#storage.size;
   }
 
-  toArray() {
+  toArray<T>(
+    callbackfn: (item: Payload<Key, Value>) => T = (item) =>
+      item.value as unknown as T,
+  ): T[] {
     return Object.values(this.#storage.store)
       .flatMap((list) => list?.toArray())
-      .map((pair) => pair.value);
+      .map(callbackfn);
   }
 
   get isEmpty() {
@@ -34,14 +37,14 @@ export class LFUCache<Key extends keyof any, Value>
     const storage = this.#storage;
 
     if (storage.hasItem(key)) {
-      storage.deleteItem(key);
+      storage.removeItem(key);
     }
 
     if (storage.size === this.#capacity) {
-      storage.evictLeastFrequent();
+      storage.evictLeastFrequentItem();
     }
 
-    storage.addItem(key, value);
+    storage.setItem(key, value);
 
     return this;
   }
@@ -52,9 +55,9 @@ export class LFUCache<Key extends keyof any, Value>
     if (!storage.hasItem(key)) return null;
 
     const node = storage.getItem(key)!;
-    storage.deleteItem(key);
+    storage.removeItem(key);
 
-    storage.addItem(key, node.data.value);
+    storage.setItem(key, node.data.value);
 
     return node.data.value;
   }
@@ -74,13 +77,10 @@ class Storage<Key extends keyof any, Value> {
 
   #frequencyBuckets = {} as Record<
     number,
-    DoublyLinkedList<{ key: Key; value: Value }>
+    DoublyLinkedList<Payload<Key, Value>>
   >;
 
-  #keyNodeMap = new Map<
-    Key,
-    DoublyLinkedListNode<{ key: Key; value: Value }>
-  >();
+  #keyNodeMap = new Map<Key, DoublyLinkedListNode<Payload<Key, Value>>>();
 
   #INITIAL_FREQUENCY_VALUE = 0;
 
@@ -96,15 +96,11 @@ class Storage<Key extends keyof any, Value> {
     return this.#frequencyBuckets;
   }
 
-  hasItem(key: Key) {
-    return this.#keyNodeMap.has(key);
-  }
-
   getItem(key: Key) {
     return this.#keyNodeMap.get(key);
   }
 
-  addItem(key: Key, value: Value) {
+  setItem(key: Key, value: Value) {
     this.#increaseFrequency(key);
     this.#resetMinFrequencyIfNeeded(key);
 
@@ -138,7 +134,11 @@ class Storage<Key extends keyof any, Value> {
     return this.#frequencyBuckets[frequency] ?? new DoublyLinkedList();
   }
 
-  deleteItem(key: Key) {
+  hasItem(key: Key) {
+    return this.#keyNodeMap.has(key);
+  }
+
+  removeItem(key: Key) {
     const node = this.#keyNodeMap.get(key)!;
     const frequency = this.#keyFrequencyMap.get(key)!;
     const bucket = this.#frequencyBuckets[frequency];
@@ -151,7 +151,7 @@ class Storage<Key extends keyof any, Value> {
     }
   }
 
-  evictLeastFrequent() {
+  evictLeastFrequentItem() {
     const minFreq = this.#currentMinFrequency;
     const bucket = this.#frequencyBuckets[minFreq];
 

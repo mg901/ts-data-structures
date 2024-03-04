@@ -2,23 +2,49 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { LFUCache } from './index';
 
 describe('LFUCache', () => {
-  it('returns initial state correctly', () => {
-    const cache = new LFUCache(0);
+  let cache: LFUCache<string, number>;
 
+  // Arrange
+  beforeEach(() => {
+    cache = new LFUCache(2);
+  });
+  it('returns initial state correctly', () => {
     expect(cache.size).toBe(0);
     expect(cache.toArray()).toEqual([]);
     expect(cache.isEmpty).toBeTruthy();
   });
 
-  describe('put', () => {
-    let cache: LFUCache<string, number>;
+  describe('toArray', () => {
+    it('returns values of items', () => {
+      // Arrange
+      cache.put('a', 1);
+      cache.put('b', 2);
 
-    // Arrange
-    beforeEach(() => {
-      cache = new LFUCache(2);
+      // Act and Assert
+      expect(cache.toArray()).toEqual([1, 2]);
     });
 
-    it('puts new item', () => {
+    it('returns keys of items', () => {
+      // Arrange
+      cache.put('a', 1);
+      cache.put('b', 2);
+
+      // Act and Assert
+      expect(cache.toArray(({ key }) => key)).toEqual(['a', 'b']);
+    });
+  });
+
+  describe('put', () => {
+    it('adds first item', () => {
+      // Act
+      cache.put('a', 1);
+
+      // Assert
+      expect(cache.toArray()).toEqual([1]);
+      expect(cache.size).toBe(1);
+    });
+
+    it('adds second item', () => {
       // Act
       cache.put('a', 1);
 
@@ -65,13 +91,6 @@ describe('LFUCache', () => {
   });
 
   describe('get', () => {
-    let cache: LFUCache<string, number>;
-
-    // Arrange
-    beforeEach(() => {
-      cache = new LFUCache(2);
-    });
-
     it('returns null for non-existing value', () => {
       // Arrange
       cache.put('a', 1);
@@ -121,21 +140,21 @@ describe('LFUCache', () => {
 
   it('clears the cache', () => {
     // Arrange
-    const cache = new LFUCache<string, number>(3);
-    cache.put('a', 1);
-    cache.put('b', 2);
-    cache.put('c', 3);
+    const lfu = new LFUCache<string, number>(3);
+    lfu.put('a', 1);
+    lfu.put('b', 2);
+    lfu.put('c', 3);
 
-    expect(cache.toArray()).toEqual([1, 2, 3]);
-    expect(cache.isEmpty).toBeFalsy();
+    expect(lfu.toArray()).toEqual([1, 2, 3]);
+    expect(lfu.isEmpty).toBeFalsy();
 
     // Act
-    cache.clear();
+    lfu.clear();
 
     // Assert
-    expect(cache.toArray()).toEqual([]);
-    expect(cache.isEmpty).toBeTruthy();
-    expect(cache.size).toBe(0);
+    expect(lfu.toArray()).toEqual([]);
+    expect(lfu.isEmpty).toBeTruthy();
+    expect(lfu.size).toBe(0);
   });
 
   describe('toStringTag', () => {
