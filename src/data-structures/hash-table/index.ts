@@ -8,13 +8,12 @@ interface IHashTable<Key, Value> {
   clear(): void;
 }
 
-// FIXME: replace with private prop (initialCapacity)
-const INITIAL_CAPACITY = 5;
-
-export class HashTable<Key extends number | string | symbol, Value = any>
+export class HashTable<Key extends keyof any, Value = any>
   implements IHashTable<Key, Value>
 {
-  #capacity = INITIAL_CAPACITY;
+  #INITIAL_CAPACITY = 5;
+
+  #capacity = this.#INITIAL_CAPACITY;
 
   #buckets = createArrayOfLinkedLists(this.#capacity);
 
@@ -108,7 +107,7 @@ export class HashTable<Key extends number | string | symbol, Value = any>
   }
 
   clear(): void {
-    this.#capacity = INITIAL_CAPACITY;
+    this.#capacity = this.#INITIAL_CAPACITY;
     this.#buckets = createArrayOfLinkedLists(this.#capacity);
     this.#size = 0;
   }
@@ -119,10 +118,7 @@ export class HashTable<Key extends number | string | symbol, Value = any>
   }
 }
 
-function getHash<T extends string | number | symbol>(
-  key: T,
-  length: number,
-): number {
+function getHash<T extends keyof any>(key: T, length: number): number {
   const hash = Array.from(String(key)).reduce<number>(
     (acc, char) => acc + char.charCodeAt(0),
     0,
