@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BinaryTreeNode } from './binary-tree-node';
+import { BinaryTreeNode } from './index';
 
 describe('BinaryTreeNode', () => {
   it('returns initial state correctly', () => {
