@@ -1,23 +1,96 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { BinaryTree } from './index';
 
 describe('BinaryTree', () => {
-  it('returns initial state correctly', () => {
-    // Arrange
-    const binaryTree = new BinaryTree();
+  let binaryTree: BinaryTree<number>;
 
+  // Arrange
+  beforeEach(() => {
+    binaryTree = new BinaryTree();
+  });
+
+  it('returns initial state correctly', () => {
     // Assert
     expect(binaryTree).toBeDefined();
   });
 
-  it('sets the root value', () => {
-    // Arrange
-    const binaryTree = new BinaryTree<number>();
+  describe('insert', () => {
+    it('inserts a value as the root node if the tree is empty', () => {
+      // Act
+      binaryTree.insert(10);
 
-    // Act
-    binaryTree.setRootValue(1);
+      // Assert
+      expect(binaryTree.root?.data).toBe(10);
+      expect(binaryTree.root?.left).toBeNull();
+      expect(binaryTree.root?.right).toBeNull();
+    });
 
-    // Assert
-    expect(binaryTree.root?.data).toBe(1);
+    it('inserts a value as a left child of the root node if the value if less than the root value', () => {
+      // Arrange
+      binaryTree.insert(10);
+
+      // Act
+      binaryTree.insert(5);
+
+      // Arrange
+      expect(binaryTree.root?.left?.data).toBe(5);
+      expect(binaryTree.root?.right).toBeNull();
+    });
+
+    it('insets a value as a left child of the root node if the value if equal to the root value', () => {
+      // Arrange
+      binaryTree.insert(10);
+
+      // Act
+      binaryTree.insert(10);
+
+      // Arrange
+      expect(binaryTree.root?.left?.data).toBe(10);
+      expect(binaryTree.root?.right).toBeNull();
+    });
+
+    it("inserts the value recursively to the left subtree if it is less than the current node's value", () => {
+      // Arrange
+      binaryTree.insert(10);
+      binaryTree.insert(7);
+
+      // Act
+      binaryTree.insert(5);
+      expect(binaryTree.root?.left?.left?.data).toBe(5);
+    });
+
+    it("inserts the value recursively to the left subtree if it is equal to the current node's value", () => {
+      // Arrange
+      binaryTree.insert(10);
+      binaryTree.insert(7);
+
+      // Act
+      binaryTree.insert(7);
+      expect(binaryTree.root?.left?.left?.data).toBe(7);
+    });
+
+    it('insets a value as a right child of the root node if the value is greater than the root value', () => {
+      // Arrange
+      binaryTree.insert(10);
+
+      // Act
+      binaryTree.insert(15);
+
+      // Assert
+      expect(binaryTree.root?.right?.data).toBe(15);
+      expect(binaryTree.root?.left).toBeNull();
+    });
+
+    it("insets the values recursively to the right subtree if the value is greater than the current node's value", () => {
+      // Arrange
+      binaryTree.insert(10);
+      binaryTree.insert(15);
+
+      // Act
+      binaryTree.insert(20);
+
+      // Assert
+      expect(binaryTree.root?.right?.right?.data).toBe(20);
+    });
   });
 });
