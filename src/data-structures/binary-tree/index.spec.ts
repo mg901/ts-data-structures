@@ -18,6 +18,6 @@ describe('BinaryTree', () => {
     binaryTree.setRootValue(1);
 
     // Assert
-    expect(binaryTree.root).toBe(1);
+    expect(binaryTree.root?.data).toBe(1);
   });
 });
