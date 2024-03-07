@@ -25,7 +25,7 @@ describe('BinaryTree', () => {
       expect(binaryTree.root?.right).toBeNull();
     });
 
-    it('inserts a value as a left child of the root node if the value if less than the root value', () => {
+    it('inserts a value as a left child of the root node if the value is less than the root value', () => {
       // Arrange
       binaryTree.insert(10);
 
@@ -37,7 +37,7 @@ describe('BinaryTree', () => {
       expect(binaryTree.root?.right).toBeNull();
     });
 
-    it('insets a value as a left child of the root node if the value if equal to the root value', () => {
+    it('insets a value as a left child of the root node if the value is equal to the root value', () => {
       // Arrange
       binaryTree.insert(10);
 
