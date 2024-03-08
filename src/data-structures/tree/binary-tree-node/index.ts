@@ -4,9 +4,9 @@ import { Nullable } from 'vitest';
 export class BinaryTreeNode<T = any> extends Node<T> {
   parent: Nullable<BinaryTreeNode<T>> = null;
 
-  left: Nullable<BinaryTreeNode<T>>;
+  left: Nullable<BinaryTreeNode<T>> = null;
 
-  right: Nullable<BinaryTreeNode<T>>;
+  right: Nullable<BinaryTreeNode<T>> = null;
 
   setLeft(node: BinaryTreeNode<T>) {
     if (this.left) {
