@@ -1,9 +1,9 @@
 import {
   LinkedList,
+  LinkedListNode,
   type Predicate,
-} from '@/data-structures/linked-lists/linked-list';
+} from '@/shared/linked-list/linked-list';
 import { type Nullable } from '@/shared/types';
-import { LinkedListNode } from '../node';
 
 export class SinglyLinkedList<
   T = any,

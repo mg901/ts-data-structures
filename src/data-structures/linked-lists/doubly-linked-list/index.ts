@@ -1,7 +1,4 @@
-import {
-  LinkedList,
-  type Predicate,
-} from '@/data-structures/linked-lists/linked-list';
+import { LinkedList, type Predicate } from '@/shared/linked-list/linked-list';
 import { Nullable } from '@/shared/types';
 import { DoublyLinkedListNode } from './node';
 
