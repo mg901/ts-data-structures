@@ -2,13 +2,13 @@ import { Comparator, CompareFunction } from '@/shared/comparator';
 import { type Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 import isFunction from 'lodash.isfunction';
-import { SinglyLinkedListNode } from './singly-linked-list/node';
+import { LinkedListNode } from './node';
 
 export type Predicate<T = unknown> = (value: T) => boolean;
 
 export interface ILinkedList<
   T = any,
-  Node extends SinglyLinkedListNode<T> = SinglyLinkedListNode<T>,
+  Node extends LinkedListNode<T> = LinkedListNode<T>,
 > {
   get head(): Nullable<Node>;
   get tail(): Nullable<Node>;
@@ -30,16 +30,9 @@ export interface ILinkedList<
   clear(): void;
 }
 
-export interface LinkedListOptions<T, Node extends SinglyLinkedListNode<T>> {
-  compareFunction?: CompareFunction<T>;
-  NodeInstance?: {
-    new (data: T): Node;
-  };
-}
-
 export abstract class LinkedList<
   T = any,
-  Node extends SinglyLinkedListNode<T> = SinglyLinkedListNode<T>,
+  Node extends LinkedListNode<T> = LinkedListNode<T>,
 > implements ILinkedList<T>
 {
   protected _head: Nullable<Node> = null;
