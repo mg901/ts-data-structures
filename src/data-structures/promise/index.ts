@@ -1,6 +1,6 @@
 import { Queue } from '@/data-structures/queue';
 import isFunction from 'lodash.isfunction';
-import { ValuesType } from 'utility-types';
+import { ValueOf } from 'type-fest';
 
 /**
  * Represents the completion of an asynchronous operation
@@ -69,7 +69,7 @@ type PromiseSettledResult<T> =
   | PromiseRejectedResult;
 
 export class MyPromise<T = any> implements IMyPromise<T> {
-  #state: ValuesType<typeof STATE> = STATE.PENDING;
+  #state: ValueOf<typeof STATE> = STATE.PENDING;
 
   #value?: Value<T>;
 
