@@ -4,6 +4,8 @@ import { Nullable } from '@/shared/types';
 import isFunction from 'lodash.isfunction';
 import { LinkedListNode } from './node';
 
+export { LinkedListNode };
+
 export type Predicate<T = unknown> = (value: T) => boolean;
 
 export interface ILinkedList<
