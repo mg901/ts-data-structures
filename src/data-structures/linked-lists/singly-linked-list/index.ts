@@ -1,24 +1,16 @@
 import {
   LinkedList,
-  type LinkedListOptions,
   type Predicate,
 } from '@/data-structures/linked-lists/linked-list';
-import { SinglyLinkedListNode } from '@/data-structures/linked-lists/singly-linked-list/node';
 import { type Nullable } from '@/shared/types';
+import { LinkedListNode } from '../node';
 
 export class SinglyLinkedList<
   T = any,
-  Node extends SinglyLinkedListNode<T> = SinglyLinkedListNode<T>,
+  Node extends LinkedListNode<T> = LinkedListNode<T>,
 > extends LinkedList<T> {
-  #NodeInstance: new (data: T) => SinglyLinkedListNode<T>;
-
-  constructor(options: LinkedListOptions<T, Node> = {}) {
-    super(options?.compareFunction);
-    this.#NodeInstance = options.NodeInstance ?? SinglyLinkedListNode;
-  }
-
   append(value: T) {
-    const newNode = new this.#NodeInstance(value);
+    const newNode = new LinkedListNode(value);
 
     if (this._head === null) {
       this._head = newNode;
@@ -42,7 +34,7 @@ export class SinglyLinkedList<
   }
 
   prepend(value: T) {
-    const newNode = new this.#NodeInstance(value);
+    const newNode = new LinkedListNode(value);
 
     if (this._head === null) {
       this._head = newNode;
@@ -75,7 +67,7 @@ export class SinglyLinkedList<
     } else {
       // Insert in the middle.
       const prevNode = this._findNodeByIndex(index - 1);
-      const newNode = new this.#NodeInstance(value);
+      const newNode = new LinkedListNode(value);
 
       newNode.next = prevNode.next;
       prevNode.next = newNode;
@@ -115,7 +107,7 @@ export class SinglyLinkedList<
   }
 
   #deleteNodeAndUpdateTail(
-    deletedNode: SinglyLinkedListNode,
+    deletedNode: LinkedListNode,
     prevNode: Nullable<Node>,
   ) {
     if (prevNode === null) {
