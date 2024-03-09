@@ -78,4 +78,90 @@ describe('BinaryTreeNode', () => {
       expect(oldRight.parent).toBeNull();
     });
   });
+
+  describe('height', () => {
+    it('returns height of single node', () => {
+      expect(node1.height).toBe(0);
+    });
+
+    it('calculates node height', () => {
+      // Arrange
+      const root = new BinaryTreeNode(1);
+      const left = new BinaryTreeNode(2);
+      const right = new BinaryTreeNode(3);
+      const grandLeft = new BinaryTreeNode(4);
+      const grandRight = new BinaryTreeNode(5);
+      const grandGrandLeft = new BinaryTreeNode(6);
+
+      expect(root.height).toBe(0);
+
+      // Act
+      root.setLeft(left);
+      root.setRight(right);
+
+      // Assert
+      expect(root.height).toBe(1);
+      expect(left.height).toBe(0);
+      expect(root.balanceFactor).toBe(0);
+
+      // Act
+      left.setLeft(grandLeft);
+      left.setRight(grandRight);
+
+      // Assert
+      expect(root.height).toBe(2);
+      expect(left.height).toBe(1);
+      expect(grandLeft.height).toBe(0);
+      expect(grandRight.height).toBe(0);
+      expect(root.balanceFactor).toBe(1);
+
+      // Act
+      grandLeft.setLeft(grandGrandLeft);
+
+      // Assert
+      expect(root.height).toBe(3);
+      expect(left.height).toBe(2);
+      expect(grandLeft.height).toBe(1);
+      expect(grandRight.height).toBe(0);
+      expect(grandGrandLeft.height).toBe(0);
+      expect(root.balanceFactor).toBe(2);
+    });
+  });
+
+  describe('removeChild', () => {
+    it('removes the left child correctly', () => {
+      // Arrange
+      const root = node1;
+      root.setLeft(node2);
+      root.setRight(node3);
+
+      // Act
+      root.removeChild(node2);
+
+      // Assert
+      expect(root.left).toBeNull();
+      expect(root.right).toEqual(node3);
+    });
+
+    it('removes the right child correctly', () => {
+      // Arrange
+      const root = node1;
+      root.setLeft(node2);
+      root.setRight(node3);
+
+      // Act and Assert
+      expect(root.removeChild(node3)).toBeTruthy();
+      expect(root.left).toEqual(node2);
+      expect(root.right).toBeNull();
+    });
+
+    it('returns false for non-existing node', () => {
+      // Arrange
+      const root = node1;
+      root.setLeft(node2);
+
+      // Act and Assert
+      expect(root.removeChild(node3)).toBeFalsy();
+    });
+  });
 });
