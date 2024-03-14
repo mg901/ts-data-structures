@@ -1,10 +1,11 @@
 import { BinaryTreeNode } from '@/data-structures/tree/binary-tree-node';
 import { Comparator, type CompareFunction } from '@/shared/comparator';
+import { Nullable } from '@/shared/types';
 
 export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
-  left: BinarySearchTreeNode<T> | null = null;
+  left: Nullable<BinarySearchTreeNode<T>> = null;
 
-  right: BinarySearchTreeNode<T> | null = null;
+  right: Nullable<BinarySearchTreeNode<T>> = null;
 
   #compare: Comparator<T>;
 
