@@ -22,7 +22,7 @@ describe('BinarySearchTreeNode', () => {
       // Act
       const left = root.insert(3);
       const right = root.insert(25);
-      const grandLeft = root.insert(2);
+      const grandLeft = left.insert(2);
       // node.insert(5);
 
       // Assert
