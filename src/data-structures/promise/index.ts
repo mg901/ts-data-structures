@@ -231,7 +231,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
               resolve(result);
             }
           } else if (this.#state === STATE.FULFILLED) {
-            resolve(this.#value as unknown as TResult1);
+            resolve(this.#value as TResult1);
           } else {
             reject(this.#value);
           }
