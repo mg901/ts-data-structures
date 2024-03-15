@@ -218,6 +218,28 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
     return new MyPromise<TResult1 | TResult2>((resolve, reject) => {
+      type Handler = typeof onfulfilled | typeof onrejected;
+
+      const executeHandler = (handler: Handler) => {
+        try {
+          if (isFunction(handler)) {
+            const result = handler(this.#value as T);
+
+            if (isMyPromise(result)) {
+              result.then(resolve, reject);
+            } else {
+              resolve(result);
+            }
+          } else if (this.#state === STATE.FULFILLED) {
+            resolve(this.#value as unknown as TResult1);
+          } else {
+            reject(this.#value);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+
       const strategy = {
         [STATE.PENDING]: () => {
           this.#onfulfilledCallbacks.enqueue(() => executeHandler(onfulfilled));
@@ -228,29 +250,6 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       };
 
       strategy[this.#state]();
-
-      type Handler = typeof onfulfilled | typeof onrejected;
-      const self = this;
-
-      function executeHandler(handler: Handler) {
-        try {
-          if (isFunction(handler)) {
-            const result = handler(self.#value as T);
-
-            if (isMyPromise(result)) {
-              result.then(resolve, reject);
-            } else {
-              resolve(result);
-            }
-          } else if (self.#state === STATE.FULFILLED) {
-            resolve(self.#value as TResult1);
-          } else {
-            reject(self.#value);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      }
     });
   }
 
