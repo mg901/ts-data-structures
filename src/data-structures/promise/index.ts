@@ -230,8 +230,8 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       strategy[this.#state]();
 
       type Handler = typeof onfulfilled | typeof onrejected;
-
       const self = this;
+
       function executeHandler(handler: Handler) {
         try {
           if (isFunction(handler)) {
