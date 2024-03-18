@@ -35,7 +35,7 @@ describe('Queue', () => {
     });
   });
 
-  describe('Iterator', () => {
+  describe('Symbol.Iterator', () => {
     it('iterates through the elements', () => {
       // Arrange
       queue.enqueue(1).enqueue(2).enqueue(3);
