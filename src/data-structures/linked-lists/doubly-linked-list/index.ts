@@ -1,10 +1,4 @@
-// eslint-disable-next-line max-classes-per-file
-import {
-  LinkedList,
-  type LinkedListOptions,
-  type Predicate,
-} from '@/data-structures/linked-lists/linked-list';
-
+import { LinkedList, type Predicate } from '@/shared/linked-list/linked-list';
 import { Nullable } from '@/shared/types';
 import { DoublyLinkedListNode } from './node';
 
@@ -14,15 +8,8 @@ export class DoublyLinkedList<
   T = any,
   Node extends DoublyLinkedListNode<T> = DoublyLinkedListNode<T>,
 > extends LinkedList<T, Node> {
-  #NodeInstance: new (data: T) => DoublyLinkedListNode<T>;
-
-  constructor(options: LinkedListOptions<T, Node> = {}) {
-    super(options?.compareFunction);
-    this.#NodeInstance = options.NodeInstance ?? DoublyLinkedListNode;
-  }
-
   append(value: T) {
-    const newNode = new this.#NodeInstance(value) as Node;
+    const newNode = new DoublyLinkedListNode(value) as Node;
 
     if (this._head === null) {
       this._head = newNode;
@@ -47,7 +34,7 @@ export class DoublyLinkedList<
   }
 
   prepend(value: T) {
-    const newNode = new this.#NodeInstance(value) as Node;
+    const newNode = new DoublyLinkedListNode(value) as Node;
 
     if (this._head === null) {
       this._head = newNode;
@@ -81,7 +68,7 @@ export class DoublyLinkedList<
     } else {
       // Insert in the middle.
       let prevNode = this._findNodeByIndex(index - 1);
-      let newNode = new this.#NodeInstance(value);
+      let newNode = new DoublyLinkedListNode(value);
       newNode.next = prevNode.next;
       newNode.prev = prevNode;
       prevNode.next = newNode;

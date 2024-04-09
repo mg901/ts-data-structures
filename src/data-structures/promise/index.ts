@@ -231,7 +231,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
               resolve(result);
             }
           } else if (this.#state === STATE.FULFILLED) {
-            resolve(this.#value as TResult1 | TResult2);
+            resolve(this.#value as TResult1);
           } else {
             reject(this.#value);
           }
@@ -240,7 +240,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
         }
       };
 
-      const handlers = {
+      const strategy = {
         [STATE.PENDING]: () => {
           this.#onfulfilledCallbacks.enqueue(() => executeHandler(onfulfilled));
           this.#onrejectedCallbacks.enqueue(() => executeHandler(onrejected));
@@ -249,7 +249,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
         [STATE.REJECTED]: () => executeHandler(onrejected),
       };
 
-      handlers[this.#state]();
+      strategy[this.#state]();
     });
   }
 

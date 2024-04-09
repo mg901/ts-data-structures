@@ -131,7 +131,7 @@ describe('SinglyLinkedList', () => {
     });
   });
 
-  describe('Iterator', () => {
+  describe('Symbol.Iterator', () => {
     it('iterates through the elements of the list', () => {
       // Arrange
       const expectedArray = [1, 2, 3];

@@ -1,7 +1,7 @@
-import { Node } from '@/shared/node';
+import { LinkedListNode } from '@/shared/linked-list/node';
 import { Nullable } from '@/shared/types';
 
-export class DoublyLinkedListNode<T = any> extends Node<T> {
+export class DoublyLinkedListNode<T = any> extends LinkedListNode<T> {
   next: Nullable<DoublyLinkedListNode<T>>;
 
   prev: Nullable<DoublyLinkedListNode<T>>;
