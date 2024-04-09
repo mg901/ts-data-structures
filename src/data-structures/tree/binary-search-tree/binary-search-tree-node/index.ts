@@ -39,4 +39,24 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
 
     return this;
   }
+
+  find(value: T): Nullable<BinarySearchTreeNode> {
+    if (this.#compare.equal(this.data, value)) {
+      return this;
+    }
+
+    if (this.#compare.lessThan(value, this.data) && this.left) {
+      return this.left.find(value);
+    }
+
+    if (this.#compare.greaterThan(value, this.data) && this.right) {
+      return this.right.find(value);
+    }
+
+    return null;
+  }
+
+  contains(value: T) {
+    return Boolean(this.find(value));
+  }
 }

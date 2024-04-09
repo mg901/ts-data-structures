@@ -5,11 +5,9 @@ export interface IBinaryTreeNode<T> {
   parent: Nullable<BinaryTreeNode<T>>;
   left: Nullable<BinaryTreeNode<T>>;
   right: Nullable<BinaryTreeNode<T>>;
-
   get height(): number;
   get leftHeight(): number;
   get rightHeight(): number;
-
   setLeft(node: BinaryTreeNode<T>): this;
   setRight(node: BinaryTreeNode<T>): this;
   removeChild(node: BinaryTreeNode<T>): boolean;

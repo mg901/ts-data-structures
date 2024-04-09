@@ -29,8 +29,38 @@ describe('BinarySearchTreeNode', () => {
       expect(left?.data).toBe(3);
       expect(right?.data).toBe(25);
       expect(grandLeft?.data).toBe(2);
-      // expect(node.left?.left?.data).toBe(2);
-      // expect(node.left?.right?.data).toBe(5);
+    });
+  });
+
+  describe('find', () => {
+    it('finds node by the value correctly', () => {
+      // Arrange
+      const root = new BinarySearchTreeNode(2);
+      const leftNode = new BinarySearchTreeNode(1);
+      const rightNode = new BinarySearchTreeNode(4);
+
+      root.setLeft(leftNode);
+      root.setRight(rightNode);
+
+      // Act and Assert
+      expect(root.find(4)).toEqual(rightNode);
+      expect(root.find(10)).toBeNull();
+    });
+  });
+
+  describe('contains', () => {
+    it('checks if there is a node is the tree by value', () => {
+      // Arrange
+      const root = new BinarySearchTreeNode(4);
+      const leftNode = new BinarySearchTreeNode(2);
+      const rightNode = new BinarySearchTreeNode(6);
+
+      root.setLeft(leftNode);
+      root.setRight(rightNode);
+
+      // Act and Assert
+      expect(root.contains(2)).toBeTruthy();
+      expect(root.contains(10)).toBeFalsy();
     });
   });
 });
