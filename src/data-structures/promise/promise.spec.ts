@@ -83,7 +83,7 @@ describe('MyPromise', () => {
       try {
         // Act
         await new MyPromise<string>(executor);
-      } catch (error: unknown) {
+      } catch (error) {
         if (error instanceof Error) {
           // Assert
           expect(error.message).toBe(expected);
@@ -276,6 +276,20 @@ describe('MyPromise', () => {
         expect(onFulfilledSpy).toHaveBeenCalledOnce();
 
         expect(onRejectedSpy).not.toHaveBeenCalled();
+      });
+
+      it('calls onFulfillment handler with the rejected value', async () => {
+        const expected = 'reason';
+
+        await MyPromise.resolve(MyPromise.reject(Error(expected)))
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
+        expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
       it('resolve with nested promise ', async () => {
