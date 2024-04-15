@@ -63,4 +63,19 @@ describe('BinarySearchTreeNode', () => {
       expect(root.contains(10)).toBeFalsy();
     });
   });
+
+  describe('findMin', () => {
+    it('returns the node with minimum value', () => {
+      // Arrange
+      const root = new BinarySearchTreeNode(20);
+
+      root.insert(15);
+      root.insert(25);
+      root.insert(10);
+      root.insert(30);
+
+      // Act and Assert
+      expect(root.findMin().data).toEqual(10);
+    });
+  });
 });

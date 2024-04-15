@@ -6,18 +6,18 @@
     "start": "bun run src/index.ts",
     "commit": "cz",
     "test:lint": "eslint . --fix --ext .ts",
-    "test:unit": "bunx vitest run",
-    "test:unit:coverage": "bunx vitest run --coverage",
-    "test:unit:watch": "buxn vitest",
+    "test:unit": "bun vitest run",
+    "test:unit:coverage": "bun vitest run --coverage",
+    "test:unit:watch": "bun vitest",
     "ts:check": "tsc && bun clean",
-    "clean": "bunx rimraf dist",
+    "clean": "rm -rf dist",
     "prettify": "npx prettier . --write --ignore-unknown",
     "quality": "bun ts:check && bun test:lint && bun clean",
     "prepare": "husky install"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.6.1",
-    "@commitlint/config-conventional": "^19.1.0",
+    "@commitlint/config-conventional": "^19.2.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^11.1.0",
     "@semantic-release/git": "^10.0.1",
@@ -27,7 +27,7 @@
     "@types/lodash.isfunction": "^3.0.9",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
-    "@vitest/coverage-istanbul": "^1.4.0",
+    "@vitest/coverage-istanbul": "^1.5.0",
     "bun-types": "^1.1.3",
     "commitizen": "^4.3.0",
     "eslint": "^8.57.0",
@@ -41,11 +41,11 @@
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
-    "semantic-release": "^23.0.7",
+    "semantic-release": "^23.0.8",
     "type-fest": "^4.15.0",
-    "typescript": "^5.4.4",
+    "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.4.0"
+    "vitest": "^1.5.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

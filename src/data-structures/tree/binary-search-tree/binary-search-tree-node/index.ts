@@ -59,4 +59,12 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
   contains(value: T) {
     return Boolean(this.find(value));
   }
+
+  findMin(): BinarySearchTreeNode {
+    if (this.left === null) {
+      return this;
+    }
+
+    return this.left.findMin();
+  }
 }
