@@ -17,19 +17,33 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
     this.#compare = new Comparator(compareFunction);
   }
 
-  insert(value: T) {
-    const newNode = new BinarySearchTreeNode(value);
+  insert(value: T): BinarySearchTreeNode<T> {
+    if (this.#compare.equal(this.data, null)) {
+      this.data = value;
+
+      return this;
+    }
 
     if (this.#compare.lessThan(value, this.data)) {
-      if (this.left === null) {
-        this.setLeft(newNode);
-      } else {
-        this.left.insert(value);
+      if (this.left) {
+        return this.left.insert(value);
       }
-    } else if (this.right === null) {
+
+      const newNode = new BinarySearchTreeNode(value, this.#compareFunction);
+      this.setLeft(newNode);
+
+      return newNode;
+    }
+
+    if (this.#compare.greaterThan(value, this.data)) {
+      if (this.right) {
+        return this.right.insert(value);
+      }
+
+      const newNode = new BinarySearchTreeNode(value, this.#compareFunction);
       this.setRight(newNode);
-    } else {
-      this.right.insert(value);
+
+      return newNode;
     }
 
     return this;
