@@ -20,15 +20,15 @@ describe('BinarySearchTreeNode', () => {
       const root = new BinarySearchTreeNode(20);
 
       // Act
-      const left = root.insert(3);
-      const right = root.insert(25);
-      const grandLeft = left.insert(2);
-      // node.insert(5);
+      root.insert(3);
+      root.insert(25);
+      root.insert(2);
 
       // Assert
-      expect(left?.data).toBe(3);
-      expect(right?.data).toBe(25);
-      expect(grandLeft?.data).toBe(2);
+      expect(root.data).toBe(20);
+      expect(root.left?.data).toBe(3);
+      expect(root.left?.left?.data).toBe(2);
+      expect(root.right?.data).toBe(25);
     });
   });
 
@@ -64,8 +64,24 @@ describe('BinarySearchTreeNode', () => {
     });
   });
 
+  describe('delete', () => {
+    it('deletes leaf node correctly', () => {
+      // Arrange
+      const root = new BinarySearchTreeNode(5);
+
+      root.insert(3);
+      root.insert(6);
+      root.insert(2);
+      root.insert(4);
+      root.insert(7);
+
+      // Act
+      // expect(root.delete(7)).toBeTruthy();
+    });
+  });
+
   describe('findMin', () => {
-    it('returns the node with minimum value', () => {
+    it('returns the node with the minimum value', () => {
       // Arrange
       const root = new BinarySearchTreeNode(20);
 

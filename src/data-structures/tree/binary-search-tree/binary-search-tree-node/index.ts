@@ -18,22 +18,17 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
   }
 
   insert(value: T) {
-    const newNode = new BinarySearchTreeNode(value, this.#compareFunction);
+    const newNode = new BinarySearchTreeNode(value);
 
     if (this.#compare.lessThan(value, this.data)) {
       if (this.left === null) {
         this.setLeft(newNode);
-
-        return newNode;
+      } else {
+        this.left.insert(value);
       }
-
-      this.left.insert(value);
+    } else if (this.right === null) {
+      this.setRight(newNode);
     } else {
-      if (this.right === null) {
-        this.setRight(newNode);
-
-        return newNode;
-      }
       this.right.insert(value);
     }
 
@@ -58,6 +53,28 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
 
   contains(value: T) {
     return Boolean(this.find(value));
+  }
+
+  delete(value: T) {
+    const nodeToRemove = this.find(value);
+
+    if (!nodeToRemove) {
+      throw new Error('Item is not found in the tree');
+    }
+
+    const { parent } = nodeToRemove!;
+
+    if (nodeToRemove.left === null && nodeToRemove.right === null) {
+      // Check is a leaf?
+      if (parent) {
+        parent.removeChild(nodeToRemove);
+      } else {
+        // @ts-ignore
+        this.data = null;
+      }
+    }
+
+    return true;
   }
 
   findMin(): BinarySearchTreeNode {
