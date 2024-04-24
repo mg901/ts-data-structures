@@ -65,23 +65,72 @@ describe('BinarySearchTreeNode', () => {
   });
 
   describe('delete', () => {
-    it('deletes leaf node correctly', () => {
+    it('returns false when deleting a non-existing node', () => {
       // Arrange
       const root = new BinarySearchTreeNode(5);
 
-      root.insert(3);
-      root.insert(6);
-      root.insert(2);
-      root.insert(4);
-      root.insert(7);
+      // Act and Assert
+      expect(root.delete(10)).toBeFalsy();
+    });
 
-      // Act
-      // expect(root.delete(7)).toBeTruthy();
+    it('deletes leaf node', () => {
+      // Arrange
+      const root = new BinarySearchTreeNode(10);
+
+      root.insert(5);
+
+      expect(root.find(5)).toBeDefined();
+
+      // Act and Assert
+      expect(root.delete(5)).toBeTruthy();
+      expect(root.find(5)).toBeNull();
+    });
+
+    it('deletes a node with one child', () => {
+      // Arrange
+      const root = new BinarySearchTreeNode(10);
+      root.insert(5).insert(2);
+
+      expect(root.find(5)).toBeDefined();
+
+      // Act and Assert
+      expect(root.delete(5)).toBeTruthy();
+      expect(root.find(5)).toBeNull();
+      expect(root.left?.data).toBe(2);
+    });
+
+    it('deletes a node with two children', () => {
+      const root = new BinarySearchTreeNode(12);
+
+      root.insert(5);
+      root.insert(3);
+      root.insert(7);
+      root.insert(1);
+      root.insert(9);
+      root.insert(8);
+      root.insert(11);
+
+      root.insert(15);
+      root.insert(17);
+      root.insert(13);
+      root.insert(20);
+      root.insert(14);
+      root.insert(18);
+
+      expect(root.find(15)).toBeDefined();
+
+      // Act and Assert
+      expect(root.delete(15)).toBeTruthy();
+      expect(root.find(15)).toBeNull();
+
+      expect(root.right?.data).toBe(17);
+      expect(root.right?.left?.data).toBe(13);
+      expect(root.right?.right?.data).toBe(20);
     });
   });
 
   describe('findMin', () => {
-    it('returns the node with the minimum value', () => {
+    it('returns a node with the minimum value', () => {
       // Arrange
       const root = new BinarySearchTreeNode(20);
 
@@ -92,6 +141,24 @@ describe('BinarySearchTreeNode', () => {
 
       // Act and Assert
       expect(root.findMin().data).toEqual(10);
+    });
+  });
+
+  describe('findMax', () => {
+    it('returns a node with the maximum value', () => {
+      // Arrange
+      const root = new BinarySearchTreeNode(30);
+
+      root.insert(25);
+      root.insert(20);
+      root.insert(35);
+      root.insert(40);
+
+      // Act
+      const maxNode = root.findMax();
+
+      // Assert
+      expect(maxNode.data).toBe(40);
     });
   });
 });

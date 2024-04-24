@@ -70,32 +70,58 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
   }
 
   delete(value: T) {
-    const nodeToRemove = this.find(value);
+    let nodeToDelete = this.find(value);
 
-    if (!nodeToRemove) {
-      throw new Error('Item is not found in the tree');
+    if (nodeToDelete === null) {
+      return false;
     }
 
-    const { parent } = nodeToRemove!;
+    const { parent } = nodeToDelete;
 
-    if (nodeToRemove.left === null && nodeToRemove.right === null) {
-      // Check is a leaf?
-      if (parent) {
-        parent.removeChild(nodeToRemove);
-      } else {
-        // @ts-ignore
-        this.data = null;
-      }
+    if (parent === null) return false;
+
+    if (nodeToDelete.left === null && nodeToDelete.right === null) {
+      parent.deleteChild(nodeToDelete);
+
+      return true;
     }
+
+    if (nodeToDelete.left === null) {
+      parent.right = nodeToDelete.right;
+
+      nodeToDelete = null;
+
+      return true;
+    }
+
+    if (nodeToDelete.right === null) {
+      parent.left = nodeToDelete.left;
+
+      nodeToDelete = null;
+
+      return true;
+    }
+
+    const successor = nodeToDelete.right.findMin();
+    nodeToDelete.data = successor.data;
+    successor.delete(successor.data);
 
     return true;
   }
 
-  findMin(): BinarySearchTreeNode {
+  findMin(): BinarySearchTreeNode<T> {
     if (this.left === null) {
       return this;
     }
 
     return this.left.findMin();
+  }
+
+  findMax(): BinarySearchTreeNode<T> {
+    if (this.right === null) {
+      return this;
+    }
+
+    return this.right.findMax();
   }
 }

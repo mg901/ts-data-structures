@@ -136,7 +136,7 @@ describe('BinaryTreeNode', () => {
       root.setRight(node3);
 
       // Act
-      root.removeChild(node2);
+      root.deleteChild(node2);
 
       // Assert
       expect(root.left).toBeNull();
@@ -150,7 +150,7 @@ describe('BinaryTreeNode', () => {
       root.setRight(node3);
 
       // Act and Assert
-      expect(root.removeChild(node3)).toBeTruthy();
+      expect(root.deleteChild(node3)).toBeTruthy();
       expect(root.left).toEqual(node2);
       expect(root.right).toBeNull();
     });
@@ -161,7 +161,7 @@ describe('BinaryTreeNode', () => {
       root.setLeft(node2);
 
       // Act and Assert
-      expect(root.removeChild(node3)).toBeFalsy();
+      expect(root.deleteChild(node3)).toBeFalsy();
     });
   });
 });
