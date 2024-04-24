@@ -11,36 +11,36 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
 
   #compareFunction?: CompareFunction<T>;
 
-  constructor(data: T, compareFunction?: CompareFunction<T>) {
+  constructor(data: T, nodeDataCompareFn?: CompareFunction<T>) {
     super(data);
-    this.#compareFunction = compareFunction;
-    this.#compare = new Comparator(compareFunction);
+    this.#compareFunction = nodeDataCompareFn;
+    this.#compare = new Comparator(nodeDataCompareFn);
   }
 
-  insert(value: T): BinarySearchTreeNode<T> {
+  insert(data: T): BinarySearchTreeNode<T> {
     if (this.#compare.equal(this.data, null)) {
-      this.data = value;
+      this.data = data;
 
       return this;
     }
 
-    if (this.#compare.lessThan(value, this.data)) {
+    if (this.#compare.lessThan(data, this.data)) {
       if (this.left) {
-        return this.left.insert(value);
+        return this.left.insert(data);
       }
 
-      const newNode = new BinarySearchTreeNode(value, this.#compareFunction);
+      const newNode = new BinarySearchTreeNode(data, this.#compareFunction);
       this.setLeft(newNode);
 
       return newNode;
     }
 
-    if (this.#compare.greaterThan(value, this.data)) {
+    if (this.#compare.greaterThan(data, this.data)) {
       if (this.right) {
-        return this.right.insert(value);
+        return this.right.insert(data);
       }
 
-      const newNode = new BinarySearchTreeNode(value, this.#compareFunction);
+      const newNode = new BinarySearchTreeNode(data, this.#compareFunction);
       this.setRight(newNode);
 
       return newNode;
@@ -49,17 +49,17 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
     return this;
   }
 
-  find(value: T): Nullable<BinarySearchTreeNode> {
-    if (this.#compare.equal(this.data, value)) {
+  find(data: T): Nullable<BinarySearchTreeNode> {
+    if (this.#compare.equal(this.data, data)) {
       return this;
     }
 
-    if (this.#compare.lessThan(value, this.data) && this.left) {
-      return this.left.find(value);
+    if (this.#compare.lessThan(data, this.data) && this.left) {
+      return this.left.find(data);
     }
 
-    if (this.#compare.greaterThan(value, this.data) && this.right) {
-      return this.right.find(value);
+    if (this.#compare.greaterThan(data, this.data) && this.right) {
+      return this.right.find(data);
     }
 
     return null;
