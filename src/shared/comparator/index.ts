@@ -2,12 +2,12 @@ import isEqual from 'lodash.isequal';
 
 export type CompareFunction<T> = (a: T, b: T) => -1 | 0 | 1;
 
-export class Comparator<T = unknown> {
+export class Comparator<T = any> {
   #compare: CompareFunction<T>;
 
   #isEqual = isEqual;
 
-  static defaultCompareFunction<T = unknown>(a: T, b: T) {
+  static defaultCompareFunction<T = any>(a: T, b: T) {
     if (a === b) return 0;
 
     return a < b ? -1 : 1;
@@ -17,23 +17,23 @@ export class Comparator<T = unknown> {
     this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
   }
 
-  equal(a: unknown, b: unknown) {
+  equal(a: T, b: any) {
     return this.#isEqual(a, b);
   }
 
-  lessThan(a: T, b: T) {
+  lessThan(a: T, b: any) {
     return this.#compare(a, b) < 0;
   }
 
-  greaterThan(a: T, b: T) {
+  greaterThan(a: T, b: any) {
     return this.#compare(a, b) > 0;
   }
 
-  lessThanOrEqual(a: T, b: T) {
+  lessThanOrEqual(a: T, b: any) {
     return this.lessThan(a, b) || this.equal(a, b);
   }
 
-  greaterThanOrEqual(a: T, b: T) {
+  greaterThanOrEqual(a: T, b: any) {
     return this.greaterThan(a, b) || this.equal(a, b);
   }
 

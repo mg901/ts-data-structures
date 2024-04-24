@@ -10,7 +10,7 @@ export interface IBinaryTreeNode<T> {
   get rightHeight(): number;
   setLeft(node: BinaryTreeNode<T>): this;
   setRight(node: BinaryTreeNode<T>): this;
-  removeChild(node: BinaryTreeNode<T>): boolean;
+  deleteChild(node: BinaryTreeNode<T>): boolean;
 }
 
 export class BinaryTreeNode<T = any>
@@ -75,7 +75,7 @@ export class BinaryTreeNode<T = any>
     return this;
   }
 
-  removeChild(node: BinaryTreeNode<T>) {
+  deleteChild(node: BinaryTreeNode<T>) {
     if (this.left === node) {
       this.left = null;
 
