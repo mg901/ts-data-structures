@@ -90,4 +90,22 @@ export class BinaryTreeNode<T = any>
 
     return false;
   }
+
+  dfsTraversal(type: 'preOrder' | 'inOrder' | 'postOrder') {
+    let result: T[] = [];
+
+    const traverse = (node: Nullable<BinaryTreeNode<T>>) => {
+      if (node === null) return;
+
+      if (type === 'preOrder') result.push(node.data);
+      traverse(node.left);
+      if (type === 'inOrder') result.push(node.data);
+      traverse(node.right);
+      if (type === 'postOrder') result.push(node.data);
+    };
+
+    traverse(this);
+
+    return result;
+  }
 }
