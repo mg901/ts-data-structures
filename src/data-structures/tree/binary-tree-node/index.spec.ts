@@ -128,7 +128,7 @@ describe('BinaryTreeNode', () => {
     });
   });
 
-  describe('removeChild', () => {
+  describe('deleteChild', () => {
     it('removes the left child correctly', () => {
       // Arrange
       const root = node1;
@@ -162,6 +162,40 @@ describe('BinaryTreeNode', () => {
 
       // Act and Assert
       expect(root.deleteChild(node3)).toBeFalsy();
+    });
+  });
+
+  describe('DFS', () => {
+    let root: BinaryTreeNode<number>;
+
+    beforeEach(() => {
+      root = new BinaryTreeNode(2);
+      root.setLeft(new BinaryTreeNode(1));
+      root.setRight(new BinaryTreeNode(3));
+    });
+
+    it('inOrder traversal', () => {
+      // Act
+      const result = root.dfsTraversal('inOrder');
+
+      // Assert
+      expect(result).toEqual([1, 2, 3]);
+    });
+
+    it('preOrder traversal', () => {
+      // Act
+      const result = root.dfsTraversal('preOrder');
+
+      // Assert
+      expect(result).toEqual([2, 1, 3]);
+    });
+
+    it('postOrder traversal', () => {
+      // Act
+      const result = root.dfsTraversal('postOrder');
+
+      // Assert
+      expect(result).toEqual([1, 3, 2]);
     });
   });
 });
