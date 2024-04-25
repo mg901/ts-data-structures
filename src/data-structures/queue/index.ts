@@ -1,12 +1,13 @@
 import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
 import { type Callback } from '@/shared/node';
+import { Nullable } from '@/shared/types';
 
 interface IQueue<T> {
   get size(): number;
   get isEmpty(): boolean;
   enqueue(value: T): this;
-  dequeue(value: T): T | null;
-  peek(value: T): T | null;
+  dequeue(value: T): Nullable<T>;
+  peek(value: T): Nullable<T>;
   clear(): void;
   toArray(): T[];
   toString(callback?: Callback<T>): string;

@@ -40,8 +40,8 @@ describe('Dequeue', () => {
       dequeue.addFront(1).addFront(2);
 
       // Act and Assert
-      expect(dequeue.removeFront()?.data).toBe(2);
-      expect(dequeue.removeFront()?.data).toBe(1);
+      expect(dequeue.removeFront()).toBe(2);
+      expect(dequeue.removeFront()).toBe(1);
       expect(dequeue.removeFront()).toBeNull();
       expect(dequeue.size).toBe(0);
     });
@@ -55,12 +55,12 @@ describe('Dequeue', () => {
       dequeue.addFront(2);
 
       // Act and Assert
-      expect(dequeue.peekFront()?.data).toBe(2);
+      expect(dequeue.peekFront()).toBe(2);
 
       dequeue.addFront(1);
 
       // Act and Assert
-      expect(dequeue.peekFront()?.data).toBe(1);
+      expect(dequeue.peekFront()).toBe(1);
     });
   });
 
@@ -82,14 +82,24 @@ describe('Dequeue', () => {
     });
   });
 
+  describe('of', () => {
+    it('creates a dequeue with single element', () => {
+      // Act
+      const newDequeue = Dequeue.of(1);
+
+      // Assert
+      expect(newDequeue.peekFront()).toBe(1);
+    });
+  });
+
   describe('removeRead', () => {
     it('removes elements from the rear in the correct order', () => {
       // Arrange
       dequeue.addRear(1).addRear(2);
 
       // Act and Assert
-      expect(dequeue.removeRear()?.data).toBe(2);
-      expect(dequeue.removeRear()?.data).toBe(1);
+      expect(dequeue.removeRear()).toBe(2);
+      expect(dequeue.removeRear()).toBe(1);
       expect(dequeue.removeRear()).toBeNull();
       expect(dequeue.size).toBe(0);
     });
@@ -103,12 +113,12 @@ describe('Dequeue', () => {
       dequeue.addRear(1);
 
       // Act and Assert
-      expect(dequeue.peekRear()?.data).toBe(1);
+      expect(dequeue.peekRear()).toBe(1);
 
       dequeue.addRear(2);
 
       // Act and Assert
-      expect(dequeue.peekRear()?.data).toBe(2);
+      expect(dequeue.peekRear()).toBe(2);
     });
   });
 
