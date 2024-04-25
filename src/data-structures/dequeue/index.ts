@@ -1,8 +1,27 @@
 import { type Callback } from '@/shared/node';
+import { Nullable } from '@/shared/types';
 import { DoublyLinkedList } from '../linked-lists/doubly-linked-list';
 
-export class Dequeue<T = any> {
+interface IDequeue<T> {
+  get size(): number;
+  get isEmpty(): boolean;
+  addFront(data: T): this;
+  removeFront(): Nullable<T>;
+  peekFront(): Nullable<T>;
+  addRear(data: T): this;
+  removeRear(): Nullable<T>;
+  peekRear(): Nullable<T>;
+  toString(callback?: Callback<T>): string;
+}
+export class Dequeue<T = any> implements IDequeue<T> {
   #dll = new DoublyLinkedList<T>();
+
+  static of<T>(data: T) {
+    const dequeue = new Dequeue<T>();
+    dequeue.addRear(data);
+
+    return dequeue;
+  }
 
   get size() {
     return this.#dll.size;
@@ -12,32 +31,40 @@ export class Dequeue<T = any> {
     return this.#dll.isEmpty;
   }
 
-  addFront(value: T) {
-    this.#dll.prepend(value);
+  addFront(data: T) {
+    this.#dll.prepend(data);
 
     return this;
   }
 
   removeFront() {
-    return this.#dll.deleteHead();
+    if (this.#dll.isEmpty) return null;
+
+    return this.#dll.deleteHead()!.data;
   }
 
   peekFront() {
-    return this.#dll.head;
+    if (this.#dll.isEmpty) return null;
+
+    return this.#dll.head!.data;
   }
 
-  addRear(value: T) {
-    this.#dll.append(value);
+  addRear(data: T) {
+    this.#dll.append(data);
 
     return this;
   }
 
   removeRear() {
-    return this.#dll.deleteTail();
+    if (this.#dll.isEmpty) return null;
+
+    return this.#dll.deleteTail()!.data;
   }
 
   peekRear() {
-    return this.#dll.tail;
+    if (this.#dll.isEmpty) return null;
+
+    return this.#dll.tail!.data;
   }
 
   toString(callback?: Callback<T>) {
