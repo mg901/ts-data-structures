@@ -36,7 +36,7 @@ describe('BinaryTreeNode', () => {
       expect(node2.parent).toEqual(node1);
     });
 
-    it('disconnects the existing left child node before setting a new one', () => {
+    it('rewrites previous parent node', () => {
       // Arrange
       const oldLeft = node3;
       node1.setLeft(oldLeft);
@@ -165,7 +165,7 @@ describe('BinaryTreeNode', () => {
     });
   });
 
-  describe('DFS', () => {
+  describe('DFS traversal', () => {
     let root: BinaryTreeNode<number>;
 
     beforeEach(() => {
@@ -196,6 +196,25 @@ describe('BinaryTreeNode', () => {
 
       // Assert
       expect(result).toEqual([1, 3, 2]);
+    });
+  });
+
+  describe('BFS traversal', () => {
+    it('performs bfs traversal correctly', () => {
+      // Arrange
+      const root = new BinaryTreeNode(1);
+
+      root.setLeft(new BinaryTreeNode(2));
+      root.setRight(new BinaryTreeNode(3));
+
+      root.left?.setLeft(new BinaryTreeNode(4));
+      root.right?.setRight(new BinaryTreeNode(5));
+
+      // Act
+      const result = root.bfsTraversal();
+
+      // Assert
+      expect(result).toEqual([1, 2, 3, 4, 5]);
     });
   });
 });

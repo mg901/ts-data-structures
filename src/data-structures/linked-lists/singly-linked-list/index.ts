@@ -106,10 +106,7 @@ export class SinglyLinkedList<
     return deletedNode;
   }
 
-  #deleteNodeAndUpdateTail(
-    deletedNode: LinkedListNode,
-    prevNode: Nullable<Node>,
-  ) {
+  #deleteNodeAndUpdateTail(deletedNode: Node, prevNode: Nullable<Node>) {
     if (prevNode === null) {
       this._head = deletedNode.next;
     } else {

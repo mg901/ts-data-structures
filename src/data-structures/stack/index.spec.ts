@@ -26,6 +26,16 @@ describe('Stack', () => {
       expect(stack.toString()).toBe('1');
     });
 
+    describe('of', () => {
+      it('creates a new stack with single value', () => {
+        // Act
+        const newStack = Stack.of(1);
+
+        // Assert
+        expect(newStack.peek()).toBe(1);
+      });
+    });
+
     it('adds multiple elements to the top of the stack in the correct order', () => {
       // Act
       stack.push(10).push(20).push(30);

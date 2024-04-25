@@ -4,7 +4,7 @@ import { type Callback } from '@/shared/node';
 interface IStack<T> {
   get isEmpty(): boolean;
   get size(): number;
-  push(value: T): this;
+  push(data: T): this;
   peek(): T | undefined;
   pop(): T | undefined;
   toString(callback?: Callback<T>): string;
@@ -14,6 +14,10 @@ interface IStack<T> {
 export class Stack<T = any> implements IStack<T> {
   #sll = new SinglyLinkedList<T>();
 
+  static of<T>(data: T) {
+    return new Stack<T>().push(data);
+  }
+
   get isEmpty() {
     return this.#sll.isEmpty;
   }
@@ -22,8 +26,8 @@ export class Stack<T = any> implements IStack<T> {
     return this.#sll.size;
   }
 
-  push(value: T) {
-    this.#sll.append(value);
+  push(data: T) {
+    this.#sll.append(data);
 
     return this;
   }

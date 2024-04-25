@@ -1,3 +1,4 @@
+import { Queue } from '@/data-structures/queue';
 import { Node } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 
@@ -105,6 +106,26 @@ export class BinaryTreeNode<T = any>
     };
 
     traverse(this);
+
+    return result;
+  }
+
+  bfsTraversal() {
+    let result: T[] = [];
+    const queue = Queue.of<BinaryTreeNode<T>>(this);
+
+    while (queue.size > 0) {
+      const node = queue.dequeue()!;
+      result.push(node.data);
+
+      if (node.left) {
+        queue.enqueue(node.left);
+      }
+
+      if (node.right) {
+        queue.enqueue(node.right);
+      }
+    }
 
     return result;
   }

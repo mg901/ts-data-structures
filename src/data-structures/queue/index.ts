@@ -5,8 +5,8 @@ interface IQueue<T> {
   get size(): number;
   get isEmpty(): boolean;
   enqueue(value: T): this;
-  dequeue(value: T): T | undefined;
-  peek(value: T): T | undefined;
+  dequeue(value: T): T | null;
+  peek(value: T): T | null;
   clear(): void;
   toArray(): T[];
   toString(callback?: Callback<T>): string;
@@ -14,6 +14,13 @@ interface IQueue<T> {
 
 export class Queue<T = any> implements IQueue<T> {
   #sll = new SinglyLinkedList<T>();
+
+  static of<T>(value: T) {
+    const queue = new Queue<T>();
+    queue.enqueue(value);
+
+    return queue;
+  }
 
   get size() {
     return this.#sll.size;
@@ -36,11 +43,19 @@ export class Queue<T = any> implements IQueue<T> {
   }
 
   dequeue() {
-    return this.#sll.deleteHead()?.data;
+    if (this.#sll.head) {
+      return this.#sll.deleteHead()!.data;
+    }
+
+    return null;
   }
 
   peek() {
-    return this.#sll.head?.data;
+    if (this.#sll.head) {
+      return this.#sll.head.data;
+    }
+
+    return null;
   }
 
   toArray() {

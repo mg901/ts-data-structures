@@ -35,6 +35,16 @@ describe('Queue', () => {
     });
   });
 
+  describe('of', () => {
+    it('creates a new queue with single value', () => {
+      // Act
+      const newQueue = Queue.of(1);
+
+      // Assert
+      expect(newQueue.peek()).toBe(1);
+    });
+  });
+
   describe('Symbol.Iterator', () => {
     it('iterates through the elements', () => {
       // Arrange
@@ -56,7 +66,9 @@ describe('Queue', () => {
   describe('dequeue', () => {
     it('removes and returns the front element from the queue', () => {
       // Arrange
-      queue.enqueue(10).enqueue(20).enqueue(30);
+      queue.enqueue(10);
+      queue.enqueue(20);
+      queue.enqueue(30);
 
       // Act
       const removedElement = queue.dequeue();
@@ -67,12 +79,12 @@ describe('Queue', () => {
       expect(queue.size).toBe(2);
     });
 
-    it('returns undefined when deleting an element on the empty queue', () => {
+    it('returns null when deleting an element on the empty queue', () => {
       // Act
       const removedElement = queue.dequeue();
 
       // Assert
-      expect(removedElement).toBeUndefined();
+      expect(removedElement).toBeNull();
       expect(queue.size).toBe(0);
     });
   });
@@ -80,7 +92,8 @@ describe('Queue', () => {
   describe('peek', () => {
     it('returns the front element without removing it', () => {
       // Arrange
-      queue.enqueue(10).enqueue(15);
+      queue.enqueue(10);
+      queue.enqueue(15);
 
       // Act
       const frontElement = queue.peek();
@@ -91,12 +104,12 @@ describe('Queue', () => {
       expect(queue.size).toBe(2);
     });
 
-    it('returns undefined for the empty list', () => {
+    it('returns null for the empty list', () => {
       // Act
       const frontElement = queue.peek();
 
       // Assert
-      expect(frontElement).toBeUndefined();
+      expect(frontElement).toBeNull();
     });
   });
 
