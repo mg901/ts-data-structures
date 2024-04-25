@@ -47,9 +47,9 @@ describe('Stack', () => {
   });
 
   describe('peek', () => {
-    it('returns undefined for an empty stack', () => {
+    it('returns null for an empty stack', () => {
       // Act and Assert
-      expect(stack.peek()).toBeUndefined();
+      expect(stack.peek()).toBeNull();
     });
 
     it('returns the value of top element', () => {
@@ -75,12 +75,12 @@ describe('Stack', () => {
       expect(stack.size).toBe(2);
     });
 
-    it('returns undefined for an empty stack', () => {
+    it('returns null for an empty stack', () => {
       // Act
       const poppedElement = stack.pop();
 
       // Assert
-      expect(poppedElement).toBeUndefined();
+      expect(poppedElement).toBeNull();
       expect(stack.size).toBe(0);
     });
   });

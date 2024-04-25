@@ -1,14 +1,15 @@
 import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
 import { type Callback } from '@/shared/node';
+import { Nullable } from '@/shared/types';
 
 interface IStack<T> {
   get isEmpty(): boolean;
   get size(): number;
   push(data: T): this;
-  peek(): T | undefined;
-  pop(): T | undefined;
-  toString(callback?: Callback<T>): string;
+  peek(): Nullable<T>;
+  pop(): Nullable<T>;
   clear(): void;
+  toString(callback?: Callback<T>): string;
 }
 
 export class Stack<T = any> implements IStack<T> {
@@ -33,11 +34,15 @@ export class Stack<T = any> implements IStack<T> {
   }
 
   peek() {
-    return this.#sll.tail?.data;
+    if (this.#sll.isEmpty) return null;
+
+    return this.#sll.tail!.data;
   }
 
   pop() {
-    return this.#sll.deleteTail()?.data;
+    if (this.#sll.isEmpty) return null;
+
+    return this.#sll.deleteTail()!.data;
   }
 
   clear() {
