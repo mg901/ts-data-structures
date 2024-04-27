@@ -17,8 +17,7 @@ export class Dequeue<T = any> implements IDequeue<T> {
   #dll = new DoublyLinkedList<T>();
 
   static of<T>(data: T) {
-    const dequeue = new Dequeue<T>();
-    dequeue.addRear(data);
+    const dequeue = new Dequeue<T>().addRear(data);
 
     return dequeue;
   }

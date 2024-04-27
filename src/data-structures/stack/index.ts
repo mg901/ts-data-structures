@@ -16,7 +16,9 @@ export class Stack<T = any> implements IStack<T> {
   #sll = new SinglyLinkedList<T>();
 
   static of<T>(data: T) {
-    return new Stack<T>().push(data);
+    const stack = new Stack<T>().push(data);
+
+    return stack;
   }
 
   get isEmpty() {

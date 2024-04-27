@@ -19,8 +19,8 @@ export class MaxHeap<T = any> extends Heap<T> {
 
     while (currentIndex > 0) {
       const parentIndex = this._getParentIndex(currentIndex);
-      const parent = this._heap[parentIndex];
-      const current = this._heap[currentIndex];
+      const parent = this._getElement(parentIndex);
+      const current = this._getElement(currentIndex);
 
       if (parent >= current) break;
       this._swapByIndex(currentIndex, parentIndex);
@@ -71,25 +71,27 @@ export class MaxHeap<T = any> extends Heap<T> {
   }
 
   delete(value: T) {
-    const indexToRemove = this._heap.findIndex((item) => item === value);
+    const indexToDelete = this._heap.findIndex((item) => item === value);
 
-    if (indexToRemove === -1) return null;
+    if (indexToDelete === -1) return null;
 
-    // Replace the element to remove with the last element in the heap.
-    this._heap[indexToRemove] = this._heap.pop()!;
+    const deletedValue = this._getElement(indexToDelete);
+    const lastElement = this._heap.pop()!;
 
-    // If the element was the last element, no need to heapify.
-    if (indexToRemove === this.size) return value;
+    // If the deleted element is the last element, no need to heapify
+    if (indexToDelete === this.size) return deletedValue;
 
-    // Heapify up and down to maintain the heap property.
-    const ItemToRemove = this._getCurrent(indexToRemove);
-    const parentItem = this._getParent(indexToRemove)!;
-    if (parentItem !== null && ItemToRemove < parentItem) {
-      this.#heapifyUp(indexToRemove);
+    // Replace the deleted element with the last element
+    this._heap[indexToDelete] = lastElement;
+
+    // Heapify up and down to maintain the heap property
+    const parentElement = this._getParent(indexToDelete);
+    if (parentElement !== null && lastElement < parentElement) {
+      this.#heapifyUp(indexToDelete);
     } else {
-      this.#heapifyDown(indexToRemove);
+      this.#heapifyDown(indexToDelete);
     }
 
-    return value;
+    return deletedValue;
   }
 }
