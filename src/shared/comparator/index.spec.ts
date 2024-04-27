@@ -1,6 +1,6 @@
 import { describe, expect, test as it } from 'vitest';
+import type { CompareFn } from '.';
 import { Comparator } from '.';
-import type { CompareFunction } from '.';
 
 describe('Comparator', () => {
   it('compares values using default comparison function', () => {
@@ -19,7 +19,7 @@ describe('Comparator', () => {
 
   it('uses provided compare function', () => {
     // Arrange
-    const compareFunction: CompareFunction<string> = (a, b) => {
+    const compareFunction: CompareFn<string> = (a, b) => {
       if (a.length === b.length) return 0;
 
       return a.length < b.length ? -1 : 1;

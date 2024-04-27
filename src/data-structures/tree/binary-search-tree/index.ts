@@ -1,11 +1,11 @@
-import { type CompareFunction } from '@/shared/comparator';
+import { type CompareFn } from '@/shared/comparator';
 import { Callback } from '@/shared/node';
 import { BinarySearchTreeNode } from './binary-search-tree-node';
 
 export class BinarySearchTree<T = any> {
   root: BinarySearchTreeNode<T>;
 
-  constructor(nodeDataCompareFn?: CompareFunction<T>) {
+  constructor(nodeDataCompareFn?: CompareFn<T>) {
     // @ts-ignore
     this.root = new BinarySearchTreeNode(null, nodeDataCompareFn);
   }
