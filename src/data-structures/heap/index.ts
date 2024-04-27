@@ -74,18 +74,18 @@ export abstract class Heap<T = any> implements IHeap<T> {
   }
 
   protected _getParent(childIndex: number) {
-    return this._heap[this._getParentIndex(childIndex)];
+    return this._heap[this._getParentIndex(childIndex)] || null;
   }
 
   protected _getLeftChild(parentIndex: number) {
-    return this._heap[this._getLeftChildIndex(parentIndex)];
+    return this._heap[this._getLeftChildIndex(parentIndex)] || null;
   }
 
   protected _getRightChild(parentIndex: number) {
-    return this._heap[this._getRightChildIndex(parentIndex)];
+    return this._heap[this._getRightChildIndex(parentIndex)] || null;
   }
 
-  protected _getCurrent(index: number) {
+  protected _getElement(index: number) {
     return this._heap[index] as T;
   }
 

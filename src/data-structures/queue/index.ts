@@ -17,8 +17,7 @@ export class Queue<T = any> implements IQueue<T> {
   #sll = new SinglyLinkedList<T>();
 
   static of<T>(value: T) {
-    const queue = new Queue<T>();
-    queue.enqueue(value);
+    const queue = new Queue<T>().enqueue(value);
 
     return queue;
   }
