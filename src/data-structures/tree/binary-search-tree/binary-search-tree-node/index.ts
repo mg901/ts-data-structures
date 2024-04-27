@@ -1,5 +1,5 @@
 import { BinaryTreeNode } from '@/data-structures/tree/binary-tree-node';
-import { Comparator, type CompareFunction } from '@/shared/comparator';
+import { Comparator, type CompareFn } from '@/shared/comparator';
 import { Nullable } from '@/shared/types';
 
 export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
@@ -9,9 +9,9 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
 
   #compare: Comparator<T>;
 
-  #compareFunction?: CompareFunction<T>;
+  #compareFunction?: CompareFn<T>;
 
-  constructor(data: T, nodeDataCompareFn?: CompareFunction<T>) {
+  constructor(data: T, nodeDataCompareFn?: CompareFn<T>) {
     super(data);
     this.#compareFunction = nodeDataCompareFn;
     this.#compare = new Comparator(nodeDataCompareFn);

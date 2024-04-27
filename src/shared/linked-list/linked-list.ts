@@ -1,4 +1,4 @@
-import { Comparator, CompareFunction } from '@/shared/comparator';
+import { Comparator, CompareFn } from '@/shared/comparator';
 import { type Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 import isFunction from 'lodash.isfunction';
@@ -45,7 +45,7 @@ export abstract class LinkedList<
 
   protected _compare: Comparator<T>;
 
-  constructor(compareFunction?: CompareFunction<T>) {
+  constructor(compareFunction?: CompareFn<T>) {
     this._compare = new Comparator(compareFunction);
   }
 

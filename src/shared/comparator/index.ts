@@ -1,9 +1,9 @@
 import isEqual from 'lodash.isequal';
 
-export type CompareFunction<T> = (a: T, b: T) => -1 | 0 | 1;
+export type CompareFn<T> = (a: T, b: T) => -1 | 0 | 1;
 
 export class Comparator<T = any> {
-  #compare: CompareFunction<T>;
+  #compare: CompareFn<T>;
 
   #isEqual = isEqual;
 
@@ -13,7 +13,7 @@ export class Comparator<T = any> {
     return a < b ? -1 : 1;
   }
 
-  constructor(compareFunction?: CompareFunction<T>) {
+  constructor(compareFunction?: CompareFn<T>) {
     this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
   }
 
