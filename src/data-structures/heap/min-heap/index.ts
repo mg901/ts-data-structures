@@ -1,32 +1,31 @@
 import { Heap } from '../heap';
 
-export class MaxHeap<T = any> extends Heap<T> {
+export class MinHeap<T = any> extends Heap<T> {
   static of<T>(value: T) {
-    const heap = new MaxHeap<T>().insert(value);
+    const minHeap = new MinHeap();
+    minHeap.insert(value);
 
-    return heap;
+    return minHeap;
   }
 
-  insert(value: T) {
+  insert(value: T): this {
     this._heap.push(value);
-
     this.#heapifyUp();
 
     return this;
   }
 
-  // Up from the bottom
-  #heapifyUp(startIndex: number = this.size - 1): void {
+  #heapifyUp(startIndex: number = this.size - 1) {
     let currentIndex = startIndex;
 
     while (currentIndex > 0) {
       const parentIndex = this._getParentIndex(currentIndex);
-      const parentValue = this._heap[parentIndex];
-      const currentValue = this._heap[currentIndex];
+      const parentElement = this._heap[parentIndex];
+      const currentElement = this._heap[currentIndex];
 
-      if (parentValue > currentValue) break;
+      if (parentElement <= currentElement) break;
 
-      this._swapByIndex(currentIndex, parentIndex);
+      this._swapByIndex(parentIndex, currentIndex);
       currentIndex = parentIndex;
     }
   }
@@ -37,16 +36,15 @@ export class MaxHeap<T = any> extends Heap<T> {
       return this._heap.pop()!;
     }
 
-    const maxElementIndex = 0;
-    const maxElement = this._heap[maxElementIndex];
-    this._heap[maxElementIndex] = this._heap.pop()!;
+    const minElementIndex = 0;
+    const minElement = this._heap[minElementIndex];
+    this._heap[minElementIndex] = this._heap.pop()!;
 
     this.#heapifyDown();
 
-    return maxElement;
+    return minElement;
   }
 
-  // Let's go down
   #heapifyDown(startIndex: number = 0) {
     let currentIndex = startIndex;
 
@@ -54,26 +52,26 @@ export class MaxHeap<T = any> extends Heap<T> {
     while (true) {
       const leftChildIndex = this._getLeftChildIndex(currentIndex);
       const rightChildIndex = this._getRightChildIndex(currentIndex);
-      let maxIndex = currentIndex;
+      let minIndex = currentIndex;
 
       if (
         leftChildIndex < this._heap.length &&
-        this._heap[leftChildIndex] > this._heap[maxIndex]
+        this._heap[leftChildIndex] < this._heap[minIndex]
       ) {
-        maxIndex = leftChildIndex;
+        minIndex = leftChildIndex;
       }
 
       if (
         rightChildIndex < this._heap.length &&
-        this._heap[rightChildIndex] > this._heap[maxIndex]
+        this._heap[rightChildIndex] < this._heap[minIndex]
       ) {
-        maxIndex = rightChildIndex;
+        minIndex = rightChildIndex;
       }
 
-      if (maxIndex === currentIndex) break;
+      if (minIndex === currentIndex) break;
 
-      this._swapByIndex(currentIndex, maxIndex);
-      currentIndex = maxIndex;
+      this._swapByIndex(currentIndex, minIndex);
+      currentIndex = minIndex;
     }
   }
 
@@ -93,7 +91,7 @@ export class MaxHeap<T = any> extends Heap<T> {
 
     // Heapify up and down to maintain the heap property
     const parentElement = this._getParent(indexToDelete);
-    if (parentElement !== null && lastElement < parentElement) {
+    if (parentElement !== null && lastElement > parentElement) {
       this.#heapifyUp(indexToDelete);
     } else {
       // Heapify down after deleting the max element from the top.

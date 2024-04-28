@@ -23,6 +23,7 @@ module.exports = {
     'no-underscore-dangle': 0,
     'import/prefer-default-export': 0,
     'import/no-extraneous-dependencies': 0,
+
     '@typescript-eslint/no-use-before-define': 0,
     'newline-before-return': 2,
     'no-console': 2,
