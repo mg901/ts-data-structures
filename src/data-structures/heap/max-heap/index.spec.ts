@@ -3,10 +3,11 @@ import { MaxHeap } from './index';
 
 describe('MaxHeap', () => {
   it('creates an empty MaxHeap', () => {
-    // Arrange
+    // Act
     const maxHeap = new MaxHeap();
     // Assert
     expect(maxHeap).toBeDefined();
+    expect(maxHeap.toString()).toBe('');
     expect(maxHeap.size).toBe(0);
     expect(maxHeap.isEmpty).toBeTruthy();
   });
@@ -38,24 +39,17 @@ describe('MaxHeap', () => {
       expect(maxHeap.peek()).toBe(10);
 
       // Act
-      maxHeap.insert(1);
-
-      // Assert
-      expect(maxHeap.toString()).toBe('10,5,3,1,1');
-      expect(maxHeap.peek()).toBe(10);
-
-      // Act
       maxHeap.insert(8);
 
       // Assert
-      expect(maxHeap.toString()).toBe('10,5,8,1,1,3');
+      expect(maxHeap.toString()).toBe('10,8,3,1,5');
       expect(maxHeap.peek()).toBe(10);
 
       // // Act
       maxHeap.insert(20);
 
       // Assert
-      expect(maxHeap.toString()).toBe('20,5,10,1,1,3,8');
+      expect(maxHeap.toString()).toBe('20,8,10,1,5,3');
       expect(maxHeap.peek()).toBe(20);
     });
   });
@@ -84,6 +78,7 @@ describe('MaxHeap', () => {
       const maxHeap = MaxHeap.of(10);
       // Act and Assert
       expect(maxHeap.poll()).toBe(10);
+      expect(maxHeap.isEmpty).toBeTruthy();
     });
 
     it('removes the maximum element from the top and adjust the heap accordingly', () => {
@@ -157,6 +152,19 @@ describe('MaxHeap', () => {
       expect(deletedElement).toBe(12);
       expect(maxHeap.peek()).toBe(8);
       expect(maxHeap.toString()).toBe('8,5,7,3');
+    });
+  });
+
+  describe('clear', () => {
+    it('remove all elements', () => {
+      // Arrange
+      const maxHeap = MaxHeap.of(3).insert(5).insert(1);
+
+      // Act
+      maxHeap.clear();
+
+      // Assert
+      expect(maxHeap.isEmpty).toBeTruthy();
     });
   });
 });
