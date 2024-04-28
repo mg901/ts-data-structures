@@ -9,20 +9,25 @@ export class MaxHeap<T = any> extends Heap<T> {
 
   insert(value: T) {
     this._heap.push(value);
+
     this.#heapifyUp();
 
     return this;
   }
 
+  // Up from the bottom
   #heapifyUp(startIndex: number = this.size - 1): void {
     let currentIndex = startIndex;
 
     while (currentIndex > 0) {
       const parentIndex = this._getParentIndex(currentIndex);
-      const parent = this._getElement(parentIndex);
-      const current = this._getElement(currentIndex);
+      const parent = this._getElementValue(parentIndex);
+      const current = this._getElementValue(currentIndex);
 
-      if (parent >= current) break;
+      if (parent >= current) {
+        break;
+      }
+
       this._swapByIndex(currentIndex, parentIndex);
       currentIndex = parentIndex;
     }
@@ -31,16 +36,21 @@ export class MaxHeap<T = any> extends Heap<T> {
   poll() {
     if (this._heap.length === 0) return null;
     if (this._heap.length === 1) {
-      return this._heap.pop()!;
+      const maxItem = this._heap.pop()!;
+
+      return maxItem;
     }
 
-    const maxItem = this._heap[0]!;
-    this._heap[0] = this._heap.pop()!;
+    const maxElementIndex = 0;
+    const maxElement = this._getElementValue(maxElementIndex);
+    this._heap[maxElementIndex] = this._heap.pop()!;
+
     this.#heapifyDown();
 
-    return maxItem;
+    return maxElement;
   }
 
+  // Let's go down
   #heapifyDown(startIndex: number = 0) {
     let currentIndex = startIndex;
 
@@ -75,7 +85,7 @@ export class MaxHeap<T = any> extends Heap<T> {
 
     if (indexToDelete === -1) return null;
 
-    const deletedValue = this._getElement(indexToDelete);
+    const deletedValue = this._getElementValue(indexToDelete);
     const lastElement = this._heap.pop()!;
 
     // If the deleted element is the last element, no need to heapify
@@ -89,6 +99,7 @@ export class MaxHeap<T = any> extends Heap<T> {
     if (parentElement !== null && lastElement < parentElement) {
       this.#heapifyUp(indexToDelete);
     } else {
+      // Heapify down after deleting the max element from the top.
       this.#heapifyDown(indexToDelete);
     }
 
