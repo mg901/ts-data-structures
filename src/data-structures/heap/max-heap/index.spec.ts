@@ -141,5 +141,43 @@ describe('MaxHeap', () => {
       expect(maxHeap.toString()).toBe('10,3,8');
       expect(maxHeap.size).toBe(3);
     });
+
+    it('deletes item from heap with heapify down', () => {
+      const maxHeap = MaxHeap.of(3).insert(12).insert(10).insert(11);
+
+      expect(maxHeap.toString()).toBe('12,11,10,3');
+
+      // Act
+      maxHeap.delete(12);
+
+      expect(maxHeap.toString()).toEqual('11,3,10');
+
+      // Act
+      maxHeap.delete(12);
+      expect(maxHeap.peek()).toEqual(11);
+      // Act
+      maxHeap.delete(11);
+
+      expect(maxHeap.toString()).toEqual('10,3');
+
+      // Act
+      maxHeap.delete(10);
+
+      // Assert
+      expect(maxHeap.peek()).toEqual(3);
+    });
+
+    // it('deleting all occurrences of the same element', () => {
+    //   const maxHeap = new MaxHeap()
+    //     .insert(1)
+    //     .insert(6)
+    //     .insert(6)
+    //     .insert(6)
+    //     .insert(5);
+
+    //   // Delete all occurrences of value 6
+    //   expect(maxHeap.delete(6)).toBe(6);
+    //   // expect(maxHeap.size).toBe(2); // Only 1 and 5 left in the heap
+    // });
   });
 });
