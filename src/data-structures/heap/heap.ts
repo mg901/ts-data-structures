@@ -15,14 +15,6 @@ export interface IHeap<T> {
 export abstract class Heap<T = any> implements IHeap<T> {
   protected _heap: T[] = [];
 
-  constructor() {
-    if (new.target === Heap) {
-      throw new Error(
-        'Cannot construct Heap instance directly. Please use MaxHeap or MinHeap instead.',
-      );
-    }
-  }
-
   get isEmpty() {
     return this._heap.length === 0;
   }

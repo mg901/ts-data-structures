@@ -54,7 +54,7 @@ describe('HashTable', () => {
   });
 
   describe('has', () => {
-    it('checks if a key exists using has method', () => {
+    it('checks if a key exists in a hash table', () => {
       // Arrange
       hashTable.set('one', 1).set('two', 2);
 

@@ -1,3 +1,4 @@
+import { Comparator, CompareFn } from '@/shared/comparator';
 import { Heap } from '../heap';
 
 export class MinHeap<T = any> extends Heap<T> {
@@ -8,6 +9,14 @@ export class MinHeap<T = any> extends Heap<T> {
     return minHeap;
   }
 
+  #compare: Comparator<T>;
+
+  constructor(compareFn?: CompareFn<T>) {
+    super();
+
+    this.#compare = new Comparator(compareFn);
+  }
+
   insert(value: T): this {
     this._heap.push(value);
     this.#heapifyUp();
@@ -15,7 +24,7 @@ export class MinHeap<T = any> extends Heap<T> {
     return this;
   }
 
-  #heapifyUp(startIndex: number = this.size - 1) {
+  #heapifyUp(startIndex = this.size - 1) {
     let currentIndex = startIndex;
 
     while (currentIndex > 0) {
@@ -23,7 +32,7 @@ export class MinHeap<T = any> extends Heap<T> {
       const parentElement = this._heap[parentIndex];
       const currentElement = this._heap[currentIndex];
 
-      if (parentElement <= currentElement) break;
+      if (this.#compare.lessThan(parentElement, currentElement)) break;
 
       this._swapByIndex(parentIndex, currentIndex);
       currentIndex = parentIndex;
@@ -45,7 +54,7 @@ export class MinHeap<T = any> extends Heap<T> {
     return minElement;
   }
 
-  #heapifyDown(startIndex: number = 0) {
+  #heapifyDown(startIndex = 0) {
     let currentIndex = startIndex;
 
     // eslint-disable-next-line no-constant-condition

@@ -17,23 +17,23 @@ export class Comparator<T = any> {
     this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
   }
 
-  equal(a: T, b: any) {
+  equal(a: any, b: any) {
     return this.#isEqual(a, b);
   }
 
-  lessThan(a: T, b: any) {
+  lessThan(a: any, b: any) {
     return this.#compare(a, b) < 0;
   }
 
-  greaterThan(a: T, b: any) {
+  greaterThan(a: any, b: any) {
     return this.#compare(a, b) > 0;
   }
 
-  lessThanOrEqual(a: T, b: any) {
+  lessThanOrEqual(a: any, b: any) {
     return this.lessThan(a, b) || this.equal(a, b);
   }
 
-  greaterThanOrEqual(a: T, b: any) {
+  greaterThanOrEqual(a: any, b: any) {
     return this.greaterThan(a, b) || this.equal(a, b);
   }
 

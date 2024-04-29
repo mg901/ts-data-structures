@@ -45,8 +45,8 @@ export abstract class LinkedList<
 
   protected _compare: Comparator<T>;
 
-  constructor(compareFunction?: CompareFn<T>) {
-    this._compare = new Comparator(compareFunction);
+  constructor(compareFn?: CompareFn<T>) {
+    this._compare = new Comparator(compareFn);
   }
 
   get head() {

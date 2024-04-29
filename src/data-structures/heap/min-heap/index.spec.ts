@@ -56,6 +56,18 @@ describe('MinHeap', () => {
     });
   });
 
+  describe('of', () => {
+    it('creates a new heap with a single element', () => {
+      // Act
+      const minHeap = MinHeap.of(1);
+
+      // Assert
+      expect(minHeap.toString()).toBe('1');
+      expect(minHeap.size).toBe(1);
+      expect(minHeap.isEmpty).toBeFalsy();
+    });
+  });
+
   describe('poll', () => {
     it('removes the minimum element from an empty max-heap', () => {
       // Arrange

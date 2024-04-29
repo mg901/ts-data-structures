@@ -1,3 +1,4 @@
+import { Comparator, CompareFn } from '@/shared/comparator';
 import { Heap } from '../heap';
 
 export class MaxHeap<T = any> extends Heap<T> {
@@ -5,6 +6,14 @@ export class MaxHeap<T = any> extends Heap<T> {
     const heap = new MaxHeap<T>().insert(value);
 
     return heap;
+  }
+
+  #compare: Comparator<T>;
+
+  constructor(compareFn?: CompareFn<T>) {
+    super();
+
+    this.#compare = new Comparator(compareFn);
   }
 
   insert(value: T) {
@@ -24,7 +33,7 @@ export class MaxHeap<T = any> extends Heap<T> {
       const parentValue = this._heap[parentIndex];
       const currentValue = this._heap[currentIndex];
 
-      if (parentValue > currentValue) break;
+      if (this.#compare.greaterThan(parentValue, currentValue)) break;
 
       this._swapByIndex(currentIndex, parentIndex);
       currentIndex = parentIndex;
