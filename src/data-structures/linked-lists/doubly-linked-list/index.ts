@@ -164,21 +164,16 @@ export class DoublyLinkedList<
   deleteTail() {
     if (this._head === null) return null;
 
-    // If there is only one node.
-    if (this._head === this._tail) {
-      const deletedNode = this._tail;
-      this._head = null;
-      this._tail = null;
-
-      this._size -= 1;
-
-      return deletedNode;
-    }
-
     const deletedNode = this.tail!;
 
-    this._tail = deletedNode.prev! as Node;
-    this._tail.next = null;
+    // If there is only one node.
+    if (this._head === this._tail) {
+      this._head = null;
+      this._tail = null;
+    } else {
+      this._tail = deletedNode.prev! as Node;
+      this._tail.next = null;
+    }
 
     this._size -= 1;
 
