@@ -145,7 +145,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
           errors.push(error);
 
           if (errors.length === promises.length) {
-            reject(new AggregateError('All promises were rejected'));
+            reject(new AggregateError(errors, 'All promises were rejected'));
           }
         });
       }
@@ -279,11 +279,11 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   }
 }
 
-function handleNonIterable(reject: (reason: any) => void, values: any): void {
-  if (!values[Symbol.iterator]) {
+function handleNonIterable(reject: (reason: any) => void, value: any): void {
+  if (!value[Symbol.iterator]) {
     reject(
       new TypeError(
-        `${typeof values} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+        `${typeof value} ${value} is not iterable (cannot read property Symbol(Symbol.iterator))`,
       ),
     );
   }
