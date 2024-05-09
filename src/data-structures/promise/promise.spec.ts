@@ -164,7 +164,7 @@ describe('MyPromise', () => {
 
     it('handles error thrown in the fulfillment handler of a resolved promise', async () => {
       // Arrange
-      const expected = 'handle error';
+      const expected = new Error('message');
       const promise = new MyPromise((resolve) => {
         resolve(FULFILLED_VALUE);
       });
@@ -175,14 +175,14 @@ describe('MyPromise', () => {
       await promise
         // Act
         .then(() => {
-          throw Error(expected);
+          throw expected;
         }, onRejectedSpy1)
         .then(null, onRejectedSpy2);
 
       // Assert
       expect(onRejectedSpy1).not.toHaveBeenCalled();
 
-      expect(onRejectedSpy2).toHaveBeenCalledWith(new Error(expected));
+      expect(onRejectedSpy2).toHaveBeenCalledWith(expected);
       expect(onRejectedSpy2).toHaveBeenCalledOnce();
     });
 

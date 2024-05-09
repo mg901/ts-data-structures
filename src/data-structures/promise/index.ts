@@ -291,7 +291,7 @@ function handleNonIterable(reject: (reason: any) => void, value: any): void {
 }
 
 function isThenable(it: any): it is PromiseLike<unknown> {
-  return !!(it && typeof it === 'object' && it.then && isFunction(it.then));
+  return !!(it && isFunction(it.then));
 }
 
 function executeCallbacks(queue: Queue<Callback>) {
