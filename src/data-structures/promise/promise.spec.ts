@@ -19,8 +19,6 @@ describe('MyPromise', () => {
   let IS_NOT_ITERABLE_ERROR_MESSAGE: string;
 
   // Arrange
-  let resolvedPromise: MyPromise<string>;
-  let rejectedPromise: MyPromise<never>;
   let onFulfilledSpy: Mock<any, any>;
   let onRejectedSpy: Mock<any, any>;
 
@@ -34,18 +32,10 @@ describe('MyPromise', () => {
     FULFILLED_VALUE = 'Hooray';
     REJECTED_REASON = 'Oops';
     IS_NOT_ITERABLE_ERROR_MESSAGE =
-      ' is not iterable (cannot read property Symbol(Symbol.iterator))';
+      'is not iterable (cannot read property Symbol(Symbol.iterator))';
   });
 
   beforeEach(() => {
-    resolvedPromise = new MyPromise((resolve) => {
-      resolve(FULFILLED_VALUE);
-    });
-
-    rejectedPromise = new MyPromise((_, reject) => {
-      reject(new Error(REJECTED_REASON));
-    });
-
     onFulfilledSpy = vi.fn();
     onRejectedSpy = vi.fn();
   });
@@ -95,34 +85,35 @@ describe('MyPromise', () => {
     });
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(MyPromise.resolve(1))).toBe(
-        '[object MyPromise]',
-      );
-    });
-  });
-
   describe('then', () => {
-    it('calls the fulfillment handler with a nested promise', async () => {
+    it('returns the resolved value by flattening nested promises', async () => {
       // Arrange
-      const nestedPromise = new MyPromise((resolve) => resolve(1));
+      const expected = 1;
+      const nestedPromise = new MyPromise((resolve) => {
+        resolve(expected);
+      });
 
-      await new MyPromise((resolve) => resolve(nestedPromise))
+      await new MyPromise((resolve) => {
+        resolve(nestedPromise);
+      })
         // Act
         .then(onFulfilledSpy, onRejectedSpy);
 
       // Assert
-      expect(onFulfilledSpy).toHaveBeenCalledWith(nestedPromise);
+      expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
       expect(onFulfilledSpy).toHaveBeenCalledOnce();
 
       expect(onRejectedSpy).not.toHaveBeenCalled();
     });
 
-    it('calls the fulfillment handler with the resolved value', async () => {
+    it('it returns the resolved value', async () => {
+      // Arrange
+      const promise = new MyPromise((resolve) => {
+        resolve(FULFILLED_VALUE);
+      });
+
       // Act
-      await resolvedPromise.then(onFulfilledSpy, onRejectedSpy);
+      await promise.then(onFulfilledSpy, onRejectedSpy);
 
       // Assert
       expect(onFulfilledSpy).toHaveBeenCalledWith(FULFILLED_VALUE);
@@ -134,11 +125,16 @@ describe('MyPromise', () => {
     it('handles asynchronous callbacks passed as fulfillment handler', async () => {
       // Arrange
       const expected = 'expected';
+      const promise = new MyPromise((resolve) => {
+        resolve(FULFILLED_VALUE);
+      });
       const asynchronousCallback = () =>
-        new MyPromise((resolve) => setTimeout(resolve, 50, expected));
+        new MyPromise((resolve) => {
+          setTimeout(resolve, 50, expected);
+        });
 
       // Act
-      await resolvedPromise
+      await promise
         .then(asynchronousCallback, onRejectedSpy)
         .then(onFulfilledSpy);
 
@@ -151,8 +147,13 @@ describe('MyPromise', () => {
     });
 
     it('handles an empty fulfillment handler and calls the next handler with the resolved value', async () => {
+      // Arrange
+      const promise = new MyPromise((resolve) => {
+        resolve(FULFILLED_VALUE);
+      });
+
       // Act
-      await resolvedPromise.then(null, onRejectedSpy).then(onFulfilledSpy);
+      await promise.then(null, onRejectedSpy).then(onFulfilledSpy);
 
       // Assert
       expect(onRejectedSpy).not.toHaveBeenCalled();
@@ -164,10 +165,14 @@ describe('MyPromise', () => {
     it('handles error thrown in the fulfillment handler of a resolved promise', async () => {
       // Arrange
       const expected = 'handle error';
+      const promise = new MyPromise((resolve) => {
+        resolve(FULFILLED_VALUE);
+      });
+
       const onRejectedSpy1 = vi.fn();
       const onRejectedSpy2 = vi.fn();
 
-      await resolvedPromise
+      await promise
         // Act
         .then(() => {
           throw Error(expected);
@@ -177,25 +182,29 @@ describe('MyPromise', () => {
       // Assert
       expect(onRejectedSpy1).not.toHaveBeenCalled();
 
-      expect(onRejectedSpy2).toHaveBeenCalledWith(Error(expected));
+      expect(onRejectedSpy2).toHaveBeenCalledWith(new Error(expected));
       expect(onRejectedSpy2).toHaveBeenCalledOnce();
     });
 
     it('handles error thrown in the fulfillment handler of a rejected promise', async () => {
       // Arrange
-      const expected = 'handle error';
+      const expected = new Error('message');
+      const promise = new MyPromise((_, reject) => {
+        reject(expected);
+      });
+
       const onRejectedSpy1 = vi.fn();
       const onRejectedSpy2 = vi.fn();
 
-      await rejectedPromise
+      await promise
         // Act
         .then(() => {
-          throw Error(expected);
+          throw expected;
         }, onRejectedSpy1)
         .then(null, onRejectedSpy2);
 
       // Assert
-      expect(onRejectedSpy1).toHaveBeenCalledWith(Error(REJECTED_REASON));
+      expect(onRejectedSpy1).toHaveBeenCalledWith(expected);
       expect(onRejectedSpy1).toHaveBeenCalledOnce();
 
       expect(onRejectedSpy2).not.toHaveBeenCalled();
@@ -203,29 +212,34 @@ describe('MyPromise', () => {
   });
 
   describe('finally', () => {
-    let onFinallySpy: Mock<any, any>;
-
-    // Arrange
-    beforeEach(() => {
-      onFinallySpy = vi.fn();
-    });
-
     it('calls the finally handler after fulfillment', async () => {
+      // Arrange
+      const promise = new MyPromise((resolve) => {
+        resolve(FULFILLED_VALUE);
+      });
+
       // Act
-      await resolvedPromise.finally(onFinallySpy);
+      await promise.then(onFulfilledSpy).finally(onRejectedSpy);
 
       // Assert
-      expect(onFinallySpy).toHaveBeenCalled();
-      expect(onFinallySpy).toHaveBeenCalledOnce();
+      expect(onFulfilledSpy.mock.invocationCallOrder[0]).toBeLessThan(
+        onRejectedSpy.mock.invocationCallOrder[0],
+      );
     });
 
     it('calls the finally handler after rejection', async () => {
+      // Arrange
+      const promise = new MyPromise((_, reject) => {
+        reject(new Error(REJECTED_REASON));
+      });
+
       // Act
-      await rejectedPromise.finally(onFinallySpy);
+      await promise.catch(onFulfilledSpy).finally(onRejectedSpy);
 
       // Assert
-      expect(onFinallySpy).toHaveBeenCalled();
-      expect(onFinallySpy).toHaveBeenCalledOnce();
+      expect(onFulfilledSpy.mock.invocationCallOrder[0]).toBeLessThan(
+        onRejectedSpy.mock.invocationCallOrder[0],
+      );
     });
 
     it('handles empty onfinally method after fulfillment', async () => {
@@ -258,11 +272,11 @@ describe('MyPromise', () => {
     // Arrange
     beforeEach(() => {
       makeTypeError = (value: any) =>
-        TypeError(typeof value + IS_NOT_ITERABLE_ERROR_MESSAGE);
+        TypeError(`${typeof value} ${IS_NOT_ITERABLE_ERROR_MESSAGE}`);
     });
 
     describe('resolve', () => {
-      it('resolves with non-promise value', async () => {
+      it('returns the resolved value', async () => {
         // Arrange
         const expected = 'nested value';
 
@@ -278,63 +292,47 @@ describe('MyPromise', () => {
         expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
-      it('calls onFulfillment handler with the rejected value', async () => {
-        const expected = 'reason';
+      it('triggers rejection handler with the rejected value', async () => {
+        // Arrange
+        const expected = new Error('message');
 
-        await MyPromise.resolve(MyPromise.reject(Error(expected)))
+        // Act
+        await MyPromise.resolve(MyPromise.reject(expected))
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(expected);
         expect(onRejectedSpy).toHaveBeenCalledOnce();
-      });
-
-      it('resolve with nested promise ', async () => {
-        // Arrange
-        const expected = 'nested value';
-        const nestedPromise = new MyPromise((resolve) => {
-          setTimeout(resolve, 50, expected);
-        });
-
-        // Act
-        await MyPromise.resolve(nestedPromise)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
-
-        // Assert
-        expect(onFulfilledSpy).toHaveBeenLastCalledWith(expected);
-        expect(onFulfilledSpy).toHaveBeenCalledOnce();
-
-        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
     });
 
     describe('reject', () => {
-      it('calls onFulfillment handler with the rejected value', async () => {
+      it('rejects with the expected error', async () => {
         // Arrange
-        const expected = 'nested reason';
+        const expected = new Error('message');
 
-        await MyPromise.reject(new Error(expected)).catch(onRejectedSpy);
+        // Act
+        await MyPromise.reject(expected).catch(onRejectedSpy);
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(expected);
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
-      it('calls onFulfillment handler with the nested promise value', async () => {
+      it('rejects with the nested promise instance', async () => {
         // Arrange
         const expected = 'nested reason';
         const nestedPromise = new MyPromise((_, reject) => {
-          setTimeout(reject, 50, new Error(expected));
+          setTimeout(reject, 50, Error(expected));
         });
 
         // Act
         await MyPromise.reject(nestedPromise).catch(onRejectedSpy);
 
         // Assert
-        expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(nestedPromise);
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
     });
@@ -405,7 +403,7 @@ describe('MyPromise', () => {
         // Act
         await MyPromise.all([
           MyPromise.resolve(1),
-          MyPromise.reject(Error(expected)),
+          MyPromise.reject(new Error(expected)),
           MyPromise.resolve(2),
         ])
           .then(onFulfilledSpy)
@@ -414,7 +412,7 @@ describe('MyPromise', () => {
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(new Error(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
     });
@@ -478,16 +476,16 @@ describe('MyPromise', () => {
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(new Error(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
       it('handles non-promise values in the iterable', async () => {
         // Arrange
         const expected = 'non-promise';
-        const promise = new MyPromise((resolve) =>
-          setTimeout(resolve, 100, 'first'),
-        );
+        const promise = new MyPromise((resolve) => {
+          setTimeout(resolve, 100, 'first');
+        });
 
         // Act
         await MyPromise.race([promise, expected, 123])
@@ -522,9 +520,15 @@ describe('MyPromise', () => {
 
         // Act
         await MyPromise.any([
-          new MyPromise((resolve) => setTimeout(resolve, 70, 'third')),
-          new MyPromise((resolve) => setTimeout(resolve, 50, expected)),
-          new MyPromise((resolve) => setTimeout(resolve, 60, 'second')),
+          new MyPromise((resolve) => {
+            setTimeout(resolve, 70, 'third');
+          }),
+          new MyPromise((resolve) => {
+            setTimeout(resolve, 50, expected);
+          }),
+          new MyPromise((resolve) => {
+            setTimeout(resolve, 60, 'second');
+          }),
         ])
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
@@ -537,12 +541,12 @@ describe('MyPromise', () => {
       });
 
       it('rejects if all promises were rejected', async () => {
+        // Arrange
+        const errors = [new Error('a'), new Error('b'), new Error('c')];
+        const mappedErrors = errors.map((error) => MyPromise.reject(error));
+
         // Act
-        await MyPromise.any([
-          MyPromise.reject(1),
-          MyPromise.reject(2),
-          MyPromise.reject(3),
-        ])
+        await MyPromise.any(mappedErrors)
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
@@ -550,8 +554,9 @@ describe('MyPromise', () => {
         expect(onFulfilledSpy).not.toHaveBeenCalled();
 
         expect(onRejectedSpy).toHaveBeenCalledWith(
-          AggregateError('All promises were rejected'),
+          AggregateError(errors, 'All promises were rejected'),
         );
+
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
     });
@@ -668,8 +673,8 @@ describe('MyPromise', () => {
           { status: 'fulfilled', value: 'one' },
           { status: 'fulfilled', value: 'two' },
         ]);
-        expect(onFulfilledSpy).toHaveBeenCalledOnce();
 
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
         expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
@@ -694,6 +699,15 @@ describe('MyPromise', () => {
 
         expect(onRejectedSpy).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(MyPromise.resolve(1))).toBe(
+        '[object MyPromise]',
+      );
     });
   });
 });
