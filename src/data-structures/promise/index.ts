@@ -81,18 +81,10 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   static resolve<T>(value: T): MyPromise<Awaited<T>>;
   static resolve<T>(value: T | PromiseLike<T>): MyPromise<Awaited<T>>;
   static resolve<T>(value?: T | PromiseLike<T>) {
-    if (isMyPromise(value)) {
-      return value;
-    }
-
     return new MyPromise<Awaited<T>>((resolve) => resolve(value as Awaited<T>));
   }
 
   static reject<T = never>(reason?: any) {
-    if (isMyPromise(reason)) {
-      return reason as T;
-    }
-
     return new MyPromise<T>((_, reject) => reject(reason));
   }
 
@@ -190,17 +182,17 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'MyPromise';
-  }
-
   #resolve(value: Value<T>) {
     if (this.#state === STATE.PENDING) {
-      this.#state = STATE.FULFILLED;
-      this.#value = value;
+      if (isThenable(value)) {
+        value.then(this.#resolve.bind(this), this.#reject.bind(this));
+      } else {
+        this.#state = STATE.FULFILLED;
+        this.#value = value;
+      }
 
-      processCallbackQueue(this.#onfulfilledCallbacks);
+      executeCallbacks(this.#onfulfilledCallbacks);
+      this.#onfulfilledCallbacks.clear();
     }
   }
 
@@ -209,7 +201,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       this.#state = STATE.REJECTED;
       this.#value = reason;
 
-      processCallbackQueue(this.#onrejectedCallbacks);
+      executeCallbacks(this.#onrejectedCallbacks);
     }
   }
 
@@ -225,7 +217,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
           if (isFunction(handler)) {
             const result = handler(this.#value as T);
 
-            if (isMyPromise(result)) {
+            if (isThenable(result)) {
               result.then(resolve, reject);
             } else {
               resolve(result);
@@ -245,8 +237,12 @@ export class MyPromise<T = any> implements IMyPromise<T> {
           this.#onfulfilledCallbacks.enqueue(() => executeHandler(onfulfilled));
           this.#onrejectedCallbacks.enqueue(() => executeHandler(onrejected));
         },
-        [STATE.FULFILLED]: () => executeHandler(onfulfilled),
-        [STATE.REJECTED]: () => executeHandler(onrejected),
+        [STATE.FULFILLED]: () => {
+          queueMicrotask(() => executeHandler(onfulfilled));
+        },
+        [STATE.REJECTED]: () => {
+          queueMicrotask(() => executeHandler(onrejected));
+        },
       };
 
       strategy[this.#state]();
@@ -277,26 +273,29 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       },
     );
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return 'MyPromise';
+  }
 }
 
 function handleNonIterable(reject: (reason: any) => void, value: any): void {
   if (!value[Symbol.iterator]) {
     reject(
       new TypeError(
-        `${typeof value} ${value} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+        `${typeof value} is not iterable (cannot read property Symbol(Symbol.iterator))`,
       ),
     );
   }
 }
 
-function isMyPromise(value: any): value is MyPromise {
-  return value instanceof MyPromise;
+function isThenable(it: any): it is PromiseLike<unknown> {
+  return !!(it && typeof it === 'object' && it.then && isFunction(it.then));
 }
 
-function processCallbackQueue(queue: Queue<Callback>) {
+function executeCallbacks(queue: Queue<Callback>) {
   for (const callback of queue) {
     queueMicrotask(() => callback());
   }
-
-  queue.clear();
 }

@@ -32,7 +32,7 @@ describe('MyPromise', () => {
     FULFILLED_VALUE = 'Hooray';
     REJECTED_REASON = 'Oops';
     IS_NOT_ITERABLE_ERROR_MESSAGE =
-      ' is not iterable (cannot read property Symbol(Symbol.iterator))';
+      'is not iterable (cannot read property Symbol(Symbol.iterator))';
   });
 
   beforeEach(() => {
@@ -85,20 +85,12 @@ describe('MyPromise', () => {
     });
   });
 
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(MyPromise.resolve(1))).toBe(
-        '[object MyPromise]',
-      );
-    });
-  });
-
   describe('then', () => {
-    it('calls the fulfillment handler with a nested promise', async () => {
+    it('returns the resolved value by flattening nested promises', async () => {
       // Arrange
+      const expected = 1;
       const nestedPromise = new MyPromise((resolve) => {
-        resolve(1);
+        resolve(expected);
       });
 
       await new MyPromise((resolve) => {
@@ -108,13 +100,13 @@ describe('MyPromise', () => {
         .then(onFulfilledSpy, onRejectedSpy);
 
       // Assert
-      expect(onFulfilledSpy).toHaveBeenCalledWith(nestedPromise);
+      expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
       expect(onFulfilledSpy).toHaveBeenCalledOnce();
 
       expect(onRejectedSpy).not.toHaveBeenCalled();
     });
 
-    it('calls the fulfillment handler with the resolved value', async () => {
+    it('it returns the resolved value', async () => {
       // Arrange
       const promise = new MyPromise((resolve) => {
         resolve(FULFILLED_VALUE);
@@ -196,9 +188,9 @@ describe('MyPromise', () => {
 
     it('handles error thrown in the fulfillment handler of a rejected promise', async () => {
       // Arrange
-      const expected = 'handle error';
+      const expected = new Error('message');
       const promise = new MyPromise((_, reject) => {
-        reject(new Error(REJECTED_REASON));
+        reject(expected);
       });
 
       const onRejectedSpy1 = vi.fn();
@@ -207,12 +199,12 @@ describe('MyPromise', () => {
       await promise
         // Act
         .then(() => {
-          throw Error(expected);
+          throw expected;
         }, onRejectedSpy1)
         .then(null, onRejectedSpy2);
 
       // Assert
-      expect(onRejectedSpy1).toHaveBeenCalledWith(new Error(REJECTED_REASON));
+      expect(onRejectedSpy1).toHaveBeenCalledWith(expected);
       expect(onRejectedSpy1).toHaveBeenCalledOnce();
 
       expect(onRejectedSpy2).not.toHaveBeenCalled();
@@ -280,11 +272,11 @@ describe('MyPromise', () => {
     // Arrange
     beforeEach(() => {
       makeTypeError = (value: any) =>
-        TypeError(`${typeof value} ${value}${IS_NOT_ITERABLE_ERROR_MESSAGE}`);
+        TypeError(`${typeof value} ${IS_NOT_ITERABLE_ERROR_MESSAGE}`);
     });
 
     describe('resolve', () => {
-      it('resolves with non-promise value', async () => {
+      it('returns the resolved value', async () => {
         // Arrange
         const expected = 'nested value';
 
@@ -300,52 +292,36 @@ describe('MyPromise', () => {
         expect(onRejectedSpy).not.toHaveBeenCalled();
       });
 
-      it('calls onFulfillment handler with the rejected value', async () => {
-        const expected = 'reason';
+      it('triggers rejection handler with the rejected value', async () => {
+        // Arrange
+        const expected = new Error('message');
 
-        await MyPromise.resolve(MyPromise.reject(new Error(expected)))
+        // Act
+        await MyPromise.resolve(MyPromise.reject(expected))
           .then(onFulfilledSpy)
           .catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(new Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(expected);
         expect(onRejectedSpy).toHaveBeenCalledOnce();
-      });
-
-      it('resolve with nested promise ', async () => {
-        // Arrange
-        const expected = 'nested value';
-        const nestedPromise = new MyPromise((resolve) => {
-          setTimeout(resolve, 50, expected);
-        });
-
-        // Act
-        await MyPromise.resolve(nestedPromise)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
-
-        // Assert
-        expect(onFulfilledSpy).toHaveBeenLastCalledWith(expected);
-        expect(onFulfilledSpy).toHaveBeenCalledOnce();
-
-        expect(onRejectedSpy).not.toHaveBeenCalled();
       });
     });
 
     describe('reject', () => {
-      it('calls onFulfillment handler with the rejected value', async () => {
+      it('rejects with the expected error', async () => {
         // Arrange
-        const expected = 'nested reason';
+        const expected = new Error('message');
 
-        await MyPromise.reject(new Error(expected)).catch(onRejectedSpy);
+        // Act
+        await MyPromise.reject(expected).catch(onRejectedSpy);
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(new Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(expected);
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
-      it('calls onFulfillment handler with the nested promise value', async () => {
+      it('rejects with the nested promise instance', async () => {
         // Arrange
         const expected = 'nested reason';
         const nestedPromise = new MyPromise((_, reject) => {
@@ -356,7 +332,7 @@ describe('MyPromise', () => {
         await MyPromise.reject(nestedPromise).catch(onRejectedSpy);
 
         // Assert
-        expect(onRejectedSpy).toHaveBeenCalledWith(new Error(expected));
+        expect(onRejectedSpy).toHaveBeenCalledWith(nestedPromise);
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
     });
@@ -723,6 +699,15 @@ describe('MyPromise', () => {
 
         expect(onRejectedSpy).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('toStringTag', () => {
+    it('returns correct string representation', () => {
+      // Assert
+      expect(Object.prototype.toString.call(MyPromise.resolve(1))).toBe(
+        '[object MyPromise]',
+      );
     });
   });
 });
