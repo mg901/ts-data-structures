@@ -92,22 +92,31 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     return new MyPromise<Awaited<T>[]>((resolve, reject) => {
       handleNonIterable(reject, values);
 
-      Array.from(values)
-        .reduce<MyPromise<Awaited<T>[]>>(
-          (accumulator, promise) =>
-            accumulator.then((results) =>
-              MyPromise.resolve(promise).then((value) => results.concat(value)),
-            ),
-          MyPromise.resolve([]),
-        )
-        .then(
-          (results) => {
-            resolve(results);
+      const results = Array.from(values);
+      let unresolved = results.length;
+
+      if (results.length === 0) {
+        resolve([]);
+      }
+
+      for (let index = 0; index < results.length; index += 1) {
+        const item = results[index];
+
+        MyPromise.resolve(item).then(
+          // eslint-disable-next-line @typescript-eslint/no-loop-func
+          (value) => {
+            results[index] = value;
+            unresolved -= 1;
+
+            if (unresolved === 0) {
+              resolve(results as Awaited<T>[]);
+            }
           },
-          (error) => {
-            reject(error);
+          (reason) => {
+            reject(reason);
           },
         );
+      }
     });
   }
 
