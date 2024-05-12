@@ -99,11 +99,8 @@ export class MyPromise<T = any> implements IMyPromise<T> {
         resolve([]);
       }
 
-      for (let index = 0; index < results.length; index += 1) {
-        const item = results[index];
-
+      results.forEach((item, index) => {
         MyPromise.resolve(item).then(
-          // eslint-disable-next-line @typescript-eslint/no-loop-func
           (value) => {
             results[index] = value;
             unresolved -= 1;
@@ -116,7 +113,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
             reject(reason);
           },
         );
-      }
+      });
     });
   }
 
