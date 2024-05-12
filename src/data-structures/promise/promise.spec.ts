@@ -276,6 +276,16 @@ describe('MyPromise', () => {
     });
 
     describe('resolve', () => {
+      it('returns the same instance', async () => {
+        // Arrange
+        const instance = new MyPromise((resolve) => {
+          resolve(1);
+        });
+
+        // Act
+        await expect(MyPromise.resolve(instance)).toEqual(instance);
+      });
+
       it('returns the resolved value', async () => {
         // Arrange
         const expected = 'nested value';
