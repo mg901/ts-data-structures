@@ -81,6 +81,10 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   static resolve<T>(value: T): MyPromise<Awaited<T>>;
   static resolve<T>(value: T | PromiseLike<T>): MyPromise<Awaited<T>>;
   static resolve<T>(value?: T | PromiseLike<T>) {
+    if (isThenable(value)) {
+      return value;
+    }
+
     return new MyPromise<Awaited<T>>((resolve) => resolve(value as Awaited<T>));
   }
 
