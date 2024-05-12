@@ -514,6 +514,20 @@ describe('MyPromise', () => {
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
+      it('rejects with an empty array of values', async () => {
+        // Act
+        await MyPromise.any([]).then(onFulfilledSpy).catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          AggregateError([], 'All promises were rejected'),
+        );
+
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
+      });
+
       it('resolves with the first resolved promise', async () => {
         // Arrange
         const expected = 'first';

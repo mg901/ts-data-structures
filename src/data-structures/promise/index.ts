@@ -136,20 +136,26 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   ): MyPromise<Awaited<T[number]>>;
   static any<T>(values: Iterable<T | PromiseLike<T>>): MyPromise<Awaited<T>>;
   static any<T>(values: Iterable<T | PromiseLike<T>>) {
-    const promises = Array.from(values);
-    let errors: Error[] = [];
-
     return new MyPromise<Awaited<T>>((resolve, reject) => {
       handleNonIterable(reject, values);
+
+      const promises = Array.from(values);
+      let errors: Error[] = [];
+
+      handleRejectedPromises();
 
       for (const promise of promises) {
         MyPromise.resolve(promise).then(resolve, (error: Error) => {
           errors.push(error);
 
-          if (errors.length === promises.length) {
-            reject(new AggregateError(errors, 'All promises were rejected'));
-          }
+          handleRejectedPromises();
         });
+      }
+
+      function handleRejectedPromises() {
+        if (errors.length === promises.length) {
+          reject(new AggregateError(errors, 'All promises were rejected'));
+        }
       }
     });
   }
