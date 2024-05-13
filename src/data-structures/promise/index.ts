@@ -141,7 +141,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
 
       const items = Array.from(values);
       let resolved = items.length;
-      let errors = new Array(items.length) as Error[];
+      let errors: Error[] = new Array(items.length);
 
       handleRejectedPromises();
 

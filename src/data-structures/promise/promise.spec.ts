@@ -273,6 +273,16 @@ describe('MyPromise', () => {
 
   describe('static methods', () => {
     describe('resolve', () => {
+      it('returns the same instance', async () => {
+        // Arrange
+        const instance = new MyPromise((resolve) => {
+          resolve(1);
+        });
+
+        // Act
+        await expect(MyPromise.resolve(instance)).toEqual(instance);
+      });
+
       it('returns the resolved value', async () => {
         expect.assertions(3);
 
@@ -430,6 +440,40 @@ describe('MyPromise', () => {
         expect(onRejectedSpy).toHaveBeenCalledWith(new Error(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
+
+      it('resolves with delayed promises', async () => {
+        expect.assertions(3);
+
+        // Arrange
+        const values = [0, 1, 2];
+
+        const promise0 = new MyPromise((resolve) => {
+          setTimeout(() => {
+            resolve(values.at(0));
+          }, 200);
+        });
+        const promise1 = new MyPromise((resolve) => {
+          setTimeout(() => {
+            resolve(values.at(1));
+          }, 100);
+        });
+        const promise2 = new MyPromise((resolve) => {
+          setTimeout(() => {
+            resolve(values.at(2));
+          }, 10);
+        });
+
+        // Act
+        await MyPromise.all([promise0, promise1, promise2])
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).toHaveBeenCalledWith(values);
+        expect(onFulfilledSpy).toHaveBeenCalledOnce();
+
+        expect(onRejectedSpy).not.toHaveBeenCalled();
+      });
     });
 
     describe('race', () => {
@@ -559,7 +603,7 @@ describe('MyPromise', () => {
         expect.assertions(3);
 
         // Arrange
-        const errors = [new Error('1'), new Error('2'), new Error('3')];
+        const errors = [new Error('0'), new Error('1'), new Error('2')];
 
         const promise0 = new MyPromise((_, reject) => {
           setTimeout(() => {
