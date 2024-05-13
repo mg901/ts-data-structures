@@ -99,9 +99,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       const items = Array.from(values);
       let unresolved = items.length;
 
-      if (items.length === 0) {
-        resolve([]);
-      }
+      handleResolvedPromises();
 
       items.forEach((item, index) => {
         MyPromise.resolve(item).then(
@@ -109,15 +107,19 @@ export class MyPromise<T = any> implements IMyPromise<T> {
             items[index] = value;
             unresolved -= 1;
 
-            if (unresolved === 0) {
-              resolve(items as Awaited<T>[]);
-            }
+            handleResolvedPromises();
           },
           (reason) => {
             reject(reason);
           },
         );
       });
+
+      function handleResolvedPromises() {
+        if (unresolved === 0) {
+          resolve(items as Awaited<T>[]);
+        }
+      }
     });
   }
 

@@ -22,6 +22,7 @@ const FULFILLED_VALUE = 'Hooray';
 const REJECTED_REASON = 'Oops';
 const IS_NOT_ITERABLE_ERROR_MESSAGE =
   'is not iterable (cannot read property Symbol(Symbol.iterator))';
+
 describe('MyPromise', () => {
   afterEach(() => {
     vi.clearAllMocks();
