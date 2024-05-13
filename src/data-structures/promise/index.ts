@@ -96,21 +96,21 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     return new MyPromise<Awaited<T>[]>((resolve, reject) => {
       handleNonIterable(reject, values);
 
-      const results = Array.from(values);
-      let unresolved = results.length;
+      const items = Array.from(values);
+      let unresolved = items.length;
 
-      if (results.length === 0) {
+      if (items.length === 0) {
         resolve([]);
       }
 
-      results.forEach((item, index) => {
+      items.forEach((item, index) => {
         MyPromise.resolve(item).then(
           (value) => {
-            results[index] = value;
+            items[index] = value;
             unresolved -= 1;
 
             if (unresolved === 0) {
-              resolve(results as Awaited<T>[]);
+              resolve(items as Awaited<T>[]);
             }
           },
           (reason) => {
@@ -139,21 +139,28 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     return new MyPromise<Awaited<T>>((resolve, reject) => {
       handleNonIterable(reject, values);
 
-      const promises = Array.from(values);
-      let errors: Error[] = [];
+      const items = Array.from(values);
+      let resolved = items.length;
+      let errors = new Array(items.length) as Error[];
 
       handleRejectedPromises();
 
-      for (const promise of promises) {
-        MyPromise.resolve(promise).then(resolve, (error: Error) => {
-          errors.push(error);
+      items.forEach((item, index) => {
+        MyPromise.resolve(item).then(
+          (result) => {
+            resolve(result);
+          },
+          (reason) => {
+            errors[index] = reason;
+            resolved -= 1;
 
-          handleRejectedPromises();
-        });
-      }
+            handleRejectedPromises();
+          },
+        );
+      });
 
       function handleRejectedPromises() {
-        if (errors.length === promises.length) {
+        if (resolved === 0) {
           reject(new AggregateError(errors, 'All promises were rejected'));
         }
       }

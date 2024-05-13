@@ -1,4 +1,5 @@
 import {
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -9,35 +10,21 @@ import {
 } from 'vitest';
 import { MyPromise } from './index';
 
+const onFulfilledSpy = vi.fn();
+const onRejectedSpy = vi.fn();
+const PROMISE_STATE = {
+  PENDING: 'pending',
+  FULFILLED: 'fulfilled',
+  REJECTED: 'rejected',
+} as const;
+
+const FULFILLED_VALUE = 'Hooray';
+const REJECTED_REASON = 'Oops';
+const IS_NOT_ITERABLE_ERROR_MESSAGE =
+  'is not iterable (cannot read property Symbol(Symbol.iterator))';
 describe('MyPromise', () => {
-  let PROMISE_STATE: Record<
-    'PENDING' | 'FULFILLED' | 'REJECTED',
-    'pending' | 'fulfilled' | 'rejected'
-  >;
-  let FULFILLED_VALUE: string;
-  let REJECTED_REASON: string;
-  let IS_NOT_ITERABLE_ERROR_MESSAGE: string;
-
-  // Arrange
-  let onFulfilledSpy: Mock<any, any>;
-  let onRejectedSpy: Mock<any, any>;
-
-  beforeAll(() => {
-    PROMISE_STATE = {
-      PENDING: 'pending',
-      FULFILLED: 'fulfilled',
-      REJECTED: 'rejected',
-    } as const;
-
-    FULFILLED_VALUE = 'Hooray';
-    REJECTED_REASON = 'Oops';
-    IS_NOT_ITERABLE_ERROR_MESSAGE =
-      'is not iterable (cannot read property Symbol(Symbol.iterator))';
-  });
-
-  beforeEach(() => {
-    onFulfilledSpy = vi.fn();
-    onRejectedSpy = vi.fn();
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   describe('executor', () => {
@@ -49,6 +36,8 @@ describe('MyPromise', () => {
     });
 
     it('handles executor function', async () => {
+      expect.assertions(2);
+
       // Arrange
       const expected = 'executor';
       const executor = executorSpy.mockImplementation((resolve) =>
@@ -64,6 +53,8 @@ describe('MyPromise', () => {
     });
 
     it('handles executor function throwing error', async () => {
+      expect.assertions(2);
+
       // Arrange
       const expected = 'executor error';
       const executor = executorSpy.mockImplementation(() => {
@@ -73,20 +64,20 @@ describe('MyPromise', () => {
       try {
         // Act
         await new MyPromise<string>(executor);
-      } catch (error) {
-        if (error instanceof Error) {
-          // Assert
-          expect(error.message).toBe(expected);
-        }
+      } catch (error: any) {
+        // Assert
+        expect(error.message).toBe(expected);
       }
 
-      expect(executor).toHaveBeenCalled();
+      // Assert
       expect(executor).toHaveBeenCalledOnce();
     });
   });
 
   describe('then', () => {
     it('returns the resolved value by flattening nested promises', async () => {
+      expect.assertions(3);
+
       // Arrange
       const expected = 1;
       const nestedPromise = new MyPromise((resolve) => {
@@ -107,6 +98,8 @@ describe('MyPromise', () => {
     });
 
     it('it returns the resolved value', async () => {
+      expect.assertions(3);
+
       // Arrange
       const promise = new MyPromise((resolve) => {
         resolve(FULFILLED_VALUE);
@@ -123,11 +116,14 @@ describe('MyPromise', () => {
     });
 
     it('handles asynchronous callbacks passed as fulfillment handler', async () => {
+      expect.assertions(3);
+
       // Arrange
       const expected = 'expected';
       const promise = new MyPromise((resolve) => {
         resolve(FULFILLED_VALUE);
       });
+
       const asynchronousCallback = () =>
         new MyPromise((resolve) => {
           setTimeout(resolve, 50, expected);
@@ -139,7 +135,6 @@ describe('MyPromise', () => {
         .then(onFulfilledSpy);
 
       // Assert
-
       expect(onRejectedSpy).not.toHaveBeenCalled();
 
       expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
@@ -147,6 +142,8 @@ describe('MyPromise', () => {
     });
 
     it('handles an empty fulfillment handler and calls the next handler with the resolved value', async () => {
+      expect.assertions(3);
+
       // Arrange
       const promise = new MyPromise((resolve) => {
         resolve(FULFILLED_VALUE);
@@ -163,6 +160,8 @@ describe('MyPromise', () => {
     });
 
     it('handles error thrown in the fulfillment handler of a resolved promise', async () => {
+      expect.assertions(3);
+
       // Arrange
       const expected = new Error('message');
       const promise = new MyPromise((resolve) => {
@@ -187,6 +186,8 @@ describe('MyPromise', () => {
     });
 
     it('handles error thrown in the fulfillment handler of a rejected promise', async () => {
+      expect.assertions(3);
+
       // Arrange
       const expected = new Error('message');
       const promise = new MyPromise((_, reject) => {
@@ -267,16 +268,14 @@ describe('MyPromise', () => {
     });
   });
 
-  describe('static methods', () => {
-    let makeTypeError: (value: any) => TypeError;
-    // Arrange
-    beforeEach(() => {
-      makeTypeError = (value: any) =>
-        TypeError(`${typeof value} ${IS_NOT_ITERABLE_ERROR_MESSAGE}`);
-    });
+  const makeTypeError = (value: any) =>
+    TypeError(`${typeof value} ${IS_NOT_ITERABLE_ERROR_MESSAGE}`);
 
+  describe('static methods', () => {
     describe('resolve', () => {
       it('returns the resolved value', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 'nested value';
 
@@ -293,6 +292,8 @@ describe('MyPromise', () => {
       });
 
       it('triggers rejection handler with the rejected value', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = new Error('message');
 
@@ -311,6 +312,8 @@ describe('MyPromise', () => {
 
     describe('reject', () => {
       it('rejects with the expected error', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = new Error('message');
 
@@ -322,6 +325,8 @@ describe('MyPromise', () => {
       });
 
       it('rejects with the nested promise instance', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 'nested reason';
         const nestedPromise = new MyPromise((_, reject) => {
@@ -339,6 +344,8 @@ describe('MyPromise', () => {
 
     describe('all', () => {
       it('rejects if the input is not iterable', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 42;
 
@@ -361,6 +368,8 @@ describe('MyPromise', () => {
       });
 
       it('works with empty array', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected: [] = [];
 
@@ -375,6 +384,8 @@ describe('MyPromise', () => {
       });
 
       it('resolves an array of promises', async () => {
+        expect.assertions(3);
+
         // Assert
         const promises = VALUES.map((value) => MyPromise.resolve(value));
 
@@ -389,6 +400,8 @@ describe('MyPromise', () => {
       });
 
       it('handles non-promise values in the iterable', async () => {
+        expect.assertions(2);
+
         // Act
         await MyPromise.all(VALUES).then(onFulfilledSpy).catch(onRejectedSpy);
 
@@ -397,6 +410,8 @@ describe('MyPromise', () => {
       });
 
       it('rejects if any of the promises rejects', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 'error';
 
@@ -419,6 +434,8 @@ describe('MyPromise', () => {
 
     describe('race', () => {
       it('rejects if the input is not iterable', async () => {
+        expect.assertions(2);
+
         // Arrange
         const expected = 42;
 
@@ -436,6 +453,8 @@ describe('MyPromise', () => {
       });
 
       it('resolves with the first fulfilled promise', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 'fast';
         const promise2 = new MyPromise((resolve) => {
@@ -458,6 +477,8 @@ describe('MyPromise', () => {
       });
 
       it('rejects with the first rejected promise', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 'fast';
         const promise2 = new MyPromise((_, reject) => {
@@ -481,6 +502,8 @@ describe('MyPromise', () => {
       });
 
       it('handles non-promise values in the iterable', async () => {
+        expect.assertions(2);
+
         // Arrange
         const expected = 'non-promise';
         const promise = new MyPromise((resolve) => {
@@ -500,6 +523,8 @@ describe('MyPromise', () => {
 
     describe('any', () => {
       it('rejects if the input is not iterable', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 42;
 
@@ -515,6 +540,8 @@ describe('MyPromise', () => {
       });
 
       it('rejects with an empty array of values', async () => {
+        expect.assertions(3);
+
         // Act
         await MyPromise.any([]).then(onFulfilledSpy).catch(onRejectedSpy);
 
@@ -528,12 +555,49 @@ describe('MyPromise', () => {
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
-      it('resolves with the first resolved promise', async () => {
+      it('rejects with delayed promises', async () => {
+        expect.assertions(3);
+
         // Arrange
-        const expected = 'first';
+        const errors = [new Error('1'), new Error('2'), new Error('3')];
+
+        const promise0 = new MyPromise((_, reject) => {
+          setTimeout(() => {
+            reject(errors.at(0));
+          }, 200);
+        });
+        const promise1 = new MyPromise((_, reject) => {
+          setTimeout(() => {
+            reject(errors.at(1));
+          }, 100);
+        });
+        const promise2 = new MyPromise((_, reject) => {
+          setTimeout(() => {
+            reject(errors.at(2));
+          }, 10);
+        });
 
         // Act
-        await MyPromise.any([
+        await MyPromise.any([promise0, promise1, promise2])
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          AggregateError(errors, 'All promises were rejected'),
+        );
+
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
+      });
+
+      it('resolves with the first resolved promise', async () => {
+        expect.assertions(3);
+
+        // Arrange
+        const expected = 'first';
+        const promises = [
           new MyPromise((resolve) => {
             setTimeout(resolve, 70, 'third');
           }),
@@ -543,9 +607,10 @@ describe('MyPromise', () => {
           new MyPromise((resolve) => {
             setTimeout(resolve, 60, 'second');
           }),
-        ])
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        ];
+
+        // Act
+        await MyPromise.any(promises).then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
@@ -555,6 +620,8 @@ describe('MyPromise', () => {
       });
 
       it('rejects if all promises were rejected', async () => {
+        expect.assertions(3);
+
         // Arrange
         const errors = [new Error('a'), new Error('b'), new Error('c')];
         const mappedErrors = errors.map((error) => MyPromise.reject(error));
@@ -577,6 +644,8 @@ describe('MyPromise', () => {
 
     describe('allSettled', async () => {
       it('rejects if the input is not iterable', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected = 42;
 
@@ -592,6 +661,8 @@ describe('MyPromise', () => {
       });
 
       it('resolves with empty array', async () => {
+        expect.assertions(3);
+
         // Arrange
         const expected: [] = [];
         // Act
@@ -607,6 +678,8 @@ describe('MyPromise', () => {
       });
 
       it('handles promises with different settle times', async () => {
+        expect.assertions(3);
+
         // Arrange
         const promises = [
           new MyPromise((resolve) => {
@@ -633,6 +706,8 @@ describe('MyPromise', () => {
       });
 
       it('handles array with mix of promises and non-promises', async () => {
+        expect.assertions(2);
+
         // Arrange
         const promises = [
           MyPromise.resolve('one'),
@@ -658,6 +733,8 @@ describe('MyPromise', () => {
       });
 
       it('handles non-promise in the iterable', async () => {
+        expect.assertions(3);
+
         // Act
         await MyPromise.allSettled([1, 2])
           .then(onFulfilledSpy)
@@ -674,6 +751,8 @@ describe('MyPromise', () => {
       });
 
       it('handles all promises fulfilled', async () => {
+        expect.assertions(3);
+
         // Arrange
         const promises = [MyPromise.resolve('one'), MyPromise.resolve('two')];
 
@@ -693,6 +772,8 @@ describe('MyPromise', () => {
       });
 
       it('handles all promises rejected', async () => {
+        expect.assertions(3);
+
         // Arrange
         const promises = [
           MyPromise.reject(new Error('error1')),
