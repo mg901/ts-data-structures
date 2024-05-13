@@ -96,21 +96,21 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     return new MyPromise<Awaited<T>[]>((resolve, reject) => {
       handleNonIterable(reject, values);
 
-      const results = Array.from(values);
-      let unresolved = results.length;
+      const items = Array.from(values);
+      let unresolved = items.length;
 
-      if (results.length === 0) {
+      if (items.length === 0) {
         resolve([]);
       }
 
-      results.forEach((item, index) => {
+      items.forEach((item, index) => {
         MyPromise.resolve(item).then(
           (value) => {
-            results[index] = value;
+            items[index] = value;
             unresolved -= 1;
 
             if (unresolved === 0) {
-              resolve(results as Awaited<T>[]);
+              resolve(items as Awaited<T>[]);
             }
           },
           (reason) => {
@@ -136,20 +136,33 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   ): MyPromise<Awaited<T[number]>>;
   static any<T>(values: Iterable<T | PromiseLike<T>>): MyPromise<Awaited<T>>;
   static any<T>(values: Iterable<T | PromiseLike<T>>) {
-    const promises = Array.from(values);
-    let errors: Error[] = [];
-
     return new MyPromise<Awaited<T>>((resolve, reject) => {
       handleNonIterable(reject, values);
 
-      for (const promise of promises) {
-        MyPromise.resolve(promise).then(resolve, (error: Error) => {
-          errors.push(error);
+      const items = Array.from(values);
+      let resolved = items.length;
+      let errors = new Array(items.length) as Error[];
 
-          if (errors.length === promises.length) {
-            reject(new AggregateError(errors, 'All promises were rejected'));
-          }
-        });
+      handleRejectedPromises();
+
+      items.forEach((item, index) => {
+        MyPromise.resolve(item).then(
+          (result) => {
+            resolve(result);
+          },
+          (reason) => {
+            errors[index] = reason;
+            resolved -= 1;
+
+            handleRejectedPromises();
+          },
+        );
+      });
+
+      function handleRejectedPromises() {
+        if (resolved === 0) {
+          reject(new AggregateError(errors, 'All promises were rejected'));
+        }
       }
     });
   }
