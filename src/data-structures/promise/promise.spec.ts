@@ -312,7 +312,7 @@ describe('MyPromise', () => {
 
     describe('reject', () => {
       it('rejects with the expected error', async () => {
-        expect.assertions(3);
+        expect.assertions(2);
 
         // Arrange
         const expected = new Error('message');
@@ -325,7 +325,7 @@ describe('MyPromise', () => {
       });
 
       it('rejects with the nested promise instance', async () => {
-        expect.assertions(3);
+        expect.assertions(2);
 
         // Arrange
         const expected = 'nested reason';
@@ -434,7 +434,7 @@ describe('MyPromise', () => {
 
     describe('race', () => {
       it('rejects if the input is not iterable', async () => {
-        expect.assertions(2);
+        expect.assertions(3);
 
         // Arrange
         const expected = 42;
