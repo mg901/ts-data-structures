@@ -20,8 +20,6 @@ const PROMISE_STATE = {
 
 const FULFILLED_VALUE = 'Hooray';
 const REJECTED_REASON = 'Oops';
-const IS_NOT_ITERABLE_ERROR_MESSAGE =
-  'is not iterable (cannot read property Symbol(Symbol.iterator))';
 
 describe('MyPromise', () => {
   afterEach(() => {
@@ -269,9 +267,6 @@ describe('MyPromise', () => {
     });
   });
 
-  const makeTypeError = (value: any) =>
-    TypeError(`${typeof value} ${IS_NOT_ITERABLE_ERROR_MESSAGE}`);
-
   describe('static methods', () => {
     describe('resolve', () => {
       it('returns the same instance', async () => {
@@ -354,20 +349,69 @@ describe('MyPromise', () => {
     });
 
     describe('all', () => {
-      it('rejects if the input is not iterable', async () => {
+      it('rejects if the input is number', async () => {
         expect.assertions(3);
 
         // Arrange
         const expected = 42;
+        // @ts-ignore
+        const promise = MyPromise.all(expected);
 
         // Act
-        // @ts-ignore
-        await MyPromise.all(expected).then(onFulfilledSpy).catch(onRejectedSpy);
+        await promise.then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          TypeError(
+            `number ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+          ),
+        );
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
+      });
+
+      it('rejects if the input is NaN', async () => {
+        expect.assertions(3);
+
+        // Arrange
+        const expected = NaN;
+        // @ts-ignore
+        const promise = MyPromise.all(expected);
+
+        // Act
+        await promise.then(onFulfilledSpy).catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          TypeError(
+            `number ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+          ),
+        );
+
+        expect(onRejectedSpy).toHaveBeenCalledOnce();
+      });
+
+      it('rejects if the input is boolean', async () => {
+        expect.assertions(3);
+
+        // Arrange
+        const expected = true;
+        // @ts-ignore
+        const promise = MyPromise.all(expected);
+
+        // Act
+        await promise.then(onFulfilledSpy).catch(onRejectedSpy);
+
+        // Assert
+        expect(onFulfilledSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          TypeError(
+            `boolean ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+          ),
+        );
+
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
@@ -447,21 +491,16 @@ describe('MyPromise', () => {
 
         // Arrange
         const values = [0, 1, 2];
-
         const promise0 = new MyPromise((resolve) => {
-          setTimeout(() => {
-            resolve(values.at(0));
-          }, 200);
+          setTimeout(resolve, 200, values.at(0));
         });
+
         const promise1 = new MyPromise((resolve) => {
-          setTimeout(() => {
-            resolve(values.at(1));
-          }, 100);
+          setTimeout(resolve, 100, values.at(1));
         });
+
         const promise2 = new MyPromise((resolve) => {
-          setTimeout(() => {
-            resolve(values.at(2));
-          }, 10);
+          setTimeout(resolve, 10, values.at(2));
         });
 
         // Act
@@ -483,17 +522,20 @@ describe('MyPromise', () => {
 
         // Arrange
         const expected = 42;
+        // @ts-ignore
+        const promise = MyPromise.race(expected);
 
         // Act
-        // @ts-ignore
-        await MyPromise.race(expected)
-          .then(onFulfilledSpy)
-          .catch(onRejectedSpy);
+        await promise.then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          TypeError(
+            `number ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+          ),
+        );
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
@@ -572,15 +614,21 @@ describe('MyPromise', () => {
 
         // Arrange
         const expected = 42;
+        // @ts-ignore
+        const promise = MyPromise.any(expected);
 
         // Act
         // @ts-ignore
-        await MyPromise.any(expected).then(onFulfilledSpy).catch(onRejectedSpy);
+        await promise.then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          TypeError(
+            `number ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+          ),
+        );
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 
@@ -605,21 +653,16 @@ describe('MyPromise', () => {
 
         // Arrange
         const errors = [new Error('0'), new Error('1'), new Error('2')];
-
         const promise0 = new MyPromise((_, reject) => {
-          setTimeout(() => {
-            reject(errors.at(0));
-          }, 200);
+          setTimeout(reject, 200, errors.at(0));
         });
+
         const promise1 = new MyPromise((_, reject) => {
-          setTimeout(() => {
-            reject(errors.at(1));
-          }, 100);
+          setTimeout(reject, 100, errors.at(1));
         });
+
         const promise2 = new MyPromise((_, reject) => {
-          setTimeout(() => {
-            reject(errors.at(2));
-          }, 10);
+          setTimeout(reject, 10, errors.at(2));
         });
 
         // Act
@@ -641,24 +684,26 @@ describe('MyPromise', () => {
         expect.assertions(3);
 
         // Arrange
-        const expected = 'first';
-        const promises = [
-          new MyPromise((resolve) => {
-            setTimeout(resolve, 70, 'third');
-          }),
-          new MyPromise((resolve) => {
-            setTimeout(resolve, 50, expected);
-          }),
-          new MyPromise((resolve) => {
-            setTimeout(resolve, 60, 'second');
-          }),
-        ];
+        const values = ['first', 'second', 'third'];
+        const promise0 = new MyPromise((resolve) => {
+          setTimeout(resolve, 70, values.at(2));
+        });
+
+        const promise1 = new MyPromise((resolve) => {
+          setTimeout(resolve, 50, values.at(0));
+        });
+
+        const promise2 = new MyPromise((resolve) => {
+          setTimeout(resolve, 60, values.at(1));
+        });
 
         // Act
-        await MyPromise.any(promises).then(onFulfilledSpy).catch(onRejectedSpy);
+        await MyPromise.any([promise0, promise1, promise2])
+          .then(onFulfilledSpy)
+          .catch(onRejectedSpy);
 
         // Assert
-        expect(onFulfilledSpy).toHaveBeenCalledWith(expected);
+        expect(onFulfilledSpy).toHaveBeenCalledWith(values.at(0));
         expect(onFulfilledSpy).toHaveBeenCalledOnce();
 
         expect(onRejectedSpy).not.toHaveBeenCalled();
@@ -693,15 +738,20 @@ describe('MyPromise', () => {
 
         // Arrange
         const expected = 42;
+        // @ts-ignore
+        const promise = MyPromise.all(expected);
 
         // Act
-        // @ts-ignore
-        await MyPromise.all(expected).then(onFulfilledSpy).catch(onRejectedSpy);
+        await promise.then(onFulfilledSpy).catch(onRejectedSpy);
 
         // Assert
         expect(onFulfilledSpy).not.toHaveBeenCalled();
+        expect(onRejectedSpy).toHaveBeenCalledWith(
+          TypeError(
+            `number ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+          ),
+        );
 
-        expect(onRejectedSpy).toHaveBeenCalledWith(makeTypeError(expected));
         expect(onRejectedSpy).toHaveBeenCalledOnce();
       });
 

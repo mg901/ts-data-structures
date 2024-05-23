@@ -94,7 +94,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
 
   static all<T>(values: Iterable<T | PromiseLike<T>>) {
     return new MyPromise<Awaited<T>[]>((resolve, reject) => {
-      handleNonIterable(reject, values);
+      handleNonIterable(values);
 
       const items = Array.from(values);
       let unresolved = items.length;
@@ -125,7 +125,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
 
   static race<T>(values: Iterable<T | PromiseLike<T>> = []) {
     return new MyPromise<Awaited<T>>((resolve, reject) => {
-      handleNonIterable(reject, values);
+      handleNonIterable(values);
 
       for (const value of values) {
         MyPromise.resolve(value).then(resolve, reject);
@@ -139,7 +139,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   static any<T>(values: Iterable<T | PromiseLike<T>>): MyPromise<Awaited<T>>;
   static any<T>(values: Iterable<T | PromiseLike<T>>) {
     return new MyPromise<Awaited<T>>((resolve, reject) => {
-      handleNonIterable(reject, values);
+      handleNonIterable(values);
 
       const items = Array.from(values);
       let resolved = items.length;
@@ -178,20 +178,20 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     values: Iterable<T | PromiseLike<T>>,
   ): MyPromise<PromiseSettledResult<Awaited<T>>[]>;
   static allSettled<T>(values: Iterable<T | PromiseLike<T>> = []) {
-    return MyPromise.all<PromiseSettledResult<Awaited<T>>>(
-      Array.from(values).map((promise) =>
-        MyPromise.resolve(promise).then(
-          (value) => ({
-            status: STATE.FULFILLED,
-            value,
-          }),
-          (error) => ({
-            status: STATE.REJECTED,
-            reason: error,
-          }),
-        ),
+    const items = Array.from(values).map((item) =>
+      MyPromise.resolve(item).then(
+        (value) => ({
+          status: STATE.FULFILLED,
+          value,
+        }),
+        (error) => ({
+          status: STATE.REJECTED,
+          reason: error,
+        }),
       ),
     );
+
+    return MyPromise.all<PromiseSettledResult<Awaited<T>>>(items);
   }
 
   constructor(
@@ -305,14 +305,19 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   }
 }
 
-function handleNonIterable(reject: (reason: any) => void, value: any): void {
-  if (!value[Symbol.iterator]) {
-    reject(
-      new TypeError(
-        `${typeof value} is not iterable (cannot read property Symbol(Symbol.iterator))`,
-      ),
-    );
+function handleNonIterable(it: any): void {
+  if (it[Symbol.iterator]) return;
+
+  let type = typeof it;
+  let prefix = `${type}`;
+
+  if (type === 'number' || type === 'boolean') {
+    prefix += ` ${it}`;
   }
+
+  throw new TypeError(
+    `${prefix} is not iterable (cannot read property Symbol(Symbol.iterator))`,
+  );
 }
 
 function isThenable(it: any): it is PromiseLike<unknown> {
