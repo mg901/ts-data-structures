@@ -1,4 +1,4 @@
-import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
+import { DoublyLinkedList } from '@/data-structures/linked-lists/doubly-linked-list';
 import { type Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 
@@ -13,7 +13,7 @@ interface IStack<T> {
 }
 
 export class Stack<T = any> implements IStack<T> {
-  #sll = new SinglyLinkedList<T>();
+  #sll = new DoublyLinkedList<T>();
 
   static of<T>(data: T) {
     const stack = new Stack<T>().push(data);
