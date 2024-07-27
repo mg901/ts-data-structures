@@ -27,7 +27,7 @@ describe('MyPromise', () => {
   });
 
   describe('executor', () => {
-    let executorSpy: Mock<any, any>;
+    let executorSpy: Mock;
 
     // Arrange
     beforeEach(() => {
