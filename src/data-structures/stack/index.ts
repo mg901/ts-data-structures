@@ -13,7 +13,7 @@ interface IStack<T> {
 }
 
 export class Stack<T = any> implements IStack<T> {
-  #sll = new DoublyLinkedList<T>();
+  #dll = new DoublyLinkedList<T>();
 
   static of<T>(data: T) {
     const stack = new Stack<T>().push(data);
@@ -22,37 +22,37 @@ export class Stack<T = any> implements IStack<T> {
   }
 
   get isEmpty() {
-    return this.#sll.isEmpty;
+    return this.#dll.isEmpty;
   }
 
   get size() {
-    return this.#sll.size;
+    return this.#dll.size;
   }
 
   push(data: T) {
-    this.#sll.append(data);
+    this.#dll.append(data);
 
     return this;
   }
 
   peek() {
-    if (this.#sll.isEmpty) return null;
+    if (this.#dll.isEmpty) return null;
 
-    return this.#sll.tail!.data;
+    return this.#dll.tail!.data;
   }
 
   pop() {
-    if (this.#sll.isEmpty) return null;
+    if (this.#dll.isEmpty) return null;
 
-    return this.#sll.deleteTail()!.data;
+    return this.#dll.deleteTail()!.data;
   }
 
   clear() {
-    this.#sll.clear();
+    this.#dll.clear();
   }
 
   toString(callback?: Callback<T>) {
-    return this.#sll.toString(callback);
+    return this.#dll.toString(callback);
   }
 
   // eslint-disable-next-line class-methods-use-this
