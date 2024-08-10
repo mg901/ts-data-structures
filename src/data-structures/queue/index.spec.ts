@@ -50,14 +50,11 @@ describe('Queue', () => {
       // Arrange
       queue.enqueue(1).enqueue(2).enqueue(3);
 
-      // Act
-      const received = Array.from(queue, (item) => item);
-
-      // Assert
-      expect(received).toEqual([1, 2, 3]);
+      // Act and Assert
+      expect(Array.from(queue)).toEqual([1, 2, 3]);
     });
 
-    it('handles an empty list', () => {
+    it('handles an empty queue', () => {
       // Act and Assert
       expect(Array.from(queue)).toEqual([]);
     });
