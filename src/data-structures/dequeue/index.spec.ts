@@ -16,6 +16,21 @@ describe('Dequeue', () => {
     expect(dequeue.isEmpty).toBeTruthy();
   });
 
+  describe('Symbol.Iterator', () => {
+    it('iterates through the elements', () => {
+      // Arrange
+      dequeue.addRear(1).addRear(2).addRear(3);
+
+      // Act and Assert
+      expect(Array.from(dequeue)).toEqual([1, 2, 3]);
+    });
+
+    it('handles an empty dequeue', () => {
+      // Act and Assert
+      expect(Array.from(dequeue)).toEqual([]);
+    });
+  });
+
   describe('addFront', () => {
     it('adds elements to the front in the correct order', () => {
       // Act

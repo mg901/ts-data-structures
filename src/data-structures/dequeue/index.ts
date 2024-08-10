@@ -30,6 +30,12 @@ export class Dequeue<T = any> implements IDequeue<T> {
     return this.#dll.isEmpty;
   }
 
+  *[Symbol.iterator]() {
+    for (const node of this.#dll) {
+      yield node.data;
+    }
+  }
+
   addFront(data: T) {
     this.#dll.prepend(data);
 
