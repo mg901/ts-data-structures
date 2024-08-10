@@ -30,16 +30,16 @@ export class Queue<T = any> implements IQueue<T> {
     return this.#sll.isEmpty;
   }
 
-  enqueue(value: T) {
-    this.#sll.append(value);
-
-    return this;
-  }
-
   *[Symbol.iterator]() {
     for (const node of this.#sll) {
       yield node.data;
     }
+  }
+
+  enqueue(value: T) {
+    this.#sll.append(value);
+
+    return this;
   }
 
   dequeue() {
