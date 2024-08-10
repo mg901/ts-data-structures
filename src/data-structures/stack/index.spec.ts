@@ -16,6 +16,16 @@ describe('Stack', () => {
     expect(stack.size).toBe(0);
   });
 
+  describe('of', () => {
+    it('creates a new stack with single value', () => {
+      // Act
+      const newStack = Stack.of(1);
+
+      // Assert
+      expect(newStack.peek()).toBe(1);
+    });
+  });
+
   describe('push', () => {
     it('adds an element to the top of the stack', () => {
       // Act
@@ -26,16 +36,6 @@ describe('Stack', () => {
       expect(stack.toString()).toBe('1');
     });
 
-    describe('of', () => {
-      it('creates a new stack with single value', () => {
-        // Act
-        const newStack = Stack.of(1);
-
-        // Assert
-        expect(newStack.peek()).toBe(1);
-      });
-    });
-
     it('adds multiple elements to the top of the stack in the correct order', () => {
       // Act
       stack.push(10).push(20).push(30);
@@ -43,6 +43,21 @@ describe('Stack', () => {
       // Assert
       expect(stack.toString()).toBe('10,20,30');
       expect(stack.size).toBe(3);
+    });
+  });
+
+  describe('Symbol.Iterator', () => {
+    it('iterates through the elements', () => {
+      // Arrange
+      Stack.of(1).push(2).push(3);
+
+      // Act and Assert
+      expect(Array.from(stack)).toEqual([1, 2, 3]);
+    });
+
+    it('handles an empty stack', () => {
+      // Act and Assert
+      expect(Array.from(stack)).toEqual([]);
     });
   });
 
