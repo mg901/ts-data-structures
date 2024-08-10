@@ -29,6 +29,12 @@ export class Stack<T = any> implements IStack<T> {
     return this.#dll.size;
   }
 
+  *[Symbol.iterator]() {
+    for (const node of this.#dll) {
+      yield node.data;
+    }
+  }
+
   push(data: T) {
     this.#dll.append(data);
 
