@@ -19,7 +19,7 @@ describe('Dequeue', () => {
   describe('Symbol.Iterator', () => {
     it('iterates through the elements', () => {
       // Arrange
-      dequeue.addFront(1).addFront(2).addFront(3);
+      dequeue.addRear(1).addRear(2).addRear(3);
 
       // Act and Assert
       expect(Array.from(dequeue)).toEqual([1, 2, 3]);
