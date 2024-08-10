@@ -49,7 +49,7 @@ describe('Stack', () => {
   describe('Symbol.Iterator', () => {
     it('iterates through the elements', () => {
       // Arrange
-      Stack.of(1).push(2).push(3);
+      stack.push(1).push(2).push(3);
 
       // Act and Assert
       expect(Array.from(stack)).toEqual([1, 2, 3]);
