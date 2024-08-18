@@ -210,7 +210,9 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   #resolve(value: Value<T>) {
     if (this.#state === STATE.PENDING) {
       if (isThenable(value)) {
-        value.then(this.#resolve.bind(this), this.#reject.bind(this));
+        queueMicrotask(() => {
+          value.then(this.#resolve.bind(this), this.#reject.bind(this));
+        });
       } else {
         this.#state = STATE.FULFILLED;
         this.#value = value;
@@ -263,10 +265,14 @@ export class MyPromise<T = any> implements IMyPromise<T> {
           this.#onrejectedCallbacks.enqueue(() => executeHandler(onrejected));
         },
         [STATE.FULFILLED]: () => {
-          queueMicrotask(() => executeHandler(onfulfilled));
+          queueMicrotask(() => {
+            executeHandler(onfulfilled);
+          });
         },
         [STATE.REJECTED]: () => {
-          queueMicrotask(() => executeHandler(onrejected));
+          queueMicrotask(() => {
+            executeHandler(onrejected);
+          });
         },
       };
 
@@ -326,6 +332,8 @@ function isThenable(it: any): it is PromiseLike<unknown> {
 
 function executeCallbacks(queue: Queue<Callback>) {
   for (const callback of queue) {
-    queueMicrotask(() => callback());
+    queueMicrotask(() => {
+      callback();
+    });
   }
 }
