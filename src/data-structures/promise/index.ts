@@ -1,3 +1,6 @@
+// Promises/A+ spec
+// https://github.com/promises-aplus/promises-spec
+
 import { Queue } from '@/data-structures/queue';
 import isFunction from 'lodash.isfunction';
 import { ValueOf } from 'type-fest';
@@ -194,12 +197,40 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     return MyPromise.all<PromiseSettledResult<Awaited<T>>>(items);
   }
 
+  static withResolvers<T>() {
+    let resolve!: (value: T | PromiseLike<T>) => void;
+    let reject!: (reason?: any) => void;
+
+    const promise = new MyPromise<T>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+
+    return {
+      promise,
+      resolve,
+      reject,
+    };
+  }
+
   constructor(
     executor: (
       resolve: (value: T | PromiseLike<T>) => void,
       reject: (reason?: any) => void,
     ) => void,
   ) {
+    if (new.target === undefined) {
+      throw new TypeError(
+        `${this.constructor.name} constructor cannot be invoked without 'new'`,
+      );
+    }
+
+    if (typeof executor !== 'function') {
+      throw new TypeError(
+        `${this.constructor.name} resolver ${typeof executor} is not a function`,
+      );
+    }
+
     try {
       executor(this.#resolve.bind(this), this.#reject.bind(this));
     } catch (error) {
@@ -245,7 +276,9 @@ export class MyPromise<T = any> implements IMyPromise<T> {
             const result = handler(this.#value as T);
 
             if (isThenable(result)) {
-              result.then(resolve, reject);
+              queueMicrotask(() => {
+                result.then(resolve, reject);
+              });
             } else {
               resolve(result);
             }
@@ -307,7 +340,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'MyPromise';
+    return `${this.constructor.name}`;
   }
 }
 
@@ -326,7 +359,7 @@ function handleNonIterable(it: any): void {
   );
 }
 
-function isThenable(it: any): it is PromiseLike<unknown> {
+function isThenable(it: any): it is PromiseLike<any> {
   return !!(it && isFunction(it.then));
 }
 

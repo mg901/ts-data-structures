@@ -46,7 +46,7 @@ export class LRUCache<Key extends keyof any, Value = any>
 
   #evictLeastRecentItem() {
     const firstKey = this.#storage.keys().next().value;
-    this.#storage.delete(firstKey);
+    this.#storage.delete(firstKey!);
   }
 
   get(key: Key): Value | null {
