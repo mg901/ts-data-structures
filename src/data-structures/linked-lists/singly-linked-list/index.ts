@@ -129,21 +129,23 @@ export class SinglyLinkedList<
     const deletedNode = this._tail;
 
     // If only one node.
-    if (this._head.next === null) this.clear();
+    if (this._head.next) {
+      // // If there are multiple nodes.
+      let prevNode: Nullable<Node> = null;
 
-    // // If there are multiple nodes.
-    let prevNode: Nullable<Node> = null;
+      for (const node of this) {
+        if (node.next) {
+          prevNode = node as Node;
+        } else {
+          prevNode!.next = null;
+          this._tail = prevNode;
+          this._decreaseSize();
 
-    for (const node of this) {
-      if (node.next) {
-        prevNode = node as Node;
-      } else {
-        prevNode!.next = null;
-        this._tail = prevNode;
-        this._decreaseSize();
-
-        break;
+          break;
+        }
       }
+    } else {
+      this.clear();
     }
 
     return deletedNode;
