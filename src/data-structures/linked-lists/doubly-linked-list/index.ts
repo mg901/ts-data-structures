@@ -104,7 +104,9 @@ export class DoublyLinkedList<
       this._tail = deletedNode.prev as Node;
     }
 
-    detachNode(deletedNode);
+    deletedNode.next = null;
+    deletedNode.prev = null;
+
     this._decreaseSize();
 
     return deletedNode;
@@ -129,7 +131,9 @@ export class DoublyLinkedList<
       this._tail = ref.prev as Node;
     }
 
-    detachNode(ref);
+    ref.next = null;
+    ref.prev = null;
+
     this._decreaseSize();
   }
 
@@ -202,9 +206,4 @@ export class DoublyLinkedList<
   get [Symbol.toStringTag]() {
     return `${this.constructor.name}`;
   }
-}
-
-function detachNode(node: DoublyLinkedListNode) {
-  node.next = null;
-  node.prev = null;
 }
