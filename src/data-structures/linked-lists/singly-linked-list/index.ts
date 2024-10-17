@@ -129,7 +129,7 @@ export class SinglyLinkedList<
     const deletedNode = this._tail;
 
     // // If there are multiple nodes.
-    if (this._head !== this._tail) {
+    if (this._head.next) {
       let prevNode: Nullable<Node> = null;
 
       for (const node of this) {
@@ -173,8 +173,7 @@ export class SinglyLinkedList<
     return this;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'SinglyLinkedList';
+    return `${this.constructor.name}`;
   }
 }

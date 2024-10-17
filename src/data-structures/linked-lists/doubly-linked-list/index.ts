@@ -199,9 +199,8 @@ export class DoublyLinkedList<
     return this;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'DoublyLinkedList';
+    return `${this.constructor.name}`;
   }
 }
 
