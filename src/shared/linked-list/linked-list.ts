@@ -62,7 +62,7 @@ export abstract class LinkedList<
   }
 
   get isEmpty() {
-    return this._head === null;
+    return this._head === null && this._tail === null && this.size === 0;
   }
 
   *[Symbol.iterator]() {
@@ -70,8 +70,23 @@ export abstract class LinkedList<
 
     while (currentNode !== null) {
       yield currentNode;
+
       currentNode = currentNode.next as Node;
     }
+  }
+
+  protected _increaseSize() {
+    this._size += 1;
+  }
+
+  protected _decreaseSize() {
+    this._size -= 1;
+  }
+
+  protected _initializeList(node: Node) {
+    this._head = node;
+    this._tail = node;
+    this._size = 1;
   }
 
   protected _isMatch(value: T, matcher: T | Predicate<T>) {
@@ -88,6 +103,14 @@ export abstract class LinkedList<
     }
 
     return currentNode;
+  }
+
+  protected _throwIsInvalidIndex(index: number) {
+    if (index < 0 || index > this._size) {
+      throw new RangeError(
+        'Index should be greater than or equal to 0 and less than or equal to the list length.',
+      );
+    }
   }
 
   toString(callback?: Callback<T>): string {

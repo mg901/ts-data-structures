@@ -12,11 +12,9 @@ describe('DoublyLinkedList', () => {
 
   it('returns the initial state correctly', () => {
     // Act and Assert
-    expect(doublyList.head).toBeNull();
-    expect(doublyList.tail).toBeNull();
-    expect(doublyList.size).toBe(0);
-    expect(doublyList.toString()).toBe('');
+
     expect(doublyList.isEmpty).toBeTruthy();
+    expect(doublyList.toString()).toBe('');
   });
 
   describe('toString', () => {
@@ -240,10 +238,7 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedNode).toBeNull();
-      expect(doublyList.head).toBeNull();
-      expect(doublyList.tail).toBeNull();
-
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the node outside the list', () => {
@@ -274,10 +269,7 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data).toBe(1);
-      expect(doublyList.head).toBeNull();
-      expect(doublyList.tail).toBeNull();
-
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the first node', () => {
@@ -289,6 +281,7 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data).toBe(1);
+      expect(deletedNode?.next).toBeNull();
 
       expect(doublyList.head?.data).toBe(2);
       expect(doublyList.head?.next).toBeNull();
@@ -310,6 +303,8 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data).toBe(2);
+      expect(deletedNode?.next).toBeNull();
+      expect(deletedNode?.prev).toBeNull();
 
       expect(doublyList.head?.data).toBe(1);
       expect(doublyList.head?.next?.data).toBe(3);
@@ -326,10 +321,11 @@ describe('DoublyLinkedList', () => {
       doublyList.fromArray([1, 2]);
 
       // Act
-      const deleteNode = doublyList.deleteByValue(2);
+      const deletedNode = doublyList.deleteByValue(2);
 
       // Assert
-      expect(deleteNode?.data).toBe(2);
+      expect(deletedNode?.data).toBe(2);
+      expect(deletedNode?.prev).toBeNull();
 
       expect(doublyList.head?.data).toBe(1);
       expect(doublyList.head?.next).toBeNull();
@@ -363,6 +359,8 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data.value).toBe(2);
+      expect(deletedNode?.next).toBeNull();
+      expect(deletedNode?.prev).toBeNull();
 
       expect(list.head?.data.value).toBe(1);
       expect(list.head?.next?.data.value).toBe(3);
@@ -390,9 +388,7 @@ describe('DoublyLinkedList', () => {
       doublyList.deleteByRef(nodeMap.one!);
 
       // Assert
-      expect(doublyList.head).toBeNull();
-      expect(doublyList.tail).toBeNull();
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the first node', () => {
@@ -454,7 +450,7 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedHead).toBeNull();
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the head from the singular node list', () => {
@@ -466,18 +462,19 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedHead?.data).toBe(1);
-
-      expect(doublyList.head).toBeNull();
-      expect(doublyList.tail).toBeNull();
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('removes the head from the multi-node list', () => {
       // Arrange
       doublyList.fromArray([1, 2]);
 
-      // Act and Assert
-      expect(doublyList.deleteHead()?.data).toBe(1);
+      // Act
+      const deletedHead = doublyList.deleteHead();
+
+      // Assert
+      expect(deletedHead?.data).toBe(1);
+      expect(deletedHead?.next).toBeNull();
 
       expect(doublyList.tail?.data).toBe(2);
       expect(doublyList.tail?.next).toBeNull();
@@ -493,7 +490,7 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedTail).toBeNull();
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the tail form the list with a single node', () => {
@@ -505,9 +502,7 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedTail?.data).toBe(1);
-      expect(doublyList.head).toBeNull();
-      expect(doublyList.tail).toBeNull();
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the tail from the list with multiple nodes', () => {
@@ -519,6 +514,7 @@ describe('DoublyLinkedList', () => {
 
       // Assert
       expect(deletedTail?.data).toBe(2);
+      expect(deletedTail?.prev).toBeNull();
 
       expect(doublyList.tail?.data).toBe(1);
       expect(doublyList.tail?.next).toBeNull();
@@ -533,9 +529,7 @@ describe('DoublyLinkedList', () => {
       doublyList.reverse();
 
       // Assert
-      expect(doublyList.head).toBeNull();
-      expect(doublyList.tail).toBeNull();
-      expect(doublyList.size).toBe(0);
+      expect(doublyList.isEmpty).toBeTruthy();
     });
 
     it('reverses the head of the singular node list', () => {

@@ -12,15 +12,14 @@ export class SinglyLinkedList<
   append(value: T) {
     const newNode = new LinkedListNode(value);
 
-    if (this._head === null) {
-      this._head = newNode;
-      this._tail = newNode;
+    if (this.isEmpty) {
+      this._initializeList(newNode);
     } else {
       this._tail!.next = newNode;
       this._tail = newNode;
-    }
 
-    this._size += 1;
+      this._increaseSize();
+    }
 
     return this;
   }
@@ -36,43 +35,36 @@ export class SinglyLinkedList<
   prepend(value: T) {
     const newNode = new LinkedListNode(value);
 
-    if (this._head === null) {
-      this._head = newNode;
-      this._tail = newNode;
+    if (this.isEmpty) {
+      this._initializeList(newNode);
     } else {
       newNode.next = this._head;
       this._head = newNode;
-    }
 
-    this._size += 1;
+      this._increaseSize();
+    }
 
     return this;
   }
 
   insertAt(index: number, value: T) {
-    const isInvalidIndex = index < 0 || index > this._size;
-
-    if (isInvalidIndex) {
-      throw new RangeError(
-        'Index should be greater than or equal to 0 and less than or equal to the list length.',
-      );
-    }
+    this._throwIsInvalidIndex(index);
 
     if (index === 0) {
-      // Insert at the beginning.
+      // At the beginning.
       this.prepend(value);
     } else if (index === this._size) {
-      // Insert at the end.
+      // At the end.
       this.append(value);
     } else {
-      // Insert in the middle.
+      // In the middle.
       const prevNode = this._findNodeByIndex(index - 1);
       const newNode = new LinkedListNode(value);
 
       newNode.next = prevNode.next;
       prevNode.next = newNode;
 
-      this._size += 1;
+      this._increaseSize();
     }
 
     return this;
@@ -81,7 +73,7 @@ export class SinglyLinkedList<
   deleteByValue(value: T): Nullable<Node>;
   deleteByValue(predicate: Predicate<T>): Nullable<Node>;
   deleteByValue(arg: T | Predicate<T>) {
-    if (this._head === null) return null;
+    if (this.isEmpty) return null;
 
     let deletedNode: Nullable<Node> = null;
     let prevNode: Nullable<Node> = null;
@@ -97,40 +89,36 @@ export class SinglyLinkedList<
     }
 
     if (deletedNode) {
-      this.#deleteNodeAndUpdateTail(deletedNode, prevNode);
+      if (prevNode === null) {
+        this._head = deletedNode.next;
+      } else {
+        prevNode.next = deletedNode.next;
+      }
+
+      if (deletedNode.next === null) {
+        this._tail = prevNode;
+      }
 
       deletedNode.next = null;
-      this._size -= 1;
+      this._decreaseSize();
     }
 
     return deletedNode;
   }
 
-  #deleteNodeAndUpdateTail(deletedNode: Node, prevNode: Nullable<Node>) {
-    if (prevNode === null) {
-      this._head = deletedNode.next;
-    } else {
-      prevNode.next = deletedNode.next;
-    }
-
-    if (deletedNode.next === null) {
-      this._tail = prevNode;
-    }
-  }
-
   deleteHead() {
-    if (this._head === null) return null;
+    if (this.isEmpty) return null;
 
     const deletedNode = this._head;
 
     if (deletedNode?.next) {
       this._head = deletedNode.next;
-    } else {
-      this._head = null;
-      this._tail = null;
-    }
 
-    this._size -= 1;
+      deletedNode.next = null;
+      this._decreaseSize();
+    } else {
+      this.clear();
+    }
 
     return deletedNode;
   }
@@ -138,31 +126,29 @@ export class SinglyLinkedList<
   deleteTail() {
     if (this._head === null) return null;
 
-    const deletedTail = this._tail;
+    const deletedNode = this._tail;
 
-    // If there is only one node.
-    if (this._head === this._tail) {
-      this._head = null;
-      this._tail = null;
-    } else {
-      // // If multiple nodes.
+    // // If there are multiple nodes.
+    if (this._head !== this._tail) {
       let prevNode: Nullable<Node> = null;
 
-      for (const currentNode of this) {
-        if (currentNode.next) {
-          prevNode = currentNode as Node;
+      for (const node of this) {
+        if (node.next) {
+          prevNode = node as Node;
         } else {
           prevNode!.next = null;
           this._tail = prevNode;
+          this._decreaseSize();
 
           break;
         }
       }
+    } else {
+      // If only one node.
+      this.clear();
     }
 
-    this._size -= 1;
-
-    return deletedTail;
+    return deletedNode;
   }
 
   reverse() {
@@ -170,19 +156,19 @@ export class SinglyLinkedList<
       return this;
     }
 
-    let currentNode = this._head as Nullable<Node>;
-    let prevNode = null;
+    let current = this._head as Nullable<Node>;
+    let prev = null;
 
-    while (currentNode !== null) {
-      const nextNode = currentNode.next;
-      currentNode.next = prevNode;
-      prevNode = currentNode;
+    while (current) {
+      const nextNode = current.next;
+      current.next = prev;
+      prev = current;
 
-      currentNode = nextNode as Node;
+      current = nextNode as Node;
     }
 
     this._tail = this._head;
-    this._head = prevNode;
+    this._head = prev;
 
     return this;
   }
