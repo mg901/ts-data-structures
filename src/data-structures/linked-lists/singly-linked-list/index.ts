@@ -88,20 +88,20 @@ export class SinglyLinkedList<
       prevNode = currentNode as Node;
     }
 
-    if (deletedNode) {
-      if (prevNode === null) {
-        this._head = deletedNode.next;
-      } else {
-        prevNode.next = deletedNode.next;
-      }
+    if (!deletedNode) return null;
 
-      if (deletedNode.next === null) {
-        this._tail = prevNode;
-      }
-
-      deletedNode.next = null;
-      this._decreaseSize();
+    if (prevNode === null) {
+      this._head = deletedNode.next;
+    } else {
+      prevNode.next = deletedNode.next;
     }
+
+    if (deletedNode.next === null) {
+      this._tail = prevNode;
+    }
+
+    deletedNode.next = null;
+    this._decreaseSize();
 
     return deletedNode;
   }
@@ -113,8 +113,8 @@ export class SinglyLinkedList<
 
     if (deletedNode?.next) {
       this._head = deletedNode.next;
-
       deletedNode.next = null;
+
       this._decreaseSize();
     } else {
       this.clear();

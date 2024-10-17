@@ -86,26 +86,26 @@ export class DoublyLinkedList<
       }
     }
 
-    if (deletedNode) {
-      // In the middle.
-      if (deletedNode.prev) {
-        deletedNode.prev.next = deletedNode.next;
-      } else {
-        // At the beginning.
-        this._head = deletedNode.next as Node;
-      }
+    if (!deletedNode) return null;
 
-      // In the middle.
-      if (deletedNode.next) {
-        deletedNode.next.prev = deletedNode.prev;
-      } else {
-        // At the end.
-        this._tail = deletedNode.prev as Node;
-      }
-
-      detachNode(deletedNode);
-      this._decreaseSize();
+    // In the middle.
+    if (deletedNode.prev) {
+      deletedNode.prev.next = deletedNode.next;
+    } else {
+      // At the beginning.
+      this._head = deletedNode.next as Node;
     }
+
+    // In the middle.
+    if (deletedNode.next) {
+      deletedNode.next.prev = deletedNode.prev;
+    } else {
+      // At the end.
+      this._tail = deletedNode.prev as Node;
+    }
+
+    detachNode(deletedNode);
+    this._decreaseSize();
 
     return deletedNode;
   }
