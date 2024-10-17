@@ -88,20 +88,20 @@ export class SinglyLinkedList<
       prevNode = currentNode as Node;
     }
 
-    if (deletedNode) {
-      if (prevNode === null) {
-        this._head = deletedNode.next;
-      } else {
-        prevNode.next = deletedNode.next;
-      }
+    if (!deletedNode) return null;
 
-      if (deletedNode.next === null) {
-        this._tail = prevNode;
-      }
-
-      deletedNode.next = null;
-      this._decreaseSize();
+    if (prevNode === null) {
+      this._head = deletedNode.next;
+    } else {
+      prevNode.next = deletedNode.next;
     }
+
+    if (deletedNode.next === null) {
+      this._tail = prevNode;
+    }
+
+    deletedNode.next = null;
+    this._decreaseSize();
 
     return deletedNode;
   }
@@ -113,8 +113,8 @@ export class SinglyLinkedList<
 
     if (deletedNode?.next) {
       this._head = deletedNode.next;
-
       deletedNode.next = null;
+
       this._decreaseSize();
     } else {
       this.clear();
@@ -128,8 +128,9 @@ export class SinglyLinkedList<
 
     const deletedNode = this._tail;
 
-    // // If there are multiple nodes.
-    if (this._head !== this._tail) {
+    // If only one node.
+    if (this._head.next) {
+      // // If there are multiple nodes.
       let prevNode: Nullable<Node> = null;
 
       for (const node of this) {
@@ -144,7 +145,6 @@ export class SinglyLinkedList<
         }
       }
     } else {
-      // If only one node.
       this.clear();
     }
 
@@ -173,8 +173,7 @@ export class SinglyLinkedList<
     return this;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'SinglyLinkedList';
+    return `${this.constructor.name}`;
   }
 }

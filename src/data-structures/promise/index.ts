@@ -45,6 +45,8 @@ interface IMyPromise<T> {
    * @returns A MyPromise for the completion of the callback.
    */
   finally(onfinally?: (() => void) | undefined | null): IMyPromise<T>;
+
+  readonly [Symbol.toStringTag]: string;
 }
 
 const STATE = {
@@ -52,8 +54,6 @@ const STATE = {
   FULFILLED: 'fulfilled',
   REJECTED: 'rejected',
 } as const;
-
-type Value<T> = T | PromiseLike<T>;
 
 type Callback = () => void;
 
@@ -74,7 +74,7 @@ type PromiseSettledResult<T> =
 export class MyPromise<T = any> implements IMyPromise<T> {
   #state: ValueOf<typeof STATE> = STATE.PENDING;
 
-  #value?: Value<T>;
+  #value?: T | PromiseLike<T>;
 
   #onfulfilledCallbacks = new Queue<Callback>();
 
@@ -238,7 +238,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     }
   }
 
-  #resolve(value: Value<T>) {
+  #resolve(value: T | PromiseLike<T>) {
     if (this.#state === STATE.PENDING) {
       if (isThenable(value)) {
         queueMicrotask(() => {
@@ -338,7 +338,6 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
     return `${this.constructor.name}`;
   }
