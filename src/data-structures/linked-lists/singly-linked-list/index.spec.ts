@@ -155,9 +155,7 @@ describe('SinglyLinkedList', () => {
       // Act and Assert
       expect(singlyList.toArray()).toEqual([]);
 
-      expect(singlyList.head).toBeNull();
-      expect(singlyList.tail).toBeNull();
-      expect(singlyList.size).toBe(0);
+      expect(singlyList.isEmpty).toBeTruthy();
     });
 
     it('converts a list to an array', () => {
@@ -300,7 +298,7 @@ describe('SinglyLinkedList', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('deleteByValue', () => {
     it('returns null when deleting a non-existing node', () => {
       // Act
       const deletedNode = singlyList.deleteByValue(2);
@@ -328,14 +326,11 @@ describe('SinglyLinkedList', () => {
       singlyList.append(1);
 
       // Act
-      const deletedElement = singlyList.deleteByValue(1)!;
+      const deletedNode = singlyList.deleteByValue(1)!;
 
       // Assert
-      expect(deletedElement.data).toBe(1);
-
-      expect(singlyList.head).toBeNull();
-      expect(singlyList.tail).toBeNull();
-      expect(singlyList.size).toBe(0);
+      expect(deletedNode.data).toBe(1);
+      expect(singlyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the first node from the multi-node list', () => {
@@ -347,6 +342,8 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data).toBe(1);
+      expect(deletedNode?.next).toBeNull();
+
       expect(singlyList.toString()).toEqual('2,3');
       expect(singlyList.tail?.data).toBe(3);
       expect(singlyList.size).toBe(2);
@@ -357,10 +354,11 @@ describe('SinglyLinkedList', () => {
       singlyList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedElement = singlyList.deleteByValue(2);
+      const deletedNode = singlyList.deleteByValue(2);
 
       // Assert
-      expect(deletedElement?.data).toBe(2);
+      expect(deletedNode?.data).toBe(2);
+      expect(deletedNode?.next).toBeNull();
       expect(singlyList.toString()).toBe('1,3');
       expect(singlyList.tail?.data).toBe(3);
       expect(singlyList.size).toBe(2);
@@ -371,10 +369,11 @@ describe('SinglyLinkedList', () => {
       singlyList.fromArray([1, 2]);
 
       // Act
-      const deletedElement = singlyList.deleteByValue(2);
+      const deletedNode = singlyList.deleteByValue(2);
 
       // Assert
-      expect(deletedElement?.data).toBe(2);
+      expect(deletedNode?.data).toBe(2);
+      expect(deletedNode?.next).toBeNull();
       expect(singlyList.toString()).toBe('1');
       expect(singlyList.tail?.data).toBe(1);
       expect(singlyList.tail?.next).toBeNull();
@@ -399,6 +398,8 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedNode?.data.value).toBe(2);
+      expect(deletedNode?.next).toBeNull();
+
       expect(list.toString((node) => `${node.value}`)).toBe('1,3');
       expect(list.size).toBe(2);
     });
@@ -411,7 +412,7 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedHead).toBeNull();
-      expect(singlyList.size).toBe(0);
+      expect(singlyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the head from the singular node list', () => {
@@ -423,18 +424,19 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedHead?.data).toBe(1);
-
-      expect(singlyList.head).toBeNull();
-      expect(singlyList.tail).toBeNull();
-      expect(singlyList.size).toBe(0);
+      expect(singlyList.isEmpty).toBeTruthy();
     });
 
     it('removes the head from the multi-node list', () => {
       // Arrange
       singlyList.fromArray([1, 2]);
 
-      // Act and Assert
-      expect(singlyList.deleteHead()?.data).toBe(1);
+      // Act
+      const deletedHead = singlyList.deleteHead();
+
+      // Assert
+      expect(deletedHead?.data).toBe(1);
+      expect(deletedHead?.next).toBeNull();
 
       expect(singlyList.tail?.data).toBe(2);
       expect(singlyList.tail?.next).toBeNull();
@@ -449,7 +451,7 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedTail).toBeNull();
-      expect(singlyList.size).toBe(0);
+      expect(singlyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the tail form the list with a single node', () => {
@@ -461,9 +463,7 @@ describe('SinglyLinkedList', () => {
 
       // Assert
       expect(deletedTail?.data).toBe(1);
-      expect(singlyList.head).toBeNull();
-      expect(singlyList.tail).toBeNull();
-      expect(singlyList.size).toBe(0);
+      expect(singlyList.isEmpty).toBeTruthy();
     });
 
     it('deletes the tail from the list with multiple nodes', () => {
@@ -591,9 +591,7 @@ describe('SinglyLinkedList', () => {
       singlyList.reverse();
 
       // Assert
-      expect(singlyList.head).toBeNull();
-      expect(singlyList.tail).toBeNull();
-      expect(singlyList.size).toBe(0);
+      expect(singlyList.isEmpty).toBeTruthy();
     });
 
     it('reverses the singular node list', () => {
@@ -651,9 +649,6 @@ describe('SinglyLinkedList', () => {
       singlyList.clear();
 
       // Assert
-      expect(singlyList.head).toBeNull();
-      expect(singlyList.tail).toBeNull();
-      expect(singlyList.size).toBe(0);
       expect(singlyList.isEmpty).toBeTruthy();
     });
   });
