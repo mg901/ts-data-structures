@@ -1,7 +1,6 @@
 // Promises/A+ spec
 // https://github.com/promises-aplus/promises-spec
 
-import { Queue } from '@/data-structures/queue';
 import isFunction from 'lodash.isfunction';
 import { ValueOf } from 'type-fest';
 
@@ -76,9 +75,11 @@ export class MyPromise<T = any> implements IMyPromise<T> {
 
   #value?: T | PromiseLike<T>;
 
-  #onfulfilledCallbacks = new Queue<Callback>();
+  #reason: any;
 
-  #onrejectedCallbacks = new Queue<Callback>();
+  #onfulfilledCallbacks: Callback[] = [];
+
+  #onrejectedCallbacks: Callback[] = [];
 
   static resolve(): MyPromise<void>;
   static resolve<T>(value: T): MyPromise<Awaited<T>>;
@@ -187,9 +188,9 @@ export class MyPromise<T = any> implements IMyPromise<T> {
           status: STATE.FULFILLED,
           value,
         }),
-        (error) => ({
+        (reason) => ({
           status: STATE.REJECTED,
-          reason: error,
+          reason,
         }),
       ),
     );
@@ -239,77 +240,96 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   }
 
   #resolve(value: T | PromiseLike<T>) {
-    if (this.#state === STATE.PENDING) {
-      if (isThenable(value)) {
-        queueMicrotask(() => {
-          value.then(this.#resolve.bind(this), this.#reject.bind(this));
-        });
-      } else {
-        this.#state = STATE.FULFILLED;
-        this.#value = value;
-      }
+    if (this.#state !== STATE.PENDING) return;
 
-      executeCallbacks(this.#onfulfilledCallbacks);
-      this.#onfulfilledCallbacks.clear();
-    }
+    this.#state = STATE.FULFILLED;
+    this.#value = value;
+
+    executeCallbacks(this.#onfulfilledCallbacks);
+    this.#onfulfilledCallbacks = [];
   }
 
   #reject(reason?: any) {
-    if (this.#state === STATE.PENDING) {
-      this.#state = STATE.REJECTED;
-      this.#value = reason;
+    if (this.#state !== STATE.PENDING) return;
 
-      executeCallbacks(this.#onrejectedCallbacks);
-    }
+    this.#state = STATE.REJECTED;
+    this.#reason = reason;
+
+    executeCallbacks(this.#onrejectedCallbacks);
+    this.#onfulfilledCallbacks = [];
   }
 
   then<TResult1 = T, TResult2 = never>(
     onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
-    return new MyPromise<TResult1 | TResult2>((resolve, reject) => {
-      type Handler = typeof onfulfilled | typeof onrejected;
-
-      const executeHandler = (handler: Handler) => {
-        try {
-          if (isFunction(handler)) {
-            const result = handler(this.#value as T);
-
-            if (isThenable(result)) {
-              queueMicrotask(() => {
-                result.then(resolve, reject);
-              });
-            } else {
-              resolve(result);
-            }
-          } else if (this.#state === STATE.FULFILLED) {
-            resolve(this.#value as TResult1);
-          } else {
-            reject(this.#value);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      };
-
+    return new MyPromise((resolve, reject) => {
       const strategy = {
-        [STATE.PENDING]: () => {
-          this.#onfulfilledCallbacks.enqueue(() => executeHandler(onfulfilled));
-          this.#onrejectedCallbacks.enqueue(() => executeHandler(onrejected));
-        },
         [STATE.FULFILLED]: () => {
           queueMicrotask(() => {
-            executeHandler(onfulfilled);
+            if (isThenable(this.#value)) {
+              this.#value.then((value) => {
+                executeFulfilled(onfulfilled, value);
+              });
+            } else {
+              executeFulfilled(onfulfilled, this.#value);
+            }
           });
         },
         [STATE.REJECTED]: () => {
           queueMicrotask(() => {
-            executeHandler(onrejected);
+            executeRejected(onrejected, this.#reason);
           });
+        },
+        [STATE.PENDING]: () => {
+          this.#onfulfilledCallbacks.push(() =>
+            executeFulfilled(onfulfilled, this.#value),
+          );
+          this.#onrejectedCallbacks.push(() =>
+            executeRejected(onrejected, this.#reason),
+          );
         },
       };
 
       strategy[this.#state]();
+
+      function executeFulfilled(handler: typeof onfulfilled, value: any) {
+        try {
+          if (!isFunction(handler)) {
+            resolve(value);
+
+            return;
+          }
+
+          const result = handler(value);
+          if (isThenable(result)) {
+            result.then(resolve, reject);
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      }
+
+      function executeRejected(handler: typeof onrejected, reason: any) {
+        try {
+          if (!isFunction(handler)) {
+            reject(reason);
+
+            return;
+          }
+
+          const result = handler(reason);
+          if (isThenable(result)) {
+            result.then(resolve, reject);
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      }
     });
   }
 
@@ -358,11 +378,11 @@ function handleNonIterable(it: any): void {
   );
 }
 
-function isThenable(it: any): it is PromiseLike<any> {
+function isThenable<T>(it: any): it is PromiseLike<T> {
   return !!(it && isFunction(it.then));
 }
 
-function executeCallbacks(queue: Queue<Callback>) {
+function executeCallbacks(queue: Callback[]) {
   for (const callback of queue) {
     queueMicrotask(() => {
       callback();

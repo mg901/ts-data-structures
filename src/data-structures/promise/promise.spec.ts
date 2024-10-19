@@ -592,7 +592,7 @@ describe('MyPromise', () => {
         expect.assertions(2);
 
         // Arrange
-        const expected = 'non-promise';
+        const expected = 'string';
         const promise = new MyPromise((resolve) => {
           setTimeout(resolve, 100, 'first');
         });
