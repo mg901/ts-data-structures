@@ -264,71 +264,74 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
     return new MyPromise((resolve, reject) => {
+      const handleFulfilled = executeFulfilled(onfulfilled);
+      const handleRejected = executeRejected(onrejected);
+
       const strategy = {
         [STATE.FULFILLED]: () => {
           queueMicrotask(() => {
             if (isThenable(this.#value)) {
               this.#value.then((value) => {
-                executeFulfilled(onfulfilled, value);
+                handleFulfilled(value);
               });
             } else {
-              executeFulfilled(onfulfilled, this.#value);
+              handleFulfilled(this.#value);
             }
           });
         },
         [STATE.REJECTED]: () => {
           queueMicrotask(() => {
-            executeRejected(onrejected, this.#reason);
+            handleRejected(this.#reason);
           });
         },
         [STATE.PENDING]: () => {
-          this.#onfulfilledCallbacks.push(() =>
-            executeFulfilled(onfulfilled, this.#value),
-          );
-          this.#onrejectedCallbacks.push(() =>
-            executeRejected(onrejected, this.#reason),
-          );
+          this.#onfulfilledCallbacks.push(() => handleFulfilled(this.#value));
+          this.#onrejectedCallbacks.push(() => handleRejected(this.#reason));
         },
       };
 
       strategy[this.#state]();
 
-      function executeFulfilled(handler: typeof onfulfilled, value: any) {
-        try {
-          if (!isFunction(handler)) {
-            resolve(value);
+      function executeFulfilled(handler: typeof onfulfilled) {
+        return (value: any) => {
+          try {
+            if (!isFunction(handler)) {
+              resolve(value);
 
-            return;
-          }
+              return;
+            }
 
-          const result = handler(value);
-          if (isThenable(result)) {
-            result.then(resolve, reject);
-          } else {
-            resolve(result);
+            const result = handler(value);
+            if (isThenable(result)) {
+              result.then(resolve, reject);
+            } else {
+              resolve(result);
+            }
+          } catch (error) {
+            reject(error);
           }
-        } catch (error) {
-          reject(error);
-        }
+        };
       }
 
-      function executeRejected(handler: typeof onrejected, reason: any) {
-        try {
-          if (!isFunction(handler)) {
-            reject(reason);
+      function executeRejected(handler: typeof onrejected) {
+        return (reason: any) => {
+          try {
+            if (!isFunction(handler)) {
+              reject(reason);
 
-            return;
-          }
+              return;
+            }
 
-          const result = handler(reason);
-          if (isThenable(result)) {
-            result.then(resolve, reject);
-          } else {
-            resolve(result);
+            const result = handler(reason);
+            if (isThenable(result)) {
+              result.then(resolve, reject);
+            } else {
+              resolve(result);
+            }
+          } catch (error) {
+            reject(error);
           }
-        } catch (error) {
-          reject(error);
-        }
+        };
       }
     });
   }
