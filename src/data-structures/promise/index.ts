@@ -264,16 +264,14 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
     return new MyPromise((resolve, reject) => {
-      const handleFulfilled = executeFulfilled(onfulfilled);
-      const handleRejected = executeRejected(onrejected);
+      const handleFulfilled = executeHandler(onfulfilled, resolve);
+      const handleRejected = executeHandler(onrejected, reject);
 
       const strategy = {
         [STATE.FULFILLED]: () => {
           queueMicrotask(() => {
             if (isThenable(this.#value)) {
-              this.#value.then((value) => {
-                handleFulfilled(value);
-              });
+              this.#value.then(handleFulfilled);
             } else {
               handleFulfilled(this.#value);
             }
@@ -292,37 +290,19 @@ export class MyPromise<T = any> implements IMyPromise<T> {
 
       strategy[this.#state]();
 
-      function executeFulfilled(handler: typeof onfulfilled) {
+      function executeHandler(
+        handler: typeof onfulfilled | typeof onrejected,
+        resolver: (value: any) => void,
+      ) {
         return (value: any) => {
           try {
             if (!isFunction(handler)) {
-              resolve(value);
+              resolver(value);
 
               return;
             }
 
             const result = handler(value);
-            if (isThenable(result)) {
-              result.then(resolve, reject);
-            } else {
-              resolve(result);
-            }
-          } catch (error) {
-            reject(error);
-          }
-        };
-      }
-
-      function executeRejected(handler: typeof onrejected) {
-        return (reason: any) => {
-          try {
-            if (!isFunction(handler)) {
-              reject(reason);
-
-              return;
-            }
-
-            const result = handler(reason);
             if (isThenable(result)) {
               result.then(resolve, reject);
             } else {
