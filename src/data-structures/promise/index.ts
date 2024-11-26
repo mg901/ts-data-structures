@@ -66,16 +66,21 @@ type PromiseSettledResult<T> =
   | PromiseFulfilledResult<T>
   | PromiseRejectedResult;
 
+type QueueTask = {
+  fulfilled: () => void;
+  rejected: () => void;
+};
+
 export class MyPromise<T = any> implements IMyPromise<T> {
   #state: ValueOf<typeof STATES> = STATES.PENDING;
+
+  #completed = false;
 
   #value: T | PromiseLike<T> | undefined = undefined;
 
   #reason: any = undefined;
 
-  #fulfilledCallbacksQueue: (() => void)[] = [];
-
-  #rejectedCallbacksQueue: (() => void)[] = [];
+  #callbacksQueue: QueueTask[] = [];
 
   // --- Resolve --------------------
   static resolve(): MyPromise<void>;
@@ -239,30 +244,24 @@ export class MyPromise<T = any> implements IMyPromise<T> {
 
     // Resolve -----
     const internalResolve = (value: T | PromiseLike<T>) => {
-      if (this.#state !== STATES.PENDING) return;
+      if (this.#completed) return;
+      this.#completed = true;
 
       this.#state = STATES.FULFILLED;
       this.#value = value;
 
-      this.#fulfilledCallbacksQueue.forEach((callback) => {
-        callback();
-      });
-
-      this.#fulfilledCallbacksQueue = [];
+      this.#executeCallbacksQueue();
     };
 
     // Reject -----
     const internalReject = (reason: any) => {
-      if (this.#state !== STATES.PENDING) return;
+      if (this.#completed) return;
+      this.#completed = true;
 
       this.#state = STATES.REJECTED;
       this.#reason = reason;
 
-      this.#rejectedCallbacksQueue.forEach((callback) => {
-        callback();
-      });
-
-      this.#fulfilledCallbacksQueue = [];
+      this.#executeCallbacksQueue();
     };
 
     // Constructor execution -----
@@ -282,12 +281,9 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   ) {
     return new MyPromise((resolve, reject) => {
       if (this.#state === STATES.PENDING) {
-        this.#fulfilledCallbacksQueue.push(() => {
-          handleFulfilled(this.#value as T);
-        });
-
-        this.#rejectedCallbacksQueue.push(() => {
-          handleRejected(this.#reason);
+        this.#callbacksQueue.push({
+          fulfilled: () => handleFulfilled(this.#value as T),
+          rejected: () => handleRejected(this.#reason),
         });
       } else if (this.#state === STATES.FULFILLED) {
         if (isThenable(this.#value)) {
@@ -336,6 +332,25 @@ export class MyPromise<T = any> implements IMyPromise<T> {
         }
       }
     });
+  }
+
+  #executeCallbacksQueue() {
+    let index = 0;
+    const chain = this.#callbacksQueue;
+
+    while (index !== chain.length) {
+      const { fulfilled, rejected } = chain[index];
+
+      if (this.#state === STATES.FULFILLED) {
+        fulfilled();
+      } else {
+        rejected();
+      }
+
+      index += 1;
+    }
+
+    this.#callbacksQueue = [];
   }
 
   // --- Catch --------------------
