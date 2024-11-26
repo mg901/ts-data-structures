@@ -264,6 +264,17 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       this.#executeCallbacksQueue();
     };
 
+    // Reject -----
+    const internalReject = (reason: any) => {
+      if (this.#completed) return;
+      this.#completed = true;
+
+      this.#state = STATES.REJECTED;
+      this.#reason = reason;
+
+      this.#executeCallbacksQueue();
+    };
+    
     // Constructor execution -----
     try {
       executor(internalResolve, internalReject);
