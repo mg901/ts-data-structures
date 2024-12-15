@@ -490,7 +490,8 @@ describe('MyPromise', () => {
         const promise = MyPromise.all(expected);
 
         // Act and Assert
-        await expect(promise.then(onfulfilled)).rejects.toThrowError(
+
+        await expect(promise.then(onfulfilled)).rejects.toThrow(
           TypeError(
             `number ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
           ),
@@ -506,7 +507,7 @@ describe('MyPromise', () => {
         const promise = MyPromise.all(expected);
 
         // Act and Assert
-        await expect(promise.then(onfulfilled)).rejects.toThrowError(
+        await expect(promise.then(onfulfilled)).rejects.toThrow(
           TypeError(
             `boolean ${expected} is not iterable (cannot read property Symbol(Symbol.iterator))`,
           ),
