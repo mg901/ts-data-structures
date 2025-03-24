@@ -2,7 +2,7 @@ import { type Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 import { DoublyLinkedList } from '../linked-lists/doubly-linked-list';
 
-interface IDequeue<T> {
+interface IDeque<T> {
   get size(): number;
   get isEmpty(): boolean;
   addFront(data: T): this;
@@ -13,13 +13,13 @@ interface IDequeue<T> {
   peekRear(): Nullable<T>;
   toString(callback?: Callback<T>): string;
 }
-export class Dequeue<T = any> implements IDequeue<T> {
+export class Deque<T = any> implements IDeque<T> {
   #dll = new DoublyLinkedList<T>();
 
   static of<T>(data: T) {
-    const dequeue = new Dequeue<T>().addRear(data);
+    const deque = new Deque<T>().addRear(data);
 
-    return dequeue;
+    return deque;
   }
 
   get size() {
@@ -78,6 +78,6 @@ export class Dequeue<T = any> implements IDequeue<T> {
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'Dequeue';
+    return 'Deque';
   }
 }
