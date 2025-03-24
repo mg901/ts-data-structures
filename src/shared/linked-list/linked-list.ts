@@ -1,7 +1,6 @@
 import { Comparator, CompareFn } from '@/shared/comparator';
 import { type Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
-import isFunction from 'lodash.isfunction';
 import { LinkedListNode } from './node';
 
 export { LinkedListNode };
@@ -164,4 +163,8 @@ export abstract class LinkedList<
   abstract deleteHead(): Nullable<Node>;
   abstract deleteTail(): Nullable<Node>;
   abstract reverse(): this;
+}
+
+function isFunction(it: unknown) {
+  return typeof it === 'function';
 }
