@@ -8,6 +8,20 @@ export class MinHeap<T> extends Heap<T> {
     return minHeap;
   }
 
+  static fromArray<T>(array: T[]) {
+    const minHeap = new MinHeap<T>();
+    minHeap._heap = Array.from(array);
+    minHeap.#buildHeap();
+
+    return minHeap;
+  }
+
+  #buildHeap() {
+    for (let i = Math.floor(this.size / 2) - 1; i >= 0; i -= 1) {
+      this.#heapifyDown(i);
+    }
+  }
+
   insert(value: T) {
     this._heap.push(value);
 
@@ -28,22 +42,6 @@ export class MinHeap<T> extends Heap<T> {
 
       index = parentIndex;
     }
-  }
-
-  poll() {
-    if (this.isEmpty) return null;
-
-    const min = this._heap[0];
-    const last = this._heap.pop()!;
-
-    if (!this.isEmpty) {
-      this._heap[0] = last;
-      this.#heapifyDown(0);
-    }
-
-    this._mapDelete(min, 0);
-
-    return min;
   }
 
   #heapifyDown(index: number) {
@@ -78,6 +76,22 @@ export class MinHeap<T> extends Heap<T> {
 
       index = smallestIndex;
     }
+  }
+
+  poll() {
+    if (this.isEmpty) return null;
+
+    const min = this._heap[0];
+    const last = this._heap.pop()!;
+
+    if (!this.isEmpty) {
+      this._heap[0] = last;
+      this.#heapifyDown(0);
+    }
+
+    this._mapDelete(min, 0);
+
+    return min;
   }
 
   delete(value: T) {

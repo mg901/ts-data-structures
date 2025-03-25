@@ -8,6 +8,20 @@ export class MaxHeap<T> extends Heap<T> {
     return maxHeap;
   }
 
+  static fromArray<T>(array: T[]) {
+    const maxHeap = new MaxHeap<T>();
+    maxHeap._heap = Array.from(array);
+    maxHeap.#buildHeap();
+
+    return maxHeap;
+  }
+
+  #buildHeap() {
+    for (let i = Math.floor(this.size / 2) - 1; i >= 0; i -= 1) {
+      this.#heapifyDown(i);
+    }
+  }
+
   insert(value: T) {
     this._heap.push(value);
 
@@ -28,22 +42,6 @@ export class MaxHeap<T> extends Heap<T> {
 
       index = parentIndex;
     }
-  }
-
-  poll() {
-    if (this.isEmpty) return null;
-
-    const max = this._heap[0];
-    const last = this._heap.pop()!;
-
-    if (!this.isEmpty) {
-      this._heap[0] = last;
-      this.#heapifyDown(0);
-    }
-
-    this._mapDelete(max, 0);
-
-    return max;
   }
 
   #heapifyDown(index: number) {
@@ -78,6 +76,22 @@ export class MaxHeap<T> extends Heap<T> {
 
       index = largestIndex;
     }
+  }
+
+  poll() {
+    if (this.isEmpty) return null;
+
+    const max = this._heap[0];
+    const last = this._heap.pop()!;
+
+    if (!this.isEmpty) {
+      this._heap[0] = last;
+      this.#heapifyDown(0);
+    }
+
+    this._mapDelete(max, 0);
+
+    return max;
   }
 
   delete(value: T) {

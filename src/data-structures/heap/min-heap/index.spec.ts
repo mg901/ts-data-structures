@@ -69,6 +69,12 @@ describe('MinHeap', () => {
     });
   });
 
+  describe('fromArray', () => {
+    it('creates a min-heap from a array', () => {
+      expect(MinHeap.fromArray([7, 3, 2]).toString()).toEqual('2,3,7');
+    });
+  });
+
   describe('poll', () => {
     it('removes the minimum element from an empty min-heap', () => {
       // Arrange
