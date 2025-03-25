@@ -41,8 +41,12 @@ export abstract class Heap<T> implements IHeap<T> {
     this._indexMap.clear();
   }
 
+  toArray() {
+    return this._heap;
+  }
+
   toString(): string {
-    return this._heap.join(',');
+    return this.toArray().toString();
   }
 
   abstract insert(value: T): this;

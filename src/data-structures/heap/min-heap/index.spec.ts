@@ -71,7 +71,7 @@ describe('MinHeap', () => {
 
   describe('fromArray', () => {
     it('creates a min-heap from a array', () => {
-      expect(MinHeap.fromArray([7, 3, 2]).toString()).toEqual('2,3,7');
+      expect(MinHeap.fromArray([7, 3, 2]).toArray()).toEqual([2, 3, 7]);
     });
   });
 
