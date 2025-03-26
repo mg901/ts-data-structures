@@ -5,6 +5,7 @@ export interface IHeap<T> {
   get isEmpty(): boolean;
   get size(): number;
   peek(): Nullable<T>;
+  has(value: T): boolean;
   clear(): void;
   toString(): string;
   insert(value: T): this;
@@ -52,6 +53,14 @@ export abstract class Heap<T> implements IHeap<T> {
     return this.isEmpty ? null : this._heap[0];
   }
 
+  has(value: T) {
+    return this._getIndex(value) > -1;
+  }
+
+  protected _getIndex(value: T) {
+    return this._heap.findIndex((item) => item === value);
+  }
+
   clear() {
     this._heap = [];
   }
@@ -95,10 +104,6 @@ export abstract class Heap<T> implements IHeap<T> {
 
   protected _hasRightChild(index: number) {
     return Heap._getRightChildIndex(index) < this.size;
-  }
-
-  protected _getIndex(value: T) {
-    return this._heap.findIndex((item) => item === value);
   }
 }
 

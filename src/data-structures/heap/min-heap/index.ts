@@ -8,8 +8,11 @@ export class MinHeap<T> extends Heap<T> {
     return minHeap;
   }
 
-  static fromArray<T>(array: T[]) {
-    const minHeap = new MinHeap<T>();
+  static fromArray<T>(
+    array: T[],
+    compareFn?: ConstructorParameters<typeof MinHeap<T>>[0],
+  ) {
+    const minHeap = new MinHeap<T>(compareFn);
 
     minHeap._heap = Array.from(array);
     minHeap.#buildHeap();

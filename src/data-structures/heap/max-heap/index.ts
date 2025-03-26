@@ -8,8 +8,11 @@ export class MaxHeap<T> extends Heap<T> {
     return maxHeap;
   }
 
-  static fromArray<T>(array: T[]) {
-    const maxHeap = new MaxHeap<T>();
+  static fromArray<T>(
+    array: T[],
+    compareFn?: ConstructorParameters<typeof MaxHeap<T>>[0],
+  ) {
+    const maxHeap = new MaxHeap<T>(compareFn);
 
     maxHeap._heap = Array.from(array);
     maxHeap.#buildHeap();
