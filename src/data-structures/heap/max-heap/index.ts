@@ -15,15 +15,20 @@ export class MaxHeap<T> extends Heap<T> {
     const maxHeap = new MaxHeap<T>(compareFn);
 
     maxHeap._heap = Array.from(array);
-    maxHeap.#buildHeap();
+    maxHeap.#heapifyInternal();
 
     return maxHeap;
   }
 
-  #buildHeap() {
+  #heapifyInternal() {
     for (let i = Math.floor(this.size / 2) - 1; i >= 0; i -= 1) {
       this.#heapifyDown(i);
     }
+  }
+
+  heapify(array: T[]) {
+    this._heap = Array.from(array);
+    this.#heapifyInternal();
   }
 
   insert(value: T) {
