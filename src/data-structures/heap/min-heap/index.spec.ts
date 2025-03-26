@@ -8,7 +8,8 @@ describe('MinHeap', () => {
 
     // Assert
     expect(minHeap).toBeDefined();
-    expect(minHeap.toString()).toBe('');
+    expect(minHeap.toArray()).toEqual([]);
+    expect(minHeap.toString()).toEqual('');
     expect(minHeap.size).toBe(0);
     expect(minHeap.isEmpty).toBeTruthy();
   });
@@ -22,7 +23,7 @@ describe('MinHeap', () => {
       minHeap.insert(10);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,10');
+      expect(minHeap.toArray()).toEqual([1, 10]);
       expect(minHeap.peek()).toBe(1);
       expect(minHeap.size).toBe(2);
       expect(minHeap.isEmpty).toBeFalsy();
@@ -31,28 +32,28 @@ describe('MinHeap', () => {
       minHeap.insert(3);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,10,3');
+      expect(minHeap.toArray()).toEqual([1, 10, 3]);
       expect(minHeap.peek()).toBe(1);
 
       // Act
       minHeap.insert(5);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,5,3,10');
+      expect(minHeap.toArray()).toEqual([1, 5, 3, 10]);
       expect(minHeap.peek()).toBe(1);
 
       // Act
       minHeap.insert(8);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,5,3,10,8');
+      expect(minHeap.toArray()).toEqual([1, 5, 3, 10, 8]);
       expect(minHeap.peek()).toBe(1);
 
       // Act
       minHeap.insert(20);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,5,3,10,8,20');
+      expect(minHeap.toArray()).toEqual([1, 5, 3, 10, 8, 20]);
       expect(minHeap.peek()).toBe(1);
     });
   });
@@ -63,7 +64,7 @@ describe('MinHeap', () => {
       const minHeap = MinHeap.of(1);
 
       // Assert
-      expect(minHeap.toString()).toBe('1');
+      expect(minHeap.toArray()).toEqual([1]);
       expect(minHeap.size).toBe(1);
       expect(minHeap.isEmpty).toBeFalsy();
     });
@@ -97,26 +98,26 @@ describe('MinHeap', () => {
       // Arrange
       const minHeap = MinHeap.of(1).insert(5).insert(3).insert(8).insert(2);
 
-      expect(minHeap.toString()).toBe('1,2,3,8,5');
+      expect(minHeap.toArray()).toEqual([1, 2, 3, 8, 5]);
 
       // Act and Assert
       expect(minHeap.poll()).toBe(1);
-      expect(minHeap.toString()).toBe('2,5,3,8');
+      expect(minHeap.toArray()).toEqual([2, 5, 3, 8]);
       expect(minHeap.size).toBe(4);
 
       // Act and Assert
       expect(minHeap.poll()).toBe(2);
-      expect(minHeap.toString()).toBe('3,5,8');
+      expect(minHeap.toArray()).toEqual([3, 5, 8]);
       expect(minHeap.size).toBe(3);
 
       // Act and Assert
       expect(minHeap.poll()).toBe(3);
-      expect(minHeap.toString()).toBe('5,8');
+      expect(minHeap.toArray()).toEqual([5, 8]);
       expect(minHeap.size).toBe(2);
 
       // Act and Assert
       expect(minHeap.poll()).toBe(5);
-      expect(minHeap.toString()).toBe('8');
+      expect(minHeap.toArray()).toEqual([8]);
       expect(minHeap.size).toBe(1);
 
       // Act and Assert
@@ -139,7 +140,7 @@ describe('MinHeap', () => {
 
       // Assert
       expect(deletedValue).toBeNull();
-      expect(minHeap.toString()).toBe('3,5,8,12,7');
+      expect(minHeap.toArray()).toEqual([3, 5, 8, 12, 7]);
       expect(minHeap.size).toBe(5);
     });
 
@@ -149,7 +150,7 @@ describe('MinHeap', () => {
 
       // Assert
       expect(deletedElement).toBe(7);
-      expect(minHeap.toString()).toBe('3,5,8,12');
+      expect(minHeap.toArray()).toEqual([3, 5, 8, 12]);
       expect(minHeap.size).toBe(4);
     });
 
@@ -161,7 +162,7 @@ describe('MinHeap', () => {
 
         // Assert
         expect(deletedValue).toBe(5);
-        expect(minHeap.toString()).toBe('3,7,8,12');
+        expect(minHeap.toArray()).toEqual([3, 7, 8, 12]);
         expect(minHeap.size).toBe(4);
       },
     );
@@ -170,7 +171,7 @@ describe('MinHeap', () => {
       // Act and Assert
       expect(minHeap.delete(3)).toBe(3);
       expect(minHeap.peek()).toBe(5);
-      expect(minHeap.toString()).toBe('5,7,8,12');
+      expect(minHeap.toArray()).toEqual([5, 7, 8, 12]);
     });
   });
 
