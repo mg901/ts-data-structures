@@ -154,20 +154,17 @@ describe('MinHeap', () => {
       expect(minHeap.size).toBe(4);
     });
 
-    it.todo(
-      'deletes the specified value from the heap and returns it if found',
-      () => {
-        // Act
-        const deletedValue = minHeap.delete(5);
+    it('deletes the specified value from the heap and returns it if found', () => {
+      // Act
+      const deletedValue = minHeap.delete(5);
 
-        // Assert
-        expect(deletedValue).toBe(5);
-        expect(minHeap.toArray()).toEqual([3, 7, 8, 12]);
-        expect(minHeap.size).toBe(4);
-      },
-    );
+      // Assert
+      expect(deletedValue).toBe(5);
+      expect(minHeap.toArray()).toEqual([3, 7, 8, 12]);
+      expect(minHeap.size).toBe(4);
+    });
 
-    it.todo('deletes the minimum value from the top of the heap', () => {
+    it('deletes the minimum value from the top of the heap', () => {
       // Act and Assert
       expect(minHeap.delete(3)).toBe(3);
       expect(minHeap.peek()).toBe(5);

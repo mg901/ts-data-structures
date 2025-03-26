@@ -10,6 +10,7 @@ export class MaxHeap<T> extends Heap<T> {
 
   static fromArray<T>(array: T[]) {
     const maxHeap = new MaxHeap<T>();
+
     maxHeap._heap = Array.from(array);
     maxHeap.#buildHeap();
 
@@ -24,20 +25,17 @@ export class MaxHeap<T> extends Heap<T> {
 
   insert(value: T) {
     this._heap.push(value);
-
-    const lastIndex = this.size - 1;
-    this._mapAdd(value, lastIndex);
-    this.#heapifyUp(lastIndex);
+    this.#heapifyUp(this.size - 1);
 
     return this;
   }
 
   #heapifyUp(index: number) {
     while (
-      this._hasParent(index) &&
+      Heap._hasParent(index) &&
       this._compare.greaterThan(this._heap[index], this._getParent(index))
     ) {
-      const parentIndex = this._getParentIndex(index);
+      const parentIndex = Heap._getParentIndex(index);
       this._swap(index, parentIndex);
 
       index = parentIndex;
@@ -56,7 +54,7 @@ export class MaxHeap<T> extends Heap<T> {
           this._heap[largestIndex],
         )
       ) {
-        largestIndex = this._getLeftChildIndex(index);
+        largestIndex = Heap._getLeftChildIndex(index);
       }
 
       // Check right child
@@ -67,7 +65,7 @@ export class MaxHeap<T> extends Heap<T> {
           this._heap[largestIndex],
         )
       ) {
-        largestIndex = this._getRightChildIndex(index);
+        largestIndex = Heap._getRightChildIndex(index);
       }
 
       if (largestIndex === index) break;
@@ -82,34 +80,40 @@ export class MaxHeap<T> extends Heap<T> {
     if (this.isEmpty) return null;
 
     const max = this._heap[0];
-    const last = this._heap.pop()!;
+    const lastIndex = this.size - 1;
 
-    if (!this.isEmpty) {
-      this._heap[0] = last;
-      this.#heapifyDown(0);
+    if (lastIndex > 0) {
+      this._swap(0, lastIndex);
     }
 
-    this._mapDelete(max, 0);
+    this._heap.pop()!;
+
+    if (this.size > 1) {
+      this.#heapifyDown(0);
+    }
 
     return max;
   }
 
   delete(value: T) {
-    if (!this._indexMap.has(value)) return null;
-
     const index = this._getIndex(value);
 
-    this._swap(index, this.size - 1);
-    const deleted = this._heap.pop()!;
-    this._mapDelete(value, index);
+    if (index === -1) return null;
 
-    if (
-      this._hasParent(index) &&
-      this._compare.lessThan(this._heap[index], this._getParent(index))
-    ) {
-      this.#heapifyUp(index);
-    } else {
-      this.#heapifyDown(index);
+    const lastIndex = this.size - 1;
+
+    this._swap(index, lastIndex);
+    const deleted = this._heap.pop()!;
+
+    if (index !== lastIndex) {
+      if (
+        Heap._hasParent(index) &&
+        this._compare.lessThan(this._heap[index], this._getParent(index))
+      ) {
+        this.#heapifyUp(index);
+      } else {
+        this.#heapifyDown(index);
+      }
     }
 
     return deleted;

@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { Comparator, CompareFn } from '@/shared/comparator';
 import { Nullable } from '@/shared/types';
 
@@ -16,9 +15,26 @@ export interface IHeap<T> {
 export abstract class Heap<T> implements IHeap<T> {
   protected _heap: T[] = [];
 
-  protected _indexMap = new Map<T, Set<number>>();
-
   protected _compare: Comparator<T>;
+
+  // parent
+  protected static _hasParent(index: number) {
+    return index > 0;
+  }
+
+  protected static _getParentIndex(childIndex: number) {
+    return Math.floor((childIndex - 1) / 2);
+  }
+
+  // left
+  protected static _getLeftChildIndex(parentIndex: number) {
+    return parentIndex * 2 + 1;
+  }
+
+  // right
+  protected static _getRightChildIndex(parentIndex: number) {
+    return parentIndex * 2 + 2;
+  }
 
   constructor(compareFn?: CompareFn<T>) {
     this._compare = new Comparator(compareFn);
@@ -38,7 +54,6 @@ export abstract class Heap<T> implements IHeap<T> {
 
   clear() {
     this._heap = [];
-    this._indexMap.clear();
   }
 
   toArray() {
@@ -54,84 +69,36 @@ export abstract class Heap<T> implements IHeap<T> {
   abstract delete(value: T): Nullable<T>;
 
   protected _swap(index1: number, index2: number) {
-    this._mapSwap(this._heap[index1], this._heap[index2], index1, index2);
+    if (index1 === index2) return;
+
     swap(this._heap, index1, index2);
   }
 
   // parent
-  protected _getParentIndex(childIndex: number) {
-    return Math.floor((childIndex - 1) / 2);
-  }
-
   protected _getParent(index: number) {
-    return this._heap[this._getParentIndex(index)];
-  }
-
-  protected _hasParent(index: number) {
-    return index > 0;
+    return this._heap[Heap._getParentIndex(index)];
   }
 
   // left
-  protected _getLeftChildIndex(parentIndex: number) {
-    return parentIndex * 2 + 1;
-  }
-
   protected _getLeftChild(index: number) {
-    return this._heap[this._getLeftChildIndex(index)];
+    return this._heap[Heap._getLeftChildIndex(index)];
   }
 
   protected _hasLeftChild(index: number) {
-    return this._getLeftChildIndex(index) < this._heap.length;
+    return Heap._getLeftChildIndex(index) < this.size;
   }
 
   // right
-  protected _getRightChildIndex(parentIndex: number) {
-    return parentIndex * 2 + 2;
-  }
-
   protected _getRightChild(index: number) {
-    return this._heap[this._getRightChildIndex(index)];
+    return this._heap[Heap._getRightChildIndex(index)];
   }
 
   protected _hasRightChild(index: number) {
-    return this._getRightChildIndex(index) < this._heap.length;
-  }
-
-  // indexMap
-
-  protected _mapAdd(value: T, index: number) {
-    if (!this._indexMap.has(value)) {
-      this._indexMap.set(value, new Set());
-    }
-
-    this._indexMap.get(value)!.add(index);
-  }
-
-  protected _mapDelete(value: T, index: number) {
-    if (!this._indexMap.has(value)) return;
-
-    const indexes = this._indexMap.get(value)!;
-    indexes.delete(index);
-
-    if (!this.size) {
-      this._indexMap.delete(value);
-    }
-  }
-
-  protected _mapReplace(value: T, oldIndex: number, newIndex: number) {
-    this._mapDelete(value, oldIndex);
-    this._mapAdd(value, newIndex);
-  }
-
-  protected _mapSwap(value1: T, value2: T, index1: number, index2: number) {
-    this._mapReplace(value1, index1, index2);
-    this._mapReplace(value2, index2, index1);
+    return Heap._getRightChildIndex(index) < this.size;
   }
 
   protected _getIndex(value: T) {
-    const indexes = this._indexMap.get(value);
-
-    return indexes?.values().next().value ?? -1;
+    return this._heap.findIndex((item) => item === value);
   }
 }
 
