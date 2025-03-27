@@ -73,6 +73,12 @@ export abstract class Heap<T> implements IHeap<T> {
     return this.toArray().toString();
   }
 
+  *[Symbol.iterator]() {
+    for (const item of this._heap) {
+      yield item;
+    }
+  }
+
   abstract insert(value: T): this;
   abstract poll(): Nullable<T>;
   abstract delete(value: T): Nullable<T>;

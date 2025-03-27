@@ -10,7 +10,7 @@ export class MaxHeap<T> extends Heap<T> {
 
   insert(value: T) {
     this._heap.push(value);
-    this.#heapifyUp(this.size - 1);
+    this.#heapifyUp(this._heap.length - 1);
 
     return this;
   }
@@ -67,7 +67,7 @@ export class MaxHeap<T> extends Heap<T> {
   poll() {
     if (this.isEmpty) return null;
 
-    if (this.size === 1) return this._heap.pop() ?? null;
+    if (this._heap.length === 1) return this._heap.pop() ?? null;
 
     const max = this._heap[0];
     this._heap[0] = this._heap.pop()!;
@@ -81,11 +81,11 @@ export class MaxHeap<T> extends Heap<T> {
 
     if (index === -1) return null;
 
-    if (index === this.size) {
+    if (index === this._heap.length) {
       return this._heap.pop()!;
     }
 
-    this._swap(index, this.size - 1);
+    this._swap(index, this._heap.length - 1);
     const deleted = this._heap.pop()!;
 
     if (
