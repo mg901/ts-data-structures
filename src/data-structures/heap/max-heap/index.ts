@@ -51,6 +51,8 @@ export class MaxHeap<T> extends Heap<T> {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       let largestIndex = index;
+      const leftChildIndex = Heap._getLeftChildIndex(index);
+      const rightChildIndex = Heap._getRightChildIndex(index);
 
       // Check left child
       if (
@@ -60,7 +62,7 @@ export class MaxHeap<T> extends Heap<T> {
           this._heap[largestIndex],
         )
       ) {
-        largestIndex = Heap._getLeftChildIndex(index);
+        largestIndex = leftChildIndex;
       }
 
       // Check right child
@@ -71,7 +73,7 @@ export class MaxHeap<T> extends Heap<T> {
           this._heap[largestIndex],
         )
       ) {
-        largestIndex = Heap._getRightChildIndex(index);
+        largestIndex = rightChildIndex;
       }
 
       if (largestIndex === index) break;
@@ -85,18 +87,11 @@ export class MaxHeap<T> extends Heap<T> {
   poll() {
     if (this.isEmpty) return null;
 
+    if (this.size === 1) return this._heap.pop() ?? null;
+
     const max = this._heap[0];
-    const lastIndex = this.size - 1;
-
-    if (lastIndex > 0) {
-      this._swap(0, lastIndex);
-    }
-
-    this._heap.pop()!;
-
-    if (this.size > 1) {
-      this.#heapifyDown(0);
-    }
+    this._heap[0] = this._heap.pop()!;
+    this.#heapifyDown(0);
 
     return max;
   }
@@ -106,9 +101,11 @@ export class MaxHeap<T> extends Heap<T> {
 
     if (index === -1) return null;
 
-    const lastIndex = this.size - 1;
+    if (index === this.size) {
+      return this._heap.pop()!;
+    }
 
-    this._swap(index, lastIndex);
+    this._swap(index, this.size - 1);
     const deleted = this._heap.pop()!;
 
     if (
