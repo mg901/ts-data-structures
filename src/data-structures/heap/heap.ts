@@ -8,7 +8,6 @@ export interface IHeap<T> {
   has(value: T): boolean;
   clear(): void;
   toString(): string;
-  heapify(array: T[]): void;
   insert(value: T): this;
   poll(): Nullable<T>;
   delete(value: T): Nullable<T>;
@@ -59,7 +58,7 @@ export abstract class Heap<T> implements IHeap<T> {
   }
 
   protected _getIndex(value: T) {
-    return this._heap.findIndex((item) => item === value);
+    return this._heap.findIndex((item) => this._compare.equal(item, value));
   }
 
   clear() {
@@ -74,7 +73,6 @@ export abstract class Heap<T> implements IHeap<T> {
     return this.toArray().toString();
   }
 
-  abstract heapify(array: T[]): void;
   abstract insert(value: T): this;
   abstract poll(): Nullable<T>;
   abstract delete(value: T): Nullable<T>;

@@ -15,20 +15,17 @@ export class MaxHeap<T> extends Heap<T> {
     const maxHeap = new MaxHeap<T>(compareFn);
 
     maxHeap._heap = Array.from(array);
-    maxHeap.#heapifyInternal();
+    maxHeap.#heapify();
 
     return maxHeap;
   }
 
-  #heapifyInternal() {
+  #heapify() {
+    if (this.size === 1) return;
+
     for (let i = Math.floor(this.size / 2) - 1; i >= 0; i -= 1) {
       this.#heapifyDown(i);
     }
-  }
-
-  heapify(array: T[]) {
-    this._heap = Array.from(array);
-    this.#heapifyInternal();
   }
 
   insert(value: T) {
@@ -51,6 +48,7 @@ export class MaxHeap<T> extends Heap<T> {
   }
 
   #heapifyDown(index: number) {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       let largestIndex = index;
 
@@ -113,15 +111,13 @@ export class MaxHeap<T> extends Heap<T> {
     this._swap(index, lastIndex);
     const deleted = this._heap.pop()!;
 
-    if (index !== lastIndex) {
-      if (
-        Heap._hasParent(index) &&
-        this._compare.lessThan(this._heap[index], this._getParent(index))
-      ) {
-        this.#heapifyUp(index);
-      } else {
-        this.#heapifyDown(index);
-      }
+    if (
+      Heap._hasParent(index) &&
+      this._compare.lessThan(this._heap[index], this._getParent(index))
+    ) {
+      this.#heapifyUp(index);
+    } else {
+      this.#heapifyDown(index);
     }
 
     return deleted;
