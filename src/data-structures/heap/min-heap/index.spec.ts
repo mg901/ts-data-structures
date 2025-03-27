@@ -71,7 +71,7 @@ describe('MinHeap', () => {
   });
 
   describe('poll', () => {
-    it('removes the minimum element from an empty min-heap', () => {
+    it('deletes the top element from an empty min-heap', () => {
       // Arrange
       const minHeap = new MinHeap();
 
@@ -79,7 +79,7 @@ describe('MinHeap', () => {
       expect(minHeap.poll()).toBeNull();
     });
 
-    it('removes the minimum element from an min-heap with a single element', () => {
+    it('deletes the top element from a min-heap with a single element', () => {
       // Arrange
       const minHeap = MinHeap.of(10);
 
@@ -88,7 +88,7 @@ describe('MinHeap', () => {
       expect(minHeap.isEmpty).toBeTruthy();
     });
 
-    it('removes the minimum element from the top and adjust the heap accordingly', () => {
+    it('deletes the top element and adjust the heap accordingly', () => {
       // Arrange
       const minHeap = MinHeap.of(1).insert(5).insert(3).insert(8).insert(2);
 
@@ -128,7 +128,7 @@ describe('MinHeap', () => {
       minHeap = MinHeap.of(12).insert(8).insert(7).insert(3).insert(5);
     });
 
-    it('returns null if the specified value is not found in the heap', () => {
+    it('deletes non-existing element', () => {
       // Act
       const deletedValue = minHeap.delete(4);
 
@@ -138,7 +138,7 @@ describe('MinHeap', () => {
       expect(minHeap.size).toBe(5);
     });
 
-    it('deletes the last element from the heap without heapifying if it is  the last one', () => {
+    it('deletes the last element without heapifying', () => {
       // Act
       const deletedElement = minHeap.delete(7);
 
@@ -148,7 +148,7 @@ describe('MinHeap', () => {
       expect(minHeap.size).toBe(4);
     });
 
-    it('deletes the specified value from the heap and returns it if found', () => {
+    it('deletes element', () => {
       // Act
       const deletedValue = minHeap.delete(5);
 
@@ -158,7 +158,7 @@ describe('MinHeap', () => {
       expect(minHeap.size).toBe(4);
     });
 
-    it('deletes the minimum value from the top of the heap', () => {
+    it('deletes the top element', () => {
       // Act and Assert
       expect(minHeap.delete(3)).toBe(3);
       expect(minHeap.peek()).toBe(5);

@@ -23,17 +23,17 @@ export abstract class Heap<T> implements IHeap<T> {
     return index > 0;
   }
 
-  protected static _getParentIndex(childIndex: number) {
+  protected static _calcParentIndex(childIndex: number) {
     return Math.floor((childIndex - 1) / 2);
   }
 
   // left
-  protected static _getLeftChildIndex(parentIndex: number) {
+  protected static _calcLeftChildIndex(parentIndex: number) {
     return parentIndex * 2 + 1;
   }
 
   // right
-  protected static _getRightChildIndex(parentIndex: number) {
+  protected static _calcRightChildIndex(parentIndex: number) {
     return parentIndex * 2 + 2;
   }
 
@@ -54,10 +54,10 @@ export abstract class Heap<T> implements IHeap<T> {
   }
 
   has(value: T) {
-    return this._getIndex(value) > -1;
+    return this._findIndex(value) > -1;
   }
 
-  protected _getIndex(value: T) {
+  protected _findIndex(value: T) {
     return this._heap.findIndex((item) => this._compare.equal(item, value));
   }
 
@@ -91,25 +91,25 @@ export abstract class Heap<T> implements IHeap<T> {
 
   // parent
   protected _getParent(index: number) {
-    return this._heap[Heap._getParentIndex(index)];
+    return this._heap[Heap._calcParentIndex(index)];
   }
 
   // left
   protected _getLeftChild(index: number) {
-    return this._heap[Heap._getLeftChildIndex(index)];
+    return this._heap[Heap._calcLeftChildIndex(index)];
   }
 
   protected _hasLeftChild(index: number) {
-    return Heap._getLeftChildIndex(index) < this.size;
+    return Heap._calcLeftChildIndex(index) < this.size;
   }
 
   // right
   protected _getRightChild(index: number) {
-    return this._heap[Heap._getRightChildIndex(index)];
+    return this._heap[Heap._calcRightChildIndex(index)];
   }
 
   protected _hasRightChild(index: number) {
-    return Heap._getRightChildIndex(index) < this.size;
+    return Heap._calcRightChildIndex(index) < this.size;
   }
 }
 

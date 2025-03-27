@@ -118,7 +118,7 @@ describe('MaxHeap', () => {
       maxHeap = MaxHeap.of(12).insert(8).insert(7).insert(3).insert(5);
     });
 
-    it('returns null if the specified value is not found in the heap', () => {
+    it('deletes non-existing element', () => {
       // Act
       const deletedValue = maxHeap.delete(4);
 
@@ -128,7 +128,7 @@ describe('MaxHeap', () => {
       expect(maxHeap.size).toBe(5);
     });
 
-    it('deletes the last element from the heap without heapifying if it is the last one', () => {
+    it('deletes the last element without heapifying', () => {
       // Act
       const deletedElement = maxHeap.delete(5);
 
@@ -138,7 +138,7 @@ describe('MaxHeap', () => {
       expect(maxHeap.size).toBe(4);
     });
 
-    it('deletes the specified value from the heap and returns it if found', () => {
+    it('deletes element', () => {
       // Act
       const deletedValue = maxHeap.delete(8);
 
@@ -148,7 +148,7 @@ describe('MaxHeap', () => {
       expect(maxHeap.size).toBe(4);
     });
 
-    it('deletes the maximum value from the top of the heap', () => {
+    it('deletes the top element', () => {
       // Act
       const deletedElement = maxHeap.delete(12);
 
