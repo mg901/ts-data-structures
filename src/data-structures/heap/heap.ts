@@ -66,7 +66,7 @@ export abstract class Heap<T> implements IHeap<T> {
   }
 
   toArray() {
-    return this._heap;
+    return Array.from(this._heap);
   }
 
   toString(): string {

@@ -8,26 +8,6 @@ export class MinHeap<T> extends Heap<T> {
     return minHeap;
   }
 
-  static fromArray<T>(
-    array: T[],
-    compareFn?: ConstructorParameters<typeof MinHeap<T>>[0],
-  ) {
-    const minHeap = new MinHeap<T>(compareFn);
-
-    minHeap._heap = Array.from(array);
-    minHeap.#heapify();
-
-    return minHeap;
-  }
-
-  #heapify() {
-    if (this.size === 1) return;
-
-    for (let i = Math.floor(this.size / 2) - 1; i >= 0; i -= 1) {
-      this.#heapifyDown(i);
-    }
-  }
-
   insert(value: T) {
     this._heap.push(value);
     this.#heapifyUp(this.size - 1);

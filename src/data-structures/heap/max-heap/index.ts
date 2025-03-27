@@ -8,26 +8,6 @@ export class MaxHeap<T> extends Heap<T> {
     return maxHeap;
   }
 
-  static fromArray<T>(
-    array: T[],
-    compareFn?: ConstructorParameters<typeof MaxHeap<T>>[0],
-  ) {
-    const maxHeap = new MaxHeap<T>(compareFn);
-
-    maxHeap._heap = Array.from(array);
-    maxHeap.#heapify();
-
-    return maxHeap;
-  }
-
-  #heapify() {
-    if (this.size === 1) return;
-
-    for (let i = Math.floor(this.size / 2) - 1; i >= 0; i -= 1) {
-      this.#heapifyDown(i);
-    }
-  }
-
   insert(value: T) {
     this._heap.push(value);
     this.#heapifyUp(this.size - 1);

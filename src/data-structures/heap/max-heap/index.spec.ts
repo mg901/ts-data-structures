@@ -63,12 +63,6 @@ describe('MaxHeap', () => {
     });
   });
 
-  describe('fromArray', () => {
-    it('creates a max-heap from a array', () => {
-      expect(MaxHeap.fromArray([2, 3, 7]).toArray()).toEqual([7, 3, 2]);
-    });
-  });
-
   describe('poll', () => {
     it('removes the maximum element from an empty max-heap', () => {
       // Arrange
