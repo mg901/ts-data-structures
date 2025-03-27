@@ -1,16 +1,13 @@
 import { Comparator, CompareFn } from '@/shared/comparator';
 import { type Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
-import { LinkedListNode } from './node';
+import { ListNode } from './list-node';
 
-export { LinkedListNode };
+export { ListNode };
 
 export type Predicate<T = unknown> = (value: T) => boolean;
 
-export interface ILinkedList<
-  T = any,
-  Node extends LinkedListNode<T> = LinkedListNode<T>,
-> {
+export interface ILinkedList<T = any, Node extends ListNode<T> = ListNode<T>> {
   get head(): Nullable<Node>;
   get tail(): Nullable<Node>;
   get size(): number;
@@ -31,9 +28,9 @@ export interface ILinkedList<
   clear(): void;
 }
 
-export abstract class LinkedList<
+export abstract class AbstractLinkedList<
   T = any,
-  Node extends LinkedListNode<T> = LinkedListNode<T>,
+  Node extends ListNode<T> = ListNode<T>,
 > implements ILinkedList<T>
 {
   protected _head: Nullable<Node> = null;

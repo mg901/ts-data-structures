@@ -1,4 +1,4 @@
-import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
+import { LinkedList } from '@/data-structures/linked-lists/linked-list';
 import { type Callback } from '@/shared/node';
 import { Nullable } from '@/shared/types';
 
@@ -14,12 +14,12 @@ interface IQueue<T> {
 }
 
 export class Queue<T = any> implements IQueue<T> {
-  #sll = new SinglyLinkedList<T>();
+  #sll = new LinkedList<T>();
 
   static of<T>(value: T) {
-    const queue = new Queue<T>().enqueue(value);
+    const queue = new Queue<T>();
 
-    return queue;
+    return queue.enqueue(value);
   }
 
   get size() {

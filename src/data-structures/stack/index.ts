@@ -16,9 +16,9 @@ export class Stack<T = any> implements IStack<T> {
   #dll = new DoublyLinkedList<T>();
 
   static of<T>(data: T) {
-    const stack = new Stack<T>().push(data);
+    const stack = new Stack<T>();
 
-    return stack;
+    return stack.push(data);
   }
 
   get isEmpty() {
