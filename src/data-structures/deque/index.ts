@@ -17,9 +17,9 @@ export class Deque<T = any> implements IDeque<T> {
   #dll = new DoublyLinkedList<T>();
 
   static of<T>(data: T) {
-    const deque = new Deque<T>().addRear(data);
+    const deque = new Deque<T>();
 
-    return deque;
+    return deque.addRear(data);
   }
 
   get size() {

@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { LinkedListNode } from './index';
+import { ListNode } from './index';
 
 describe('LinkedListNode', () => {
-  let node: LinkedListNode<number>;
+  let node: ListNode<number>;
 
   // Arrange
   beforeEach(() => {
-    node = new LinkedListNode<number>(1);
+    node = new ListNode<number>(1);
   });
 
   it('creates initial state correctly', () => {
@@ -18,7 +18,7 @@ describe('LinkedListNode', () => {
 
   it('links nodes together', () => {
     // Act
-    const node0 = new LinkedListNode<number>(0, node);
+    const node0 = new ListNode<number>(0, node);
 
     // Assert
     expect(node0.next).toBeDefined();

@@ -18,7 +18,7 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
   }
 
   insert(data: T): BinarySearchTreeNode<T> {
-    if (this.#compare.equal(this.data, null)) {
+    if (this.data === null) {
       this.data = data;
 
       return this;

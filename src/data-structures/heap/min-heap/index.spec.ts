@@ -8,20 +8,22 @@ describe('MinHeap', () => {
 
     // Assert
     expect(minHeap).toBeDefined();
-    expect(minHeap.toString()).toBe('');
+    expect(minHeap.toArray()).toEqual([]);
+    expect(minHeap.toString()).toEqual('');
     expect(minHeap.size).toBe(0);
     expect(minHeap.isEmpty).toBeTruthy();
   });
 
   describe('insert', () => {
     it('inserts items into the heap and ensures heap property is maintained', () => {
+      // Arrange
       const minHeap = MinHeap.of(1);
 
       // Act
       minHeap.insert(10);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,10');
+      expect(minHeap.toArray()).toEqual([1, 10]);
       expect(minHeap.peek()).toBe(1);
       expect(minHeap.size).toBe(2);
       expect(minHeap.isEmpty).toBeFalsy();
@@ -30,28 +32,28 @@ describe('MinHeap', () => {
       minHeap.insert(3);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,10,3');
+      expect(minHeap.toArray()).toEqual([1, 10, 3]);
       expect(minHeap.peek()).toBe(1);
 
       // Act
       minHeap.insert(5);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,5,3,10');
+      expect(minHeap.toArray()).toEqual([1, 5, 3, 10]);
       expect(minHeap.peek()).toBe(1);
 
-      // // Act
+      // Act
       minHeap.insert(8);
 
       // Assert
-      expect(minHeap.toString()).toBe('1,5,3,10,8');
+      expect(minHeap.toArray()).toEqual([1, 5, 3, 10, 8]);
       expect(minHeap.peek()).toBe(1);
 
-      // // // Act
+      // Act
       minHeap.insert(20);
 
-      // // Assert
-      expect(minHeap.toString()).toBe('1,5,3,10,8,20');
+      // Assert
+      expect(minHeap.toArray()).toEqual([1, 5, 3, 10, 8, 20]);
       expect(minHeap.peek()).toBe(1);
     });
   });
@@ -62,101 +64,105 @@ describe('MinHeap', () => {
       const minHeap = MinHeap.of(1);
 
       // Assert
-      expect(minHeap.toString()).toBe('1');
+      expect(minHeap.toArray()).toEqual([1]);
       expect(minHeap.size).toBe(1);
       expect(minHeap.isEmpty).toBeFalsy();
     });
   });
 
   describe('poll', () => {
-    it('removes the minimum element from an empty max-heap', () => {
+    it('deletes the top element from an empty min-heap', () => {
       // Arrange
-      const maxHeap = new MinHeap();
+      const minHeap = new MinHeap();
+
       // Act and Assert
-      expect(maxHeap.poll()).toBeNull();
+      expect(minHeap.poll()).toBeNull();
     });
 
-    it('removes the minimum element from an max-heap with a single element', () => {
-      const maxHeap = MinHeap.of(10);
+    it('deletes the top element from a min-heap with a single element', () => {
+      // Arrange
+      const minHeap = MinHeap.of(10);
+
       // Act and Assert
-      expect(maxHeap.poll()).toBe(10);
-      expect(maxHeap.isEmpty).toBeTruthy();
+      expect(minHeap.poll()).toBe(10);
+      expect(minHeap.isEmpty).toBeTruthy();
     });
 
-    it('removes the minimum element from the top and adjust the heap accordingly', () => {
+    it('deletes the top element and adjust the heap accordingly', () => {
       // Arrange
-      const maxHeap = MinHeap.of(1).insert(5).insert(3).insert(8).insert(2);
-      expect(maxHeap.toString()).toBe('1,2,3,8,5');
+      const minHeap = MinHeap.of(1).insert(5).insert(3).insert(8).insert(2);
+
+      expect(minHeap.toArray()).toEqual([1, 2, 3, 8, 5]);
 
       // Act and Assert
-      expect(maxHeap.poll()).toBe(1);
-      expect(maxHeap.toString()).toBe('2,5,3,8');
-      expect(maxHeap.size).toBe(4);
+      expect(minHeap.poll()).toBe(1);
+      expect(minHeap.toArray()).toEqual([2, 5, 3, 8]);
+      expect(minHeap.size).toBe(4);
 
       // Act and Assert
-      expect(maxHeap.poll()).toBe(2);
-      expect(maxHeap.toString()).toBe('3,5,8');
-      expect(maxHeap.size).toBe(3);
+      expect(minHeap.poll()).toBe(2);
+      expect(minHeap.toArray()).toEqual([3, 5, 8]);
+      expect(minHeap.size).toBe(3);
 
       // Act and Assert
-      expect(maxHeap.poll()).toBe(3);
-      expect(maxHeap.toString()).toBe('5,8');
-      expect(maxHeap.size).toBe(2);
+      expect(minHeap.poll()).toBe(3);
+      expect(minHeap.toArray()).toEqual([5, 8]);
+      expect(minHeap.size).toBe(2);
 
-      // // Act and Assert
-      expect(maxHeap.poll()).toBe(5);
-      expect(maxHeap.toString()).toBe('8');
-      expect(maxHeap.size).toBe(1);
+      // Act and Assert
+      expect(minHeap.poll()).toBe(5);
+      expect(minHeap.toArray()).toEqual([8]);
+      expect(minHeap.size).toBe(1);
 
-      // // Act and Assert
-      expect(maxHeap.poll()).toBe(8);
-      expect(maxHeap.isEmpty).toBeTruthy();
+      // Act and Assert
+      expect(minHeap.poll()).toBe(8);
+      expect(minHeap.isEmpty).toBeTruthy();
     });
   });
 
   describe('delete', () => {
     // Arrange
-    let maxHeap: MinHeap<number>;
+    let minHeap: MinHeap<number>;
 
     beforeEach(() => {
-      maxHeap = MinHeap.of(12).insert(8).insert(7).insert(3).insert(5);
+      minHeap = MinHeap.of(12).insert(8).insert(7).insert(3).insert(5);
     });
 
-    it('returns null if the specified value is not found in the heap', () => {
+    it('deletes non-existing element', () => {
       // Act
-      const deletedValue = maxHeap.delete(4);
+      const deletedValue = minHeap.delete((x) => x === 4);
 
       // Assert
       expect(deletedValue).toBeNull();
-      expect(maxHeap.toString()).toBe('3,5,8,12,7');
-      expect(maxHeap.size).toBe(5);
+      expect(minHeap.toArray()).toEqual([3, 5, 8, 12, 7]);
+      expect(minHeap.size).toBe(5);
     });
 
-    it('deletes the last element from the heap without heapifying if it is  the last one', () => {
+    it('deletes the last element without heapifying', () => {
       // Act
-      const deletedElement = maxHeap.delete(7);
+      const deletedElement = minHeap.delete((x) => x === 7);
 
       // Assert
       expect(deletedElement).toBe(7);
-      expect(maxHeap.toString()).toBe('3,5,8,12');
-      expect(maxHeap.size).toBe(4);
+      expect(minHeap.toArray()).toEqual([3, 5, 8, 12]);
+      expect(minHeap.size).toBe(4);
     });
 
-    it('deletes the specified value from the heap and returns it if found', () => {
+    it('deletes element', () => {
       // Act
-      const deletedValue = maxHeap.delete(5);
+      const deletedValue = minHeap.delete((x) => x === 5);
 
       // Assert
       expect(deletedValue).toBe(5);
-      expect(maxHeap.toString()).toBe('3,7,8,12');
-      expect(maxHeap.size).toBe(4);
+      expect(minHeap.toArray()).toEqual([3, 7, 8, 12]);
+      expect(minHeap.size).toBe(4);
     });
 
-    it('deletes the minimum value from the top of the heap', () => {
+    it('deletes the top element', () => {
       // Act and Assert
-      expect(maxHeap.delete(3)).toBe(3);
-      expect(maxHeap.peek()).toBe(5);
-      expect(maxHeap.toString()).toBe('5,7,8,12');
+      expect(minHeap.delete((x) => x === 3)).toBe(3);
+      expect(minHeap.peek()).toBe(5);
+      expect(minHeap.toArray()).toEqual([5, 7, 8, 12]);
     });
   });
 

@@ -1,45 +1,44 @@
 import isEqual from 'lodash.isequal';
 
-export type CompareFn<T> = (a: T, b: T) => -1 | 0 | 1;
+export type CompareFn<T> = (a: T, b: T) => number;
 
 export class Comparator<T = any> {
   #compare: CompareFn<T>;
 
-  #isEqual = isEqual;
+  #isEqual: (a: T, b: T) => boolean = isEqual;
 
-  static defaultCompareFunction<T = any>(a: T, b: T) {
+  static defaultCompareFunction<T = keyof any>(a: T, b: T) {
     if (a === b) return 0;
 
     return a < b ? -1 : 1;
   }
 
-  constructor(compareFunction?: CompareFn<T>) {
-    this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
+  constructor(compareFn?: CompareFn<T>) {
+    this.#compare = compareFn ?? Comparator.defaultCompareFunction;
   }
 
-  equal(a: any, b: any) {
+  equal(a: T, b: T): boolean {
     return this.#isEqual(a, b);
   }
 
-  lessThan(a: any, b: any) {
+  lessThan(a: T, b: T): boolean {
     return this.#compare(a, b) < 0;
   }
 
-  greaterThan(a: any, b: any) {
+  greaterThan(a: T, b: T): boolean {
     return this.#compare(a, b) > 0;
   }
 
-  lessThanOrEqual(a: any, b: any) {
+  lessThanOrEqual(a: T, b: T): boolean {
     return this.lessThan(a, b) || this.equal(a, b);
   }
 
-  greaterThanOrEqual(a: any, b: any) {
+  greaterThanOrEqual(a: T, b: T): boolean {
     return this.greaterThan(a, b) || this.equal(a, b);
   }
 
-  reverse() {
+  reverse(): void {
     const compareOriginal = this.#compare;
-
     this.#compare = (a, b) => compareOriginal(b, a);
   }
 }

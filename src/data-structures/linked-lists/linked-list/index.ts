@@ -1,16 +1,19 @@
 import {
-  LinkedList,
-  LinkedListNode,
+  AbstractLinkedList,
+  ListNode,
   type Predicate,
-} from '@/shared/linked-list/linked-list';
+} from '@/shared/abstract-linked-list/abstract-linked-list';
 import { type Nullable } from '@/shared/types';
 
-export class SinglyLinkedList<
-  T = any,
-  Node extends LinkedListNode<T> = LinkedListNode<T>,
-> extends LinkedList<T> {
+export class LinkedList<T = any> extends AbstractLinkedList<T> {
+  static of<T>(value: T) {
+    const linkedList = new LinkedList<T>();
+
+    return linkedList.append(value);
+  }
+
   append(value: T) {
-    const newNode = new LinkedListNode(value);
+    const newNode = new ListNode(value);
 
     if (this.isEmpty) {
       this._initializeList(newNode);
@@ -33,7 +36,7 @@ export class SinglyLinkedList<
   }
 
   prepend(value: T) {
-    const newNode = new LinkedListNode(value);
+    const newNode = new ListNode(value);
 
     if (this.isEmpty) {
       this._initializeList(newNode);
@@ -59,7 +62,7 @@ export class SinglyLinkedList<
     } else {
       // In the middle.
       const prevNode = this._findNodeByIndex(index - 1);
-      const newNode = new LinkedListNode(value);
+      const newNode = new ListNode(value);
 
       newNode.next = prevNode.next;
       prevNode.next = newNode;
@@ -70,22 +73,22 @@ export class SinglyLinkedList<
     return this;
   }
 
-  deleteByValue(value: T): Nullable<Node>;
-  deleteByValue(predicate: Predicate<T>): Nullable<Node>;
+  deleteByValue(value: T): Nullable<ListNode>;
+  deleteByValue(predicate: Predicate<T>): Nullable<ListNode>;
   deleteByValue(arg: T | Predicate<T>) {
     if (this.isEmpty) return null;
 
-    let deletedNode: Nullable<Node> = null;
-    let prevNode: Nullable<Node> = null;
+    let deletedNode: Nullable<ListNode> = null;
+    let prevNode: Nullable<ListNode> = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
-        deletedNode = currentNode as Node;
+        deletedNode = currentNode as ListNode;
 
         break;
       }
 
-      prevNode = currentNode as Node;
+      prevNode = currentNode as ListNode;
     }
 
     if (!deletedNode) return null;
@@ -131,11 +134,11 @@ export class SinglyLinkedList<
     // If only one node.
     if (this._head.next) {
       // // If there are multiple nodes.
-      let prevNode: Nullable<Node> = null;
+      let prevNode: Nullable<ListNode> = null;
 
       for (const node of this) {
         if (node.next) {
-          prevNode = node as Node;
+          prevNode = node as ListNode;
         } else {
           prevNode!.next = null;
           this._tail = prevNode;
@@ -156,7 +159,7 @@ export class SinglyLinkedList<
       return this;
     }
 
-    let current = this._head as Nullable<Node>;
+    let current = this._head as Nullable<ListNode>;
     let prev = null;
 
     while (current) {
@@ -164,7 +167,7 @@ export class SinglyLinkedList<
       current.next = prev;
       prev = current;
 
-      current = nextNode as Node;
+      current = nextNode as ListNode;
     }
 
     this._tail = this._head;

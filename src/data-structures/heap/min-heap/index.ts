@@ -1,112 +1,92 @@
-import { Comparator, CompareFn } from '@/shared/comparator';
 import { Heap } from '../heap';
 
-export class MinHeap<T = any> extends Heap<T> {
+export class MinHeap<T> extends Heap<T> {
   static of<T>(value: T) {
-    const minHeap = new MinHeap();
+    const minHeap = new MinHeap<T>();
     minHeap.insert(value);
 
     return minHeap;
   }
 
-  #compare: Comparator<T>;
-
-  constructor(compareFn?: CompareFn<T>) {
-    super();
-
-    this.#compare = new Comparator(compareFn);
-  }
-
-  insert(value: T): this {
+  insert(value: T) {
     this._heap.push(value);
-    this.#heapifyUp();
+    this.#heapifyUp(this.size - 1);
 
     return this;
   }
 
-  #heapifyUp(startIndex = this.size - 1) {
-    let currentIndex = startIndex;
+  #heapifyUp(index: number) {
+    while (
+      index > 0 &&
+      this._compare.lessThan(this._heap[index], this._getParent(index))
+    ) {
+      const parentIndex = this._calcParentIndex(index);
+      this._swap(index, parentIndex);
 
-    while (currentIndex > 0) {
-      const parentIndex = this._getParentIndex(currentIndex);
-      const parentElement = this._heap[parentIndex];
-      const currentElement = this._heap[currentIndex];
-
-      if (this.#compare.lessThan(parentElement, currentElement)) break;
-
-      this._swapByIndex(parentIndex, currentIndex);
-      currentIndex = parentIndex;
+      index = parentIndex;
     }
   }
 
   poll() {
-    if (this._heap.length === 0) return null;
-    if (this._heap.length === 1) {
+    const { length } = this._heap;
+
+    if (length === 0) return null;
+    if (length === 1) return this._heap.pop() ?? null;
+
+    const min = this._heap[0];
+    this._heap[0] = this._heap.pop()!;
+    this.#heapifyDown();
+
+    return min;
+  }
+
+  #heapifyDown(index: number = 0) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      let smallest = index;
+
+      // Check left child
+      if (
+        this._hasLeftChild(index) &&
+        this._compare.lessThan(this._getLeftChild(index), this._heap[smallest])
+      ) {
+        smallest = this._calcLeftChildIndex(index);
+      }
+
+      // Check right child
+      if (
+        this._hasRightChild(index) &&
+        this._compare.lessThan(this._getRightChild(index), this._heap[smallest])
+      ) {
+        smallest = this._calcRightChildIndex(index);
+      }
+
+      if (smallest === index) break;
+
+      this._swap(smallest, index);
+
+      index = smallest;
+    }
+  }
+
+  delete(predicate: (value: T, index: number, obj: T[]) => unknown) {
+    const index = this._findIndex(predicate);
+
+    if (index === -1) return null;
+
+    if (index === this.size - 1) {
       return this._heap.pop()!;
     }
 
-    const minElementIndex = 0;
-    const minElement = this._heap[minElementIndex];
-    this._heap[minElementIndex] = this._heap.pop()!;
+    this._swap(index, this.size - 1);
+    const deleted = this._heap.pop()!;
 
-    this.#heapifyDown();
-
-    return minElement;
-  }
-
-  #heapifyDown(startIndex = 0) {
-    let currentIndex = startIndex;
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const leftChildIndex = this._getLeftChildIndex(currentIndex);
-      const rightChildIndex = this._getRightChildIndex(currentIndex);
-      let minIndex = currentIndex;
-
-      if (
-        leftChildIndex < this._heap.length &&
-        this._heap[leftChildIndex] < this._heap[minIndex]
-      ) {
-        minIndex = leftChildIndex;
-      }
-
-      if (
-        rightChildIndex < this._heap.length &&
-        this._heap[rightChildIndex] < this._heap[minIndex]
-      ) {
-        minIndex = rightChildIndex;
-      }
-
-      if (minIndex === currentIndex) break;
-
-      this._swapByIndex(currentIndex, minIndex);
-      currentIndex = minIndex;
-    }
-  }
-
-  delete(value: T) {
-    const indexToDelete = this._heap.findIndex((item) => item === value);
-
-    if (indexToDelete === -1) return null;
-
-    const deletedValue = this._heap[indexToDelete];
-    const lastElement = this._heap.pop()!;
-
-    // If the deleted element is the last element, no need to heapify
-    if (indexToDelete === this.size) return deletedValue;
-
-    // Replace the deleted element with the last element
-    this._heap[indexToDelete] = lastElement;
-
-    // Heapify up and down to maintain the heap property
-    const parentElement = this._getParent(indexToDelete);
-    if (parentElement !== null && lastElement > parentElement) {
-      this.#heapifyUp(indexToDelete);
+    if (index > 0) {
+      this.#heapifyUp(index);
     } else {
-      // Heapify down after deleting the max element from the top.
-      this.#heapifyDown(indexToDelete);
+      this.#heapifyDown();
     }
 
-    return deletedValue;
+    return deleted;
   }
 }

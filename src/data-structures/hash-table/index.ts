@@ -1,4 +1,4 @@
-import { SinglyLinkedList } from '@/data-structures/linked-lists/singly-linked-list';
+import { LinkedList } from '@/data-structures/linked-lists/linked-list';
 
 interface IHashTable<Key, Value> {
   get size(): number;
@@ -124,7 +124,7 @@ function createBuckets<T extends { key: PropertyKey; value: any }>(
   const buckets = [];
 
   for (let i = 0; i < capacity; i += 1) {
-    buckets.push(new SinglyLinkedList<T>());
+    buckets.push(new LinkedList<T>());
   }
 
   return buckets;
