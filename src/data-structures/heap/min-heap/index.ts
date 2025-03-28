@@ -17,10 +17,10 @@ export class MinHeap<T> extends Heap<T> {
 
   #heapifyUp(index: number) {
     while (
-      Heap._hasParent(index) &&
+      index > 0 &&
       this._compare.lessThan(this._heap[index], this._getParent(index))
     ) {
-      const parentIndex = Heap._calcParentIndex(index);
+      const parentIndex = this._calcParentIndex(index);
       this._swap(index, parentIndex);
 
       index = parentIndex;
@@ -35,12 +35,12 @@ export class MinHeap<T> extends Heap<T> {
 
     const min = this._heap[0];
     this._heap[0] = this._heap.pop()!;
-    this.#heapifyDown(0);
+    this.#heapifyDown();
 
     return min;
   }
 
-  #heapifyDown(index: number) {
+  #heapifyDown(index: number = 0) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       let smallest = index;
@@ -50,7 +50,7 @@ export class MinHeap<T> extends Heap<T> {
         this._hasLeftChild(index) &&
         this._compare.lessThan(this._getLeftChild(index), this._heap[smallest])
       ) {
-        smallest = Heap._calcLeftChildIndex(index);
+        smallest = this._calcLeftChildIndex(index);
       }
 
       // Check right child
@@ -58,7 +58,7 @@ export class MinHeap<T> extends Heap<T> {
         this._hasRightChild(index) &&
         this._compare.lessThan(this._getRightChild(index), this._heap[smallest])
       ) {
-        smallest = Heap._calcRightChildIndex(index);
+        smallest = this._calcRightChildIndex(index);
       }
 
       if (smallest === index) break;
@@ -69,8 +69,8 @@ export class MinHeap<T> extends Heap<T> {
     }
   }
 
-  delete(value: T) {
-    const index = this._findIndex(value);
+  delete(predicate: (value: T, index: number, obj: T[]) => unknown) {
+    const index = this._findIndex(predicate);
 
     if (index === -1) return null;
 
@@ -81,10 +81,10 @@ export class MinHeap<T> extends Heap<T> {
     this._swap(index, this.size - 1);
     const deleted = this._heap.pop()!;
 
-    if (index !== 0) {
+    if (index > 0) {
       this.#heapifyUp(index);
     } else {
-      this.#heapifyDown(index);
+      this.#heapifyDown();
     }
 
     return deleted;

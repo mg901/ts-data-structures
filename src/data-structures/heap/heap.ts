@@ -5,37 +5,20 @@ export interface IHeap<T> {
   get isEmpty(): boolean;
   get size(): number;
   peek(): Nullable<T>;
-  has(value: T): boolean;
+  has(predicate: (value: T, index: number, obj: T[]) => unknown): boolean;
   clear(): void;
   toString(): string;
   insert(value: T): this;
   poll(): Nullable<T>;
-  delete(value: T): Nullable<T>;
+  delete(
+    predicate: (value: T, index: number, obj: T[]) => unknown,
+  ): Nullable<T>;
 }
 
 export abstract class Heap<T> implements IHeap<T> {
   protected _heap: T[] = [];
 
   protected _compare: Comparator<T>;
-
-  // parent
-  protected static _hasParent(index: number) {
-    return index > 0;
-  }
-
-  protected static _calcParentIndex(childIndex: number) {
-    return Math.floor((childIndex - 1) / 2);
-  }
-
-  // left
-  protected static _calcLeftChildIndex(parentIndex: number) {
-    return parentIndex * 2 + 1;
-  }
-
-  // right
-  protected static _calcRightChildIndex(parentIndex: number) {
-    return parentIndex * 2 + 2;
-  }
 
   constructor(compareFn?: CompareFn<T>) {
     this._compare = new Comparator(compareFn);
@@ -53,12 +36,14 @@ export abstract class Heap<T> implements IHeap<T> {
     return this.isEmpty ? null : this._heap[0];
   }
 
-  has(value: T) {
-    return this._findIndex(value) > -1;
+  has(predicate: (value: T, index: number, obj: T[]) => unknown) {
+    return this._findIndex(predicate) > -1;
   }
 
-  protected _findIndex(value: T) {
-    return this._heap.findIndex((item) => this._compare.equal(item, value));
+  protected _findIndex(
+    predicate: (value: T, index: number, obj: T[]) => unknown,
+  ) {
+    return this._heap.findIndex(predicate);
   }
 
   clear() {
@@ -81,7 +66,9 @@ export abstract class Heap<T> implements IHeap<T> {
 
   abstract insert(value: T): this;
   abstract poll(): Nullable<T>;
-  abstract delete(value: T): Nullable<T>;
+  abstract delete(
+    predicate: (value: T, index: number, obj: T[]) => unknown,
+  ): Nullable<T>;
 
   protected _swap(index1: number, index2: number) {
     if (index1 === index2) return;
@@ -91,25 +78,37 @@ export abstract class Heap<T> implements IHeap<T> {
 
   // parent
   protected _getParent(index: number) {
-    return this._heap[Heap._calcParentIndex(index)];
+    return this._heap[this._calcParentIndex(index)];
+  }
+
+  protected _calcParentIndex(childIndex: number) {
+    return Math.floor((childIndex - 1) / 2);
   }
 
   // left
   protected _getLeftChild(index: number) {
-    return this._heap[Heap._calcLeftChildIndex(index)];
+    return this._heap[this._calcLeftChildIndex(index)];
   }
 
   protected _hasLeftChild(index: number) {
-    return Heap._calcLeftChildIndex(index) < this.size;
+    return this._calcLeftChildIndex(index) < this.size;
+  }
+
+  protected _calcLeftChildIndex(parentIndex: number) {
+    return parentIndex * 2 + 1;
   }
 
   // right
   protected _getRightChild(index: number) {
-    return this._heap[Heap._calcRightChildIndex(index)];
+    return this._heap[this._calcRightChildIndex(index)];
   }
 
   protected _hasRightChild(index: number) {
-    return Heap._calcRightChildIndex(index) < this.size;
+    return this._calcRightChildIndex(index) < this.size;
+  }
+
+  protected _calcRightChildIndex(parentIndex: number) {
+    return parentIndex * 2 + 2;
   }
 }
 

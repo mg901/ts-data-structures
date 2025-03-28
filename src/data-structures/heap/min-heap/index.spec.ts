@@ -130,7 +130,7 @@ describe('MinHeap', () => {
 
     it('deletes non-existing element', () => {
       // Act
-      const deletedValue = minHeap.delete(4);
+      const deletedValue = minHeap.delete((x) => x === 4);
 
       // Assert
       expect(deletedValue).toBeNull();
@@ -140,7 +140,7 @@ describe('MinHeap', () => {
 
     it('deletes the last element without heapifying', () => {
       // Act
-      const deletedElement = minHeap.delete(7);
+      const deletedElement = minHeap.delete((x) => x === 7);
 
       // Assert
       expect(deletedElement).toBe(7);
@@ -150,7 +150,7 @@ describe('MinHeap', () => {
 
     it('deletes element', () => {
       // Act
-      const deletedValue = minHeap.delete(5);
+      const deletedValue = minHeap.delete((x) => x === 5);
 
       // Assert
       expect(deletedValue).toBe(5);
@@ -160,7 +160,7 @@ describe('MinHeap', () => {
 
     it('deletes the top element', () => {
       // Act and Assert
-      expect(minHeap.delete(3)).toBe(3);
+      expect(minHeap.delete((x) => x === 3)).toBe(3);
       expect(minHeap.peek()).toBe(5);
       expect(minHeap.toArray()).toEqual([5, 7, 8, 12]);
     });

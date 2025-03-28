@@ -13,8 +13,8 @@ export class Comparator<T = any> {
     return a < b ? -1 : 1;
   }
 
-  constructor(compareFunction?: CompareFn<T>) {
-    this.#compare = compareFunction ?? Comparator.defaultCompareFunction;
+  constructor(compareFn?: CompareFn<T>) {
+    this.#compare = compareFn ?? Comparator.defaultCompareFunction;
   }
 
   equal(a: T, b: T): boolean {

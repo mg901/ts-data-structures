@@ -17,10 +17,10 @@ export class MaxHeap<T> extends Heap<T> {
 
   #heapifyUp(index: number) {
     while (
-      Heap._hasParent(index) &&
+      index > 0 &&
       this._compare.greaterThan(this._heap[index], this._getParent(index))
     ) {
-      const parentIndex = Heap._calcParentIndex(index);
+      const parentIndex = this._calcParentIndex(index);
       this._swap(index, parentIndex);
 
       index = parentIndex;
@@ -35,12 +35,12 @@ export class MaxHeap<T> extends Heap<T> {
 
     const max = this._heap[0];
     this._heap[0] = this._heap.pop()!;
-    this.#heapifyDown(0);
+    this.#heapifyDown();
 
     return max;
   }
 
-  #heapifyDown(index: number) {
+  #heapifyDown(index: number = 0) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       let largest = index;
@@ -53,7 +53,7 @@ export class MaxHeap<T> extends Heap<T> {
           this._heap[largest],
         )
       ) {
-        largest = Heap._calcLeftChildIndex(index);
+        largest = this._calcLeftChildIndex(index);
       }
 
       // Check right child
@@ -64,7 +64,7 @@ export class MaxHeap<T> extends Heap<T> {
           this._heap[largest],
         )
       ) {
-        largest = Heap._calcRightChildIndex(index);
+        largest = this._calcRightChildIndex(index);
       }
 
       if (largest === index) break;
@@ -75,8 +75,8 @@ export class MaxHeap<T> extends Heap<T> {
     }
   }
 
-  delete(value: T) {
-    const index = this._findIndex(value);
+  delete(predicate: (value: T, index: number, obj: T[]) => unknown) {
+    const index = this._findIndex(predicate);
 
     if (index === -1) return null;
 
@@ -87,10 +87,10 @@ export class MaxHeap<T> extends Heap<T> {
     this._swap(index, this.size - 1);
     const deleted = this._heap.pop()!;
 
-    if (index !== 0) {
+    if (index > 0) {
       this.#heapifyUp(index);
     } else {
-      this.#heapifyDown(index);
+      this.#heapifyDown();
     }
 
     return deleted;

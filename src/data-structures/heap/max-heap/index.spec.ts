@@ -120,7 +120,7 @@ describe('MaxHeap', () => {
 
     it('deletes non-existing element', () => {
       // Act
-      const deletedValue = maxHeap.delete(4);
+      const deletedValue = maxHeap.delete((x) => x === 4);
 
       // Assert
       expect(deletedValue).toBeNull();
@@ -130,7 +130,7 @@ describe('MaxHeap', () => {
 
     it('deletes the last element without heapifying', () => {
       // Act
-      const deletedElement = maxHeap.delete(5);
+      const deletedElement = maxHeap.delete((x) => x === 5);
 
       // Assert
       expect(deletedElement).toBe(5);
@@ -140,7 +140,7 @@ describe('MaxHeap', () => {
 
     it('deletes element', () => {
       // Act
-      const deletedValue = maxHeap.delete(8);
+      const deletedValue = maxHeap.delete((x) => x === 8);
 
       // Assert
       expect(deletedValue).toBe(8);
@@ -150,7 +150,7 @@ describe('MaxHeap', () => {
 
     it('deletes the top element', () => {
       // Act
-      const deletedElement = maxHeap.delete(12);
+      const deletedElement = maxHeap.delete((x) => x === 12);
 
       // Assert
       expect(deletedElement).toBe(12);
