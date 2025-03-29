@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { MaxHeap } from './index';
 
 describe('MaxHeap', () => {
-  it('creates an empty MaxHeap', () => {
+  it('creates an empty heap', () => {
     // Act
     const maxHeap = new MaxHeap();
     // Assert
@@ -14,7 +14,7 @@ describe('MaxHeap', () => {
   });
 
   describe('insert', () => {
-    it('inserts items into the heap and ensures heap property is maintained', () => {
+    it('adds items to the heap', () => {
       // Arrange
       const maxHeap = MaxHeap.of(1);
 
@@ -52,7 +52,7 @@ describe('MaxHeap', () => {
   });
 
   describe('of', () => {
-    it('creates a new heap with a single element', () => {
+    it('creates the new heap with a single element', () => {
       // Act
       const newMaxHeap = MaxHeap.of(1);
 
@@ -64,7 +64,7 @@ describe('MaxHeap', () => {
   });
 
   describe('poll', () => {
-    it('removes the maximum element from an empty max-heap', () => {
+    it('tries to remove a non-existing element', () => {
       // Arrange
       const maxHeap = new MaxHeap();
 
@@ -72,7 +72,7 @@ describe('MaxHeap', () => {
       expect(maxHeap.poll()).toBeNull();
     });
 
-    it('removes the maximum element from a max-heap with a single element', () => {
+    it('removes the top element from the heap with a single element', () => {
       const maxHeap = MaxHeap.of(10);
 
       // Act and Assert
@@ -80,7 +80,7 @@ describe('MaxHeap', () => {
       expect(maxHeap.isEmpty).toBeTruthy();
     });
 
-    it('removes the maximum element from the top and adjust the heap accordingly', () => {
+    it('removes the top element from the heap', () => {
       // Arrange
       const maxHeap = MaxHeap.of(1).insert(5).insert(3).insert(8).insert(12);
 
@@ -110,7 +110,7 @@ describe('MaxHeap', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('remove', () => {
     // Arrange
     let maxHeap: MaxHeap<number>;
 
@@ -118,19 +118,19 @@ describe('MaxHeap', () => {
       maxHeap = MaxHeap.of(12).insert(8).insert(7).insert(3).insert(5);
     });
 
-    it('deletes non-existing element', () => {
+    it('tries to remove a non-existing element', () => {
       // Act
-      const deletedValue = maxHeap.delete((x) => x === 4);
+      const removedValue = maxHeap.remove((x) => x === 4);
 
       // Assert
-      expect(deletedValue).toBeNull();
+      expect(removedValue).toBeNull();
       expect(maxHeap.toArray()).toEqual([12, 8, 7, 3, 5]);
       expect(maxHeap.size).toBe(5);
     });
 
-    it('deletes the last element without heapifying', () => {
+    it('deletes the last element', () => {
       // Act
-      const deletedElement = maxHeap.delete((x) => x === 5);
+      const deletedElement = maxHeap.remove((x) => x === 5);
 
       // Assert
       expect(deletedElement).toBe(5);
@@ -140,17 +140,17 @@ describe('MaxHeap', () => {
 
     it('deletes element', () => {
       // Act
-      const deletedValue = maxHeap.delete((x) => x === 8);
+      const removedValue = maxHeap.remove((x) => x === 8);
 
       // Assert
-      expect(deletedValue).toBe(8);
+      expect(removedValue).toBe(8);
       expect(maxHeap.toArray()).toEqual([12, 5, 7, 3]);
       expect(maxHeap.size).toBe(4);
     });
 
     it('deletes the top element', () => {
       // Act
-      const deletedElement = maxHeap.delete((x) => x === 12);
+      const deletedElement = maxHeap.remove((x) => x === 12);
 
       // Assert
       expect(deletedElement).toBe(12);
@@ -160,7 +160,7 @@ describe('MaxHeap', () => {
   });
 
   describe('clear', () => {
-    it('deletes all elements', () => {
+    it('clears the heap', () => {
       // Arrange
       const maxHeap = MaxHeap.of(3).insert(5).insert(1);
 

@@ -7,14 +7,14 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
 
   right: Nullable<BinarySearchTreeNode<T>> = null;
 
-  #compare: Comparator<T>;
+  #comparator: Comparator<T>;
 
   #compareFunction?: CompareFn<T>;
 
   constructor(data: T, nodeDataCompareFn?: CompareFn<T>) {
     super(data);
     this.#compareFunction = nodeDataCompareFn;
-    this.#compare = new Comparator(nodeDataCompareFn);
+    this.#comparator = new Comparator(nodeDataCompareFn);
   }
 
   insert(data: T): BinarySearchTreeNode<T> {
@@ -24,7 +24,7 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
       return this;
     }
 
-    if (this.#compare.lessThan(data, this.data)) {
+    if (this.#comparator.lessThan(data, this.data)) {
       if (this.left) {
         return this.left.insert(data);
       }
@@ -35,7 +35,7 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
       return newNode;
     }
 
-    if (this.#compare.greaterThan(data, this.data)) {
+    if (this.#comparator.greaterThan(data, this.data)) {
       if (this.right) {
         return this.right.insert(data);
       }
@@ -50,15 +50,15 @@ export class BinarySearchTreeNode<T = any> extends BinaryTreeNode<T> {
   }
 
   find(data: T): Nullable<BinarySearchTreeNode> {
-    if (this.#compare.equal(this.data, data)) {
+    if (this.#comparator.equal(this.data, data)) {
       return this;
     }
 
-    if (this.#compare.lessThan(data, this.data) && this.left) {
+    if (this.#comparator.lessThan(data, this.data) && this.left) {
       return this.left.find(data);
     }
 
-    if (this.#compare.greaterThan(data, this.data) && this.right) {
+    if (this.#comparator.greaterThan(data, this.data) && this.right) {
       return this.right.find(data);
     }
 
