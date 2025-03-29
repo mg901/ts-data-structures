@@ -14,7 +14,6 @@ export interface ILinkedList<T = any, Node extends ListNode<T> = ListNode<T>> {
   get isEmpty(): boolean;
 
   append(value: T): void;
-  fromArray(array: T[]): this;
   toArray(): T[];
   prepend(value: T): this;
   insertAt(index: number, value: T): this;
@@ -39,10 +38,10 @@ export abstract class AbstractLinkedList<
 
   protected _size = 0;
 
-  protected _compare: Comparator<T>;
+  protected _comparator: Comparator<T>;
 
   constructor(compareFn?: CompareFn<T>) {
-    this._compare = new Comparator(compareFn);
+    this._comparator = new Comparator(compareFn);
   }
 
   get head() {
@@ -88,7 +87,7 @@ export abstract class AbstractLinkedList<
   protected _isMatch(value: T, matcher: T | Predicate<T>) {
     return isFunction(matcher)
       ? matcher(value)
-      : this._compare.equal(matcher, value);
+      : this._comparator.equal(matcher, value);
   }
 
   protected _findNodeByIndex(index: number) {
@@ -135,7 +134,7 @@ export abstract class AbstractLinkedList<
     let count = 0;
 
     for (const node of this) {
-      if (this._compare.equal(value, node.data)) {
+      if (this._comparator.equal(value, node.data)) {
         return count;
       }
 
@@ -153,7 +152,6 @@ export abstract class AbstractLinkedList<
 
   // Common methods
   abstract append(value: T): this;
-  abstract fromArray(array: T[]): this;
   abstract prepend(value: T): this;
   abstract insertAt(index: number, value: T): this;
   abstract deleteByValue(value: T | Predicate<T>): Nullable<Node>;

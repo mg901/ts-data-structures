@@ -1,5 +1,5 @@
+import { DoublyLinkedList } from '@/data-structures/linked-lists/doubly-linked-list';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { DoublyLinkedList } from './index';
 import { DoublyLinkedListNode } from './node';
 
 describe('DoublyLinkedList', () => {
@@ -20,20 +20,18 @@ describe('DoublyLinkedList', () => {
   describe('toString', () => {
     it('converts the list to the string', () => {
       // Arrange
-      doublyList.fromArray([1, 2, 3]);
+      const list = DoublyLinkedList.fromArray([1, 2, 3]);
 
       // Act and Assert
-      expect(doublyList.toString()).toBe('1,2,3');
+      expect(list.toString()).toBe('1,2,3');
     });
 
     it('converts to list to string with custom callback', () => {
       // Arrange
-      type Payload = {
+      const list = DoublyLinkedList.fromArray<{
         key: string;
         value: number;
-      };
-
-      const list = new DoublyLinkedList<Payload>().fromArray([
+      }>([
         { key: 'one', value: 1 },
         { key: 'two', value: 2 },
       ]);
@@ -199,23 +197,23 @@ describe('DoublyLinkedList', () => {
 
     it('inserts in the middle of the list', () => {
       // Arrange
-      doublyList.fromArray([1, 3]);
+      const list = DoublyLinkedList.fromArray([1, 3]);
 
       // Act
-      doublyList.insertAt(1, 2);
+      list.insertAt(1, 2);
 
       // Assert
-      expect(doublyList.head?.data).toBe(1);
+      expect(list.head?.data).toBe(1);
 
-      expect(doublyList.head?.next?.data).toBe(2);
-      expect(doublyList.head?.next?.next?.data).toBe(3);
-      expect(doublyList.head?.next?.prev?.data).toBe(1);
+      expect(list.head?.next?.data).toBe(2);
+      expect(list.head?.next?.next?.data).toBe(3);
+      expect(list.head?.next?.prev?.data).toBe(1);
 
-      expect(doublyList.tail?.data).toBe(3);
-      expect(doublyList.tail?.next).toBeNull();
+      expect(list.tail?.data).toBe(3);
+      expect(list.tail?.next).toBeNull();
 
-      expect(doublyList.toString()).toBe('1,2,3');
-      expect(doublyList.size).toBe(3);
+      expect(list.toString()).toBe('1,2,3');
+      expect(list.size).toBe(3);
     });
 
     it('can be used in a call chain', () => {
@@ -243,21 +241,21 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the node outside the list', () => {
       // Arrange
-      doublyList.fromArray([1, 2]);
+      const list = DoublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = doublyList.deleteByValue(3);
+      const deletedNode = list.deleteByValue(3);
 
       // Assert
       expect(deletedNode).toBeNull();
-      expect(doublyList.head?.data).toBe(1);
-      expect(doublyList.head?.prev).toBeNull();
+      expect(list.head?.data).toBe(1);
+      expect(list.head?.prev).toBeNull();
 
-      expect(doublyList.tail?.data).toBe(2);
-      expect(doublyList.tail?.next).toBeNull();
+      expect(list.tail?.data).toBe(2);
+      expect(list.tail?.next).toBeNull();
 
-      expect(doublyList.toString()).toBe('1,2');
-      expect(doublyList.size).toBe(2);
+      expect(list.toString()).toBe('1,2');
+      expect(list.size).toBe(2);
     });
 
     it('deletes the node from the singular node list', () => {
@@ -274,78 +272,76 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the first node', () => {
       // Arrange
-      doublyList.fromArray([1, 2]);
+      const list = DoublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = doublyList.deleteByValue(1);
+      const deletedNode = list.deleteByValue(1);
 
       // Assert
       expect(deletedNode?.data).toBe(1);
       expect(deletedNode?.next).toBeNull();
 
-      expect(doublyList.head?.data).toBe(2);
-      expect(doublyList.head?.next).toBeNull();
-      expect(doublyList.head?.prev).toBeNull();
+      expect(list.head?.data).toBe(2);
+      expect(list.head?.next).toBeNull();
+      expect(list.head?.prev).toBeNull();
 
-      expect(doublyList.tail?.data).toBe(2);
-      expect(doublyList.tail?.next).toBeNull();
+      expect(list.tail?.data).toBe(2);
+      expect(list.tail?.next).toBeNull();
 
-      expect(doublyList.toString()).toBe('2');
-      expect(doublyList.size).toBe(1);
+      expect(list.toString()).toBe('2');
+      expect(list.size).toBe(1);
     });
 
     it('deletes the node in the middle', () => {
       // Arrange
-      doublyList.fromArray([1, 2, 3]);
+      const list = DoublyLinkedList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedNode = doublyList.deleteByValue(2);
+      const deletedNode = list.deleteByValue(2);
 
       // Assert
       expect(deletedNode?.data).toBe(2);
       expect(deletedNode?.next).toBeNull();
       expect(deletedNode?.prev).toBeNull();
 
-      expect(doublyList.head?.data).toBe(1);
-      expect(doublyList.head?.next?.data).toBe(3);
+      expect(list.head?.data).toBe(1);
+      expect(list.head?.next?.data).toBe(3);
 
-      expect(doublyList.tail?.next).toBeNull();
-      expect(doublyList.tail?.prev?.data).toBe(1);
+      expect(list.tail?.next).toBeNull();
+      expect(list.tail?.prev?.data).toBe(1);
 
-      expect(doublyList.toString()).toBe('1,3');
-      expect(doublyList.size).toBe(2);
+      expect(list.toString()).toBe('1,3');
+      expect(list.size).toBe(2);
     });
 
     it('deletes the last node', () => {
       // Arrange
-      doublyList.fromArray([1, 2]);
+      const list = DoublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = doublyList.deleteByValue(2);
+      const deletedNode = list.deleteByValue(2);
 
       // Assert
       expect(deletedNode?.data).toBe(2);
       expect(deletedNode?.prev).toBeNull();
 
-      expect(doublyList.head?.data).toBe(1);
-      expect(doublyList.head?.next).toBeNull();
+      expect(list.head?.data).toBe(1);
+      expect(list.head?.next).toBeNull();
 
-      expect(doublyList.tail?.data).toBe(1);
-      expect(doublyList.tail?.next).toBeNull();
-      expect(doublyList.tail?.prev).toBeNull();
+      expect(list.tail?.data).toBe(1);
+      expect(list.tail?.next).toBeNull();
+      expect(list.tail?.prev).toBeNull();
 
-      expect(doublyList.toString()).toBe('1');
-      expect(doublyList.size).toBe(1);
+      expect(list.toString()).toBe('1');
+      expect(list.size).toBe(1);
     });
 
     it('deletes the node with object value', () => {
       // Arrange
-      type Value = {
+      const list = DoublyLinkedList.fromArray<{
         key: string;
         value: number;
-      };
-
-      const list = new DoublyLinkedList<Value>().fromArray([
+      }>([
         { key: 'one', value: 1 },
         { key: 'two', value: 2 },
         { key: 'three', value: 3 },
@@ -467,19 +463,19 @@ describe('DoublyLinkedList', () => {
 
     it('removes the head from the multi-node list', () => {
       // Arrange
-      doublyList.fromArray([1, 2]);
+      const list = DoublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedHead = doublyList.deleteHead();
+      const deletedHead = list.deleteHead();
 
       // Assert
       expect(deletedHead?.data).toBe(1);
       expect(deletedHead?.next).toBeNull();
 
-      expect(doublyList.tail?.data).toBe(2);
-      expect(doublyList.tail?.next).toBeNull();
-      expect(doublyList.tail?.prev).toBeNull();
-      expect(doublyList.size).toBe(1);
+      expect(list.tail?.data).toBe(2);
+      expect(list.tail?.next).toBeNull();
+      expect(list.tail?.prev).toBeNull();
+      expect(list.size).toBe(1);
     });
   });
 
@@ -507,19 +503,19 @@ describe('DoublyLinkedList', () => {
 
     it('deletes the tail from the list with multiple nodes', () => {
       // Arrange
-      doublyList.fromArray([1, 2]);
+      const list = DoublyLinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedTail = doublyList.deleteTail();
+      const deletedTail = list.deleteTail();
 
       // Assert
       expect(deletedTail?.data).toBe(2);
       expect(deletedTail?.prev).toBeNull();
 
-      expect(doublyList.tail?.data).toBe(1);
-      expect(doublyList.tail?.next).toBeNull();
-      expect(doublyList.tail?.prev).toBeNull();
-      expect(doublyList.size).toBe(1);
+      expect(list.tail?.data).toBe(1);
+      expect(list.tail?.next).toBeNull();
+      expect(list.tail?.prev).toBeNull();
+      expect(list.size).toBe(1);
     });
   });
 
@@ -551,33 +547,33 @@ describe('DoublyLinkedList', () => {
 
     it('reverses the list', () => {
       // Arrange
-      doublyList.fromArray([1, 2]);
+      const list = DoublyLinkedList.fromArray([1, 2]);
 
       // Act
-      doublyList.reverse();
+      list.reverse();
 
       // Assert
-      expect(doublyList.head?.data).toBe(2);
-      expect(doublyList.head?.next?.data).toBe(1);
-      expect(doublyList.head?.prev).toBeNull();
+      expect(list.head?.data).toBe(2);
+      expect(list.head?.next?.data).toBe(1);
+      expect(list.head?.prev).toBeNull();
 
-      expect(doublyList.tail?.data).toBe(1);
-      expect(doublyList.tail?.next).toBeNull();
+      expect(list.tail?.data).toBe(1);
+      expect(list.tail?.next).toBeNull();
 
-      expect(doublyList.toString()).toBe('2,1');
-      expect(doublyList.size).toBe(2);
+      expect(list.toString()).toBe('2,1');
+      expect(list.size).toBe(2);
     });
 
     it('can be used in a call chain', () => {
       // Arrange and Act
-      doublyList.fromArray([2, 1]).reverse().append(3);
+      const list = DoublyLinkedList.fromArray([2, 1]).reverse().append(3);
 
       // Assert
-      expect(doublyList.head?.data).toBe(1);
-      expect(doublyList.tail?.data).toBe(3);
+      expect(list.head?.data).toBe(1);
+      expect(list.tail?.data).toBe(3);
 
-      expect(doublyList.toString()).toBe('1,2,3');
-      expect(doublyList.size).toBe(3);
+      expect(list.toString()).toBe('1,2,3');
+      expect(list.size).toBe(3);
     });
   });
 

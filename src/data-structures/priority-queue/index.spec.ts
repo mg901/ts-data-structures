@@ -1,131 +1,139 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { MinHeap } from './index';
+import { PriorityQueue } from './index';
 
-describe('MinHeap', () => {
+describe('PriorityQueue', () => {
   it('creates an empty heap', () => {
     // Act
-    const minHeap = new MinHeap();
+    const pq = new PriorityQueue();
 
     // Assert
-    expect(minHeap).toBeDefined();
-    expect(minHeap.toArray()).toEqual([]);
-    expect(minHeap.toString()).toEqual('');
-    expect(minHeap.size).toBe(0);
-    expect(minHeap.isEmpty).toBeTruthy();
+    expect(pq).toBeDefined();
+    expect(pq.toArray()).toEqual([]);
+    expect(pq.toString()).toEqual('');
+    expect(pq.size).toBe(0);
+    expect(pq.isEmpty).toBeTruthy();
   });
 
-  describe('insert', () => {
+  describe('enqueue', () => {
     it('adds items to the heap', () => {
       // Arrange
-      const minHeap = new MinHeap<number>();
+      const minHeap = new PriorityQueue<number>();
 
       // Act
-      minHeap.insert(10).insert(1);
+      minHeap.enqueue(10).enqueue(1);
 
       // Assert
       expect(minHeap.toArray()).toEqual([1, 10]);
-      expect(minHeap.peek()).toBe(1);
+      expect(minHeap.front()).toBe(1);
       expect(minHeap.size).toBe(2);
       expect(minHeap.isEmpty).toBeFalsy();
 
       // Act;
-      minHeap.insert(3);
+      minHeap.enqueue(3);
 
       // Assert
       expect(minHeap.toArray()).toEqual([1, 10, 3]);
-      expect(minHeap.peek()).toBe(1);
+      expect(minHeap.front()).toBe(1);
 
       // Act
-      minHeap.insert(5);
+      minHeap.enqueue(5);
 
       // Assert
       expect(minHeap.toArray()).toEqual([1, 5, 3, 10]);
-      expect(minHeap.peek()).toBe(1);
+      expect(minHeap.front()).toBe(1);
 
       // Act
-      minHeap.insert(8);
+      minHeap.enqueue(8);
 
       // Assert
       expect(minHeap.toArray()).toEqual([1, 5, 3, 10, 8]);
-      expect(minHeap.peek()).toBe(1);
+      expect(minHeap.front()).toBe(1);
 
       // Act
-      minHeap.insert(20);
+      minHeap.enqueue(20);
 
       // Assert
       expect(minHeap.toArray()).toEqual([1, 5, 3, 10, 8, 20]);
-      expect(minHeap.peek()).toBe(1);
+      expect(minHeap.front()).toBe(1);
     });
   });
 
   describe('of', () => {
     it('creates the new heap with a single element', () => {
       // Act
-      const minHeap = MinHeap.of(1);
+      const pq = PriorityQueue.of(1);
 
       // Assert
-      expect(minHeap.toArray()).toEqual([1]);
-      expect(minHeap.size).toBe(1);
-      expect(minHeap.isEmpty).toBeFalsy();
+      expect(pq.toArray()).toEqual([1]);
+      expect(pq.size).toBe(1);
+      expect(pq.isEmpty).toBeFalsy();
     });
   });
 
-  describe('poll', () => {
+  describe('dequeue', () => {
     it('tries to remove a non-existing element', () => {
       // Arrange
-      const minHeap = new MinHeap();
+      const pq = new PriorityQueue();
 
       // Act and Assert
-      expect(minHeap.poll()).toBeNull();
+      expect(pq.dequeue()).toBeNull();
     });
 
     it('removes the top element from the heap with a single element', () => {
       // Arrange
-      const minHeap = MinHeap.of(10);
+      const pq = PriorityQueue.of(10);
 
       // Act and Assert
-      expect(minHeap.poll()).toBe(10);
-      expect(minHeap.isEmpty).toBeTruthy();
+      expect(pq.dequeue()).toBe(10);
+      expect(pq.isEmpty).toBeTruthy();
     });
 
     it('removes the top element from the heap', () => {
       // Arrange
-      const minHeap = MinHeap.of(1).insert(5).insert(3).insert(8).insert(2);
+      const pq = PriorityQueue.of(1)
+        .enqueue(5)
+        .enqueue(3)
+        .enqueue(8)
+        .enqueue(2);
 
-      expect(minHeap.toArray()).toEqual([1, 2, 3, 8, 5]);
-
-      // Act and Assert
-      expect(minHeap.poll()).toBe(1);
-      expect(minHeap.toArray()).toEqual([2, 5, 3, 8]);
-      expect(minHeap.size).toBe(4);
-
-      // Act and Assert
-      expect(minHeap.poll()).toBe(2);
-      expect(minHeap.toArray()).toEqual([3, 5, 8]);
-      expect(minHeap.size).toBe(3);
+      expect(pq.toArray()).toEqual([1, 2, 3, 8, 5]);
 
       // Act and Assert
-      expect(minHeap.poll()).toBe(3);
-      expect(minHeap.toArray()).toEqual([5, 8]);
-      expect(minHeap.size).toBe(2);
+      expect(pq.dequeue()).toBe(1);
+      expect(pq.toArray()).toEqual([2, 5, 3, 8]);
+      expect(pq.size).toBe(4);
 
       // Act and Assert
-      expect(minHeap.poll()).toBe(5);
-      expect(minHeap.toArray()).toEqual([8]);
-      expect(minHeap.size).toBe(1);
+      expect(pq.dequeue()).toBe(2);
+      expect(pq.toArray()).toEqual([3, 5, 8]);
+      expect(pq.size).toBe(3);
 
       // Act and Assert
-      expect(minHeap.poll()).toBe(8);
-      expect(minHeap.isEmpty).toBeTruthy();
+      expect(pq.dequeue()).toBe(3);
+      expect(pq.toArray()).toEqual([5, 8]);
+      expect(pq.size).toBe(2);
+
+      // Act and Assert
+      expect(pq.dequeue()).toBe(5);
+      expect(pq.toArray()).toEqual([8]);
+      expect(pq.size).toBe(1);
+
+      // Act and Assert
+      expect(pq.dequeue()).toBe(8);
+      expect(pq.isEmpty).toBeTruthy();
     });
   });
 
   describe('remove', () => {
     // Arrange
-    let minHeap: MinHeap<number>;
+    let minHeap: PriorityQueue<number>;
 
     beforeEach(() => {
-      minHeap = MinHeap.of(12).insert(8).insert(7).insert(3).insert(5);
+      minHeap = PriorityQueue.of(12)
+        .enqueue(8)
+        .enqueue(7)
+        .enqueue(3)
+        .enqueue(5);
     });
 
     it('tries to remove a non-existing element', () => {
@@ -161,7 +169,7 @@ describe('MinHeap', () => {
     it('removes the top element', () => {
       // Act and Assert
       expect(minHeap.remove((x) => x === 3)).toBe(3);
-      expect(minHeap.peek()).toBe(5);
+      expect(minHeap.front()).toBe(5);
       expect(minHeap.toArray()).toEqual([5, 7, 8, 12]);
     });
   });
@@ -169,13 +177,13 @@ describe('MinHeap', () => {
   describe('clear', () => {
     it('clears the heap', () => {
       // Arrange
-      const minHeap = MinHeap.of(3).insert(5).insert(1);
+      const pq = PriorityQueue.of(3).enqueue(5).enqueue(1);
 
       // Act
-      minHeap.clear();
+      pq.clear();
 
       // Assert
-      expect(minHeap.isEmpty).toBeTruthy();
+      expect(pq.isEmpty).toBeTruthy();
     });
   });
 });

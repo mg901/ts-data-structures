@@ -12,9 +12,18 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
   DoublyLinkedListNode<T>
 > {
   static of<T>(value: T) {
-    const doublyLinkedList = new DoublyLinkedList<T>();
+    const list = new DoublyLinkedList<T>();
 
-    return doublyLinkedList.append(value);
+    return list.append(value);
+  }
+
+  static fromArray<T>(array: T[]) {
+    const list = new DoublyLinkedList<T>();
+    array.forEach((value) => {
+      list.append(value);
+    });
+
+    return list;
   }
 
   append(value: T) {
@@ -29,14 +38,6 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
 
       this._increaseSize();
     }
-
-    return this;
-  }
-
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
 
     return this;
   }

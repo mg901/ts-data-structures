@@ -1,98 +1,71 @@
 import { Heap } from '../heap';
 
-export class MaxHeap<T> extends Heap<T> {
+const compare = <T>(a: T, b: T): number => {
+  if (a === b) return 0;
+
+  return a > b ? -1 : 1;
+};
+
+export class MaxHeap<T> {
+  #heap: Heap<T>;
+
   static of<T>(value: T) {
     const maxHeap = new MaxHeap<T>();
-    maxHeap.insert(value);
 
-    return maxHeap;
+    return maxHeap.insert(value);
+  }
+
+  static fromArray<T>(values: T[], compareFn: (a: T, b: T) => number) {
+    return new MaxHeap(compareFn, values);
+  }
+
+  constructor(compareFn: (a: T, b: T) => number = compare, values: T[] = []) {
+    this.#heap = new Heap(compareFn, values);
+
+    if (values) {
+      this.#heap.heapify();
+    }
+  }
+
+  get size() {
+    return this.#heap.size;
+  }
+
+  get isEmpty() {
+    return this.#heap.isEmpty;
   }
 
   insert(value: T) {
-    this._heap.push(value);
-    this.#heapifyUp(this.size - 1);
+    this.#heap.insert(value);
 
     return this;
   }
 
-  #heapifyUp(index: number) {
-    while (
-      index > 0 &&
-      this._compare.greaterThan(this._heap[index], this._getParent(index))
-    ) {
-      const parentIndex = this._calcParentIndex(index);
-      this._swap(index, parentIndex);
-
-      index = parentIndex;
-    }
+  peek() {
+    return this.#heap.peek();
   }
 
   poll() {
-    const { length } = this._heap;
-
-    if (length === 0) return null;
-    if (length === 1) return this._heap.pop() ?? null;
-
-    const max = this._heap[0];
-    this._heap[0] = this._heap.pop()!;
-    this.#heapifyDown();
-
-    return max;
+    return this.#heap.poll();
   }
 
-  #heapifyDown(index: number = 0) {
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      let largest = index;
-
-      // Check left child
-      if (
-        this._hasLeftChild(index) &&
-        this._compare.greaterThan(
-          this._getLeftChild(index),
-          this._heap[largest],
-        )
-      ) {
-        largest = this._calcLeftChildIndex(index);
-      }
-
-      // Check right child
-      if (
-        this._hasRightChild(index) &&
-        this._compare.greaterThan(
-          this._getRightChild(index),
-          this._heap[largest],
-        )
-      ) {
-        largest = this._calcRightChildIndex(index);
-      }
-
-      if (largest === index) break;
-
-      this._swap(largest, index);
-
-      index = largest;
-    }
+  remove(predicate: (value: T, index: number, obj: T[]) => unknown) {
+    return this.#heap.remove(predicate);
   }
 
-  delete(predicate: (value: T, index: number, obj: T[]) => unknown) {
-    const index = this._findIndex(predicate);
+  has(predicate: (value: T, index: number, obj: T[]) => unknown) {
+    return this.#heap.has(predicate);
+  }
 
-    if (index === -1) return null;
+  clear() {
+    return this.#heap.clear();
+  }
 
-    if (index === this.size - 1) {
-      return this._heap.pop()!;
-    }
+  toArray() {
+    return this.#heap.toArray();
+  }
 
-    this._swap(index, this.size - 1);
-    const deleted = this._heap.pop()!;
-
-    if (index > 0) {
-      this.#heapifyUp(index);
-    } else {
-      this.#heapifyDown();
-    }
-
-    return deleted;
+  toString() {
+    return this.#heap.toString();
   }
 }

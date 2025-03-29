@@ -7,9 +7,19 @@ import { type Nullable } from '@/shared/types';
 
 export class LinkedList<T = any> extends AbstractLinkedList<T> {
   static of<T>(value: T) {
-    const linkedList = new LinkedList<T>();
+    const list = new LinkedList<T>();
 
-    return linkedList.append(value);
+    return list.append(value);
+  }
+
+  static fromArray<T>(array: T[]) {
+    const list = new LinkedList<T>();
+
+    array.forEach((value) => {
+      list.append(value);
+    });
+
+    return list;
   }
 
   append(value: T) {
@@ -23,14 +33,6 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
 
       this._increaseSize();
     }
-
-    return this;
-  }
-
-  fromArray(array: T[]) {
-    array.forEach((value) => {
-      this.append(value);
-    });
 
     return this;
   }
