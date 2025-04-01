@@ -3,7 +3,7 @@ import { Heap } from '../heap';
 const compare = <T>(a: T, b: T): number => {
   if (a === b) return 0;
 
-  return a > b ? -1 : 1;
+  return a > b ? 1 : -1;
 };
 
 export class MaxHeap<T> {

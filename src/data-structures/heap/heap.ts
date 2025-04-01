@@ -30,7 +30,7 @@ export class Heap<T> implements IHeap<T> {
     compareFn = (a: T, b: T): number => {
       if (a === b) return 0;
 
-      return a < b ? -1 : 1;
+      return a < b ? 1 : -1;
     },
     values: T[] = [],
   ) {
@@ -63,8 +63,8 @@ export class Heap<T> implements IHeap<T> {
 
   #heapifyUp(index: number = this.size - 1) {
     while (index > 0) {
-      const parentIndex = this.#calcParentIndex(index);
-      if (!this.#isPrior(index, parentIndex)) break;
+      const parentIndex = Math.floor((index - 1) / 2);
+      if (this.#isPrior(parentIndex, index)) break;
 
       this.#swap(index, parentIndex);
 
@@ -73,11 +73,7 @@ export class Heap<T> implements IHeap<T> {
   }
 
   #isPrior(i: number, j: number) {
-    return this.#compare(this.#nodes[i], this.#nodes[j]) < 0;
-  }
-
-  #calcParentIndex(childIndex: number) {
-    return Math.floor((childIndex - 1) / 2);
+    return this.#compare(this.#nodes[i], this.#nodes[j]) > 0;
   }
 
   #swap(i: number, j: number) {
@@ -103,31 +99,31 @@ export class Heap<T> implements IHeap<T> {
 
   #heapifyDown(index: number = 0) {
     while (true) {
-      let currentIndex = index;
-      const leftChildIndex = index * 2 + 1;
-      const rightChildIndex = index * 2 + 2;
+      let currentIdx = index;
+      const leftChildIdx = index * 2 + 1;
+      const rightChildIdx = index * 2 + 2;
 
       // Check left child
       if (
-        this.#hasParent(leftChildIndex) &&
-        this.#isPrior(leftChildIndex, currentIndex)
+        this.#hasParent(leftChildIdx) &&
+        this.#isPrior(leftChildIdx, currentIdx)
       ) {
-        currentIndex = leftChildIndex;
+        currentIdx = leftChildIdx;
       }
 
       // Check right child
       if (
-        this.#hasParent(rightChildIndex) &&
-        this.#isPrior(rightChildIndex, currentIndex)
+        this.#hasParent(rightChildIdx) &&
+        this.#isPrior(rightChildIdx, currentIdx)
       ) {
-        currentIndex = rightChildIndex;
+        currentIdx = rightChildIdx;
       }
 
-      if (currentIndex === index) break;
+      if (currentIdx === index) break;
 
-      this.#swap(currentIndex, index);
+      this.#swap(currentIdx, index);
 
-      index = currentIndex;
+      index = currentIdx;
     }
   }
 
