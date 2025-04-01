@@ -42,15 +42,11 @@ export class Stack<T = any> implements IStack<T> {
   }
 
   peek() {
-    if (this.#dll.isEmpty) return null;
-
-    return this.#dll.tail!.data;
+    return this.#dll.tail?.data ?? null;
   }
 
   pop() {
-    if (this.#dll.isEmpty) return null;
-
-    return this.#dll.deleteTail()!.data;
+    return this.#dll.deleteTail()?.data ?? null;
   }
 
   clear() {
@@ -63,6 +59,6 @@ export class Stack<T = any> implements IStack<T> {
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'Stack';
+    return `${this.constructor.name}`;
   }
 }

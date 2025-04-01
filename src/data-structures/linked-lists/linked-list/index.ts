@@ -25,7 +25,7 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
   append(value: T) {
     const newNode = new ListNode(value);
 
-    if (this.isEmpty) {
+    if (!this._head) {
       this._initializeList(newNode);
     } else {
       this._tail!.next = newNode;
@@ -40,7 +40,7 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
   prepend(value: T) {
     const newNode = new ListNode(value);
 
-    if (this.isEmpty) {
+    if (!this._head) {
       this._initializeList(newNode);
     } else {
       newNode.next = this._head;
@@ -78,7 +78,7 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
   deleteByValue(value: T): Nullable<ListNode>;
   deleteByValue(predicate: Predicate<T>): Nullable<ListNode>;
   deleteByValue(arg: T | Predicate<T>) {
-    if (this.isEmpty) return null;
+    if (!this._head) return null;
 
     let deletedNode: Nullable<ListNode> = null;
     let prevNode: Nullable<ListNode> = null;
@@ -112,7 +112,7 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
   }
 
   deleteHead() {
-    if (this.isEmpty) return null;
+    if (!this._head) return null;
 
     const deletedNode = this._head;
 
@@ -129,35 +129,31 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
   }
 
   deleteTail() {
-    if (this._head === null) return null;
+    if (!this._head) return null;
 
     const deletedNode = this._tail;
 
-    // If only one node.
-    if (this._head.next) {
-      // // If there are multiple nodes.
-      let prevNode: Nullable<ListNode> = null;
-
-      for (const node of this) {
-        if (node.next) {
-          prevNode = node as ListNode;
-        } else {
-          prevNode!.next = null;
-          this._tail = prevNode;
-          this._decreaseSize();
-
-          break;
-        }
-      }
-    } else {
+    if (!this._head.next) {
       this.clear();
+    } else {
+      let prevNode: Nullable<ListNode> = null;
+      let current: Nullable<ListNode> = this._head;
+
+      while (current.next) {
+        prevNode = current;
+        current = current.next;
+      }
+
+      prevNode!.next = null;
+      this._tail = prevNode;
+      this._decreaseSize();
     }
 
     return deletedNode;
   }
 
   reverse() {
-    if (this._head === null || this._head.next === null) {
+    if (!this._head || !this._head.next) {
       return this;
     }
 

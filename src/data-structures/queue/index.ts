@@ -7,7 +7,7 @@ interface IQueue<T> {
   get isEmpty(): boolean;
   enqueue(value: T): this;
   dequeue(value: T): Nullable<T>;
-  peek(value: T): Nullable<T>;
+  front(value: T): Nullable<T>;
   clear(): void;
   toArray(): T[];
   toString(callback?: Callback<T>): string;
@@ -43,19 +43,15 @@ export class Queue<T = any> implements IQueue<T> {
   }
 
   dequeue() {
-    if (this.#sll.head) {
-      return this.#sll.deleteHead()!.data;
-    }
-
-    return null;
+    return this.#sll.deleteHead()?.data ?? null;
   }
 
-  peek() {
-    if (this.#sll.head) {
-      return this.#sll.head.data;
-    }
+  front() {
+    return this.#sll.head?.data ?? null;
+  }
 
-    return null;
+  back() {
+    return this.#sll.tail?.data ?? null;
   }
 
   toArray() {
@@ -72,6 +68,6 @@ export class Queue<T = any> implements IQueue<T> {
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'Queue';
+    return `${this.constructor.name}`;
   }
 }

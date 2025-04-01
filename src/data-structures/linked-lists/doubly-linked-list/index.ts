@@ -29,7 +29,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
   append(value: T) {
     const newNode = new DoublyLinkedListNode(value);
 
-    if (this._head === null) {
+    if (!this._head) {
       this._initializeList(newNode);
     } else {
       this._tail!.next = newNode;
@@ -45,7 +45,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
   prepend(value: T) {
     const newNode = new DoublyLinkedListNode(value);
 
-    if (this._head === null) {
+    if (!this._head) {
       this._initializeList(newNode);
     } else {
       newNode.next = this._head;
@@ -84,7 +84,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
   deleteByValue(value: T): Nullable<DoublyLinkedListNode>;
   deleteByValue(predicate: Predicate<T>): Nullable<DoublyLinkedListNode>;
   deleteByValue(arg: T | Predicate<T>) {
-    if (this._head === null) return null;
+    if (!this._head) return null;
 
     let deletedNode: Nullable<DoublyLinkedListNode> = null;
 
@@ -146,7 +146,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
   }
 
   deleteHead() {
-    if (this._head === null) return null;
+    if (!this._head) return null;
 
     const deletedNode = this._head;
 
@@ -164,7 +164,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
   }
 
   deleteTail() {
-    if (this._head === null) return null;
+    if (!this._head) return null;
 
     const deletedNode = this.tail!;
 
@@ -183,7 +183,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
   }
 
   reverse() {
-    if (this._head === null || this._head.next === null) {
+    if (!this._head || !this._head.next) {
       return this;
     }
 
