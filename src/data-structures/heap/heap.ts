@@ -27,11 +27,7 @@ export class Heap<T> implements IHeap<T> {
   #compare: Compare<T>;
 
   constructor(
-    compareFn = (a: T, b: T): number => {
-      if (a === b) return 0;
-
-      return a < b ? 1 : -1;
-    },
+    compareFn = (a: T, b: T): number => (a < b ? -1 : 1),
     values: T[] = [],
   ) {
     this.#nodes = values;
@@ -73,7 +69,7 @@ export class Heap<T> implements IHeap<T> {
   }
 
   #isPrior(i: number, j: number) {
-    return this.#compare(this.#nodes[i], this.#nodes[j]) > 0;
+    return this.#compare(this.#nodes[i], this.#nodes[j]) < 0;
   }
 
   #swap(i: number, j: number) {

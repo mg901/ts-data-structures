@@ -8,8 +8,6 @@ export class Comparator<T = any> {
   #isEqual: (a: T, b: T) => boolean = isEqual;
 
   static defaultCompareFunction<T = keyof any>(a: T, b: T) {
-    if (a === b) return 0;
-
     return a < b ? -1 : 1;
   }
 
