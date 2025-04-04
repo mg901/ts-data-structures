@@ -17,7 +17,10 @@ export class HashTable<Key extends PropertyKey, Value = any>
 
   #capacity = this.#INITIAL_CAPACITY;
 
-  #buckets = createBuckets<{ key: Key; value: Value }>(this.#capacity);
+  #buckets = createBuckets<{
+    key: Key;
+    value: Value;
+  }>(this.#capacity);
 
   #size = 0;
 
@@ -86,7 +89,7 @@ export class HashTable<Key extends PropertyKey, Value = any>
 
   delete(key: Key): boolean {
     const bucket = this.#getBucket(key);
-    const deletedNode = bucket.deleteByValue((pair) => pair.key === key);
+    const deletedNode = bucket.removeByValue((pair) => pair.key === key);
 
     if (deletedNode) {
       this.#size -= 1;

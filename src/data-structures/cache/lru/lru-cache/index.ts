@@ -61,7 +61,7 @@ export class LRUCache<Key extends keyof any, Value>
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'LRUCache';
+    return `${this.constructor.name}`;
   }
 }
 

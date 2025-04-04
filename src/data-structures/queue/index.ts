@@ -7,14 +7,14 @@ interface IQueue<T> {
   get isEmpty(): boolean;
   enqueue(value: T): this;
   dequeue(value: T): Nullable<T>;
-  peek(value: T): Nullable<T>;
+  front(value: T): Nullable<T>;
   clear(): void;
   toArray(): T[];
   toString(callback?: Callback<T>): string;
 }
 
 export class Queue<T = any> implements IQueue<T> {
-  #sll = new LinkedList<T>();
+  #list = new LinkedList<T>();
 
   static of<T>(value: T) {
     const queue = new Queue<T>();
@@ -23,55 +23,51 @@ export class Queue<T = any> implements IQueue<T> {
   }
 
   get size() {
-    return this.#sll.size;
+    return this.#list.size;
   }
 
   get isEmpty() {
-    return this.#sll.isEmpty;
+    return this.#list.isEmpty;
   }
 
   *[Symbol.iterator]() {
-    for (const node of this.#sll) {
+    for (const node of this.#list) {
       yield node.data;
     }
   }
 
   enqueue(value: T) {
-    this.#sll.append(value);
+    this.#list.append(value);
 
     return this;
   }
 
   dequeue() {
-    if (this.#sll.head) {
-      return this.#sll.deleteHead()!.data;
-    }
-
-    return null;
+    return this.#list.removeHead()?.data ?? null;
   }
 
-  peek() {
-    if (this.#sll.head) {
-      return this.#sll.head.data;
-    }
+  front() {
+    return this.#list.head?.data ?? null;
+  }
 
-    return null;
+  back() {
+    return this.#list.tail?.data ?? null;
   }
 
   toArray() {
-    return this.#sll.toArray();
+    return this.#list.toArray();
   }
 
   clear() {
-    this.#sll.clear();
+    this.#list.clear();
   }
 
   toString(callback?: Callback<T>) {
-    return this.#sll.toString(callback);
+    return this.#list.toString(callback);
   }
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'Queue';
+    return `${this.constructor.name}`;
   }
 }

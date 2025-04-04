@@ -19,9 +19,9 @@ export interface ILinkedList<T = any, Node extends ListNode<T> = ListNode<T>> {
   insertAt(index: number, value: T): this;
   indexOf(value: T): number;
   find(value: T | Predicate<T>): Nullable<Node>;
-  deleteByValue(value: T | Predicate<T>): Nullable<Node>;
-  deleteHead(): Nullable<Node>;
-  deleteTail(): Nullable<Node>;
+  removeByValue(value: T | Predicate<T>): Nullable<Node>;
+  removeHead(): Nullable<Node>;
+  removeTail(): Nullable<Node>;
   reverse(): this;
   toString(callback?: Callback<T>): string;
   clear(): void;
@@ -154,9 +154,9 @@ export abstract class AbstractLinkedList<
   abstract append(value: T): this;
   abstract prepend(value: T): this;
   abstract insertAt(index: number, value: T): this;
-  abstract deleteByValue(value: T | Predicate<T>): Nullable<Node>;
-  abstract deleteHead(): Nullable<Node>;
-  abstract deleteTail(): Nullable<Node>;
+  abstract removeByValue(value: T | Predicate<T>): Nullable<Node>;
+  abstract removeHead(): Nullable<Node>;
+  abstract removeTail(): Nullable<Node>;
   abstract reverse(): this;
 }
 

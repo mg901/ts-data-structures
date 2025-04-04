@@ -21,44 +21,39 @@ export interface IHeap<T> {
   toString(): string;
 }
 
+const defaultCompareFn = <T>(a: T, b: T): number => (a < b ? -1 : 1);
+
 export class Heap<T> implements IHeap<T> {
-  #nodes: T[];
+  #items: T[];
 
   #compare: Compare<T>;
 
-  constructor(
-    compareFn = (a: T, b: T): number => {
-      if (a === b) return 0;
-
-      return a < b ? 1 : -1;
-    },
-    values: T[] = [],
-  ) {
-    this.#nodes = values;
+  constructor(compareFn = defaultCompareFn<T>, values: T[] = []) {
+    this.#items = values;
     this.#compare = compareFn;
   }
 
   get size() {
-    return this.#nodes.length;
+    return this.#items.length;
   }
 
   get isEmpty() {
-    return this.#nodes.length === 0;
+    return this.#items.length === 0;
   }
 
   insert(value: T) {
-    this.#nodes.push(value);
+    this.#items.push(value);
     this.#heapifyUp();
 
     return this;
   }
 
   peek() {
-    return this.#nodes[0] ?? null;
+    return this.#items[0] ?? null;
   }
 
   last() {
-    return this.#nodes.at(-1) ?? null;
+    return this.#items.at(-1) ?? null;
   }
 
   #heapifyUp(index: number = this.size - 1) {
@@ -73,25 +68,25 @@ export class Heap<T> implements IHeap<T> {
   }
 
   #isPrior(i: number, j: number) {
-    return this.#compare(this.#nodes[i], this.#nodes[j]) > 0;
+    return this.#compare(this.#items[i], this.#items[j]) < 0;
   }
 
   #swap(i: number, j: number) {
     if (i === j) return;
 
-    const temp = this.#nodes[j];
-    this.#nodes[j] = this.#nodes[i];
-    this.#nodes[i] = temp;
+    const temp = this.#items[j];
+    this.#items[j] = this.#items[i];
+    this.#items[i] = temp;
   }
 
   poll() {
-    const { length } = this.#nodes;
+    const { length } = this.#items;
 
     if (length === 0) return null;
-    if (length === 1) return this.#nodes.pop() ?? null;
+    if (length === 1) return this.#items.pop()!;
 
-    const min = this.#nodes[0];
-    this.#nodes[0] = this.#nodes.pop()!;
+    const min = this.#items[0];
+    this.#items[0] = this.#items.pop()!;
     this.#heapifyDown();
 
     return min;
@@ -142,12 +137,13 @@ export class Heap<T> implements IHeap<T> {
 
     if (index === -1) return null;
 
-    if (index === this.size - 1) {
-      return this.#nodes.pop()!;
+    const lastIndex = this.size - 1;
+    if (index === lastIndex) {
+      return this.#items.pop()!;
     }
 
-    this.#swap(index, this.size - 1);
-    const value = this.#nodes.pop()!;
+    this.#swap(index, lastIndex);
+    const value = this.#items.pop()!;
 
     if (index > 0) {
       this.#heapifyUp(index);
@@ -163,15 +159,15 @@ export class Heap<T> implements IHeap<T> {
   }
 
   #findIndex(predicate: Predicate<T>) {
-    return this.#nodes.findIndex(predicate);
+    return this.#items.findIndex(predicate);
   }
 
   clear() {
-    this.#nodes = [];
+    this.#items = [];
   }
 
   toArray() {
-    return this.#nodes;
+    return this.#items;
   }
 
   toString() {

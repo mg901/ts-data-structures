@@ -1,65 +1,71 @@
+import isFunction from 'lodash.isfunction';
 import { Heap } from '../heap';
 
 export class MinHeap<T> {
-  #heap: Heap<T>;
+  #items: Heap<T>;
 
-  static of<T>(value: T, compareFn?: (a: T, b: T) => number) {
-    const maxHeap = new MinHeap<T>(compareFn);
+  static of<T>(value: T, selector?: (item: T) => T) {
+    const minHeap = new MinHeap<T>(selector);
 
-    return maxHeap.insert(value);
+    return minHeap.insert(value);
   }
 
-  static fromArray<T>(values: T[], compareFn: (a: T, b: T) => number) {
-    return new MinHeap(compareFn, values);
+  static fromArray<T>(values: T[], selector: (item: T) => T) {
+    return new MinHeap(selector, values);
   }
 
-  constructor(compareFn?: (a: T, b: T) => number, values: T[] = []) {
-    this.#heap = new Heap(compareFn, values);
+  constructor(selector?: (item: T) => T, values: T[] = []) {
+    this.#items = new Heap((a: T, b: T): number => {
+      const first = isFunction(selector) ? selector(a) : a;
+      const second = isFunction(selector) ? selector(b) : b;
+
+      return first < second ? -1 : 1;
+    }, values);
 
     if (values) {
-      this.#heap.heapify();
+      this.#items.heapify();
     }
   }
 
   get size() {
-    return this.#heap.size;
+    return this.#items.size;
   }
 
   get isEmpty() {
-    return this.#heap.isEmpty;
+    return this.#items.isEmpty;
   }
 
   insert(value: T) {
-    this.#heap.insert(value);
+    this.#items.insert(value);
 
     return this;
   }
 
   peek() {
-    return this.#heap.peek();
+    return this.#items.peek();
   }
 
   poll() {
-    return this.#heap.poll();
+    return this.#items.poll();
   }
 
   remove(predicate: (value: T, index: number, obj: T[]) => unknown) {
-    return this.#heap.remove(predicate);
+    return this.#items.remove(predicate);
   }
 
   has(predicate: (value: T, index: number, obj: T[]) => unknown) {
-    return this.#heap.has(predicate);
+    return this.#items.has(predicate);
   }
 
   clear() {
-    return this.#heap.clear();
+    return this.#items.clear();
   }
 
   toArray() {
-    return this.#heap.toArray();
+    return this.#items.toArray();
   }
 
   toString() {
-    return this.#heap.toString();
+    return this.#items.toString();
   }
 }

@@ -9,7 +9,7 @@ describe('Queue', () => {
     queue = new Queue();
   });
 
-  it('returns the initial state of the queue correctly', () => {
+  it('creates the empty queue', () => {
     // Act and Assert
     expect(queue).toBeDefined();
     expect(queue.isEmpty).toBeTruthy();
@@ -25,7 +25,7 @@ describe('Queue', () => {
       expect(queue.size).toBe(1);
     });
 
-    it('add multiple elements to the queue with ', () => {
+    it('adds elements to the queue', () => {
       // Act
       queue.enqueue(10).enqueue(20).enqueue(30);
 
@@ -41,7 +41,7 @@ describe('Queue', () => {
       const newQueue = Queue.of(1);
 
       // Assert
-      expect(newQueue.peek()).toBe(1);
+      expect(newQueue.front()).toBe(1);
     });
   });
 
@@ -86,27 +86,48 @@ describe('Queue', () => {
     });
   });
 
-  describe('peek', () => {
-    it('returns the front element without removing it', () => {
+  describe('front', () => {
+    it('tries to return the first element', () => {
+      // Act
+      const frontElement = queue.front();
+
+      // Assert
+      expect(frontElement).toBeNull();
+    });
+
+    it('returns the first element without removal', () => {
       // Arrange
       queue.enqueue(10);
       queue.enqueue(15);
 
       // Act
-      const frontElement = queue.peek();
+      const frontElement = queue.front();
 
       // Assert
       expect(frontElement).toBe(10);
       expect(queue.toString()).toBe('10,15');
       expect(queue.size).toBe(2);
     });
+  });
 
-    it('returns null for the empty list', () => {
+  describe('back', () => {
+    it('tries to return the last element', () => {
+      // Act & Assert
+      expect(queue.back()).toBeNull();
+    });
+
+    it('return the last element without removal', () => {
+      // Arrange
+      queue.enqueue(10);
+      queue.enqueue(15);
+
       // Act
-      const frontElement = queue.peek();
+      const frontElement = queue.back();
 
       // Assert
-      expect(frontElement).toBeNull();
+      expect(frontElement).toBe(15);
+      expect(queue.toString()).toBe('10,15');
+      expect(queue.size).toBe(2);
     });
   });
 

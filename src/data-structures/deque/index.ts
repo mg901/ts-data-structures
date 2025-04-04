@@ -14,7 +14,7 @@ interface IDeque<T> {
   toString(callback?: Callback<T>): string;
 }
 export class Deque<T = any> implements IDeque<T> {
-  #dll = new DoublyLinkedList<T>();
+  #list = new DoublyLinkedList<T>();
 
   static of<T>(data: T) {
     const deque = new Deque<T>();
@@ -23,61 +23,53 @@ export class Deque<T = any> implements IDeque<T> {
   }
 
   get size() {
-    return this.#dll.size;
+    return this.#list.size;
   }
 
   get isEmpty() {
-    return this.#dll.isEmpty;
+    return this.#list.isEmpty;
   }
 
   *[Symbol.iterator]() {
-    for (const node of this.#dll) {
+    for (const node of this.#list) {
       yield node.data;
     }
   }
 
   addFront(data: T) {
-    this.#dll.prepend(data);
+    this.#list.prepend(data);
 
     return this;
   }
 
   removeFront() {
-    if (this.#dll.isEmpty) return null;
-
-    return this.#dll.deleteHead()!.data;
+    return this.#list.removeHead()?.data ?? null;
   }
 
   peekFront() {
-    if (this.#dll.isEmpty) return null;
-
-    return this.#dll.head!.data;
+    return this.#list.head?.data ?? null;
   }
 
   addRear(data: T) {
-    this.#dll.append(data);
+    this.#list.append(data);
 
     return this;
   }
 
   removeRear() {
-    if (this.#dll.isEmpty) return null;
-
-    return this.#dll.deleteTail()!.data;
+    return this.#list.removeTail()?.data ?? null;
   }
 
   peekRear() {
-    if (this.#dll.isEmpty) return null;
-
-    return this.#dll.tail!.data;
+    return this.#list.tail?.data ?? null;
   }
 
   toString(callback?: Callback<T>) {
-    return this.#dll.toString(callback);
+    return this.#list.toString(callback);
   }
 
   // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
-    return 'Deque';
+    return `${this.constructor.name}`;
   }
 }
