@@ -174,13 +174,13 @@ class Storage<Key extends keyof any, Value = any> {
     const maxFrequency = this.#maxFrequency;
     const bucket = this.#frequencyBucketMap[maxFrequency]!;
 
-    const deletedNode = bucket.deleteTail()!.data;
+    const deletedNode = bucket.removeTail()!.data;
 
     this.#keyNodeMap.delete(deletedNode.key);
     this.#keyFrequencyMap.delete(deletedNode.key);
 
     if (bucket.isEmpty) {
-      this.#frequencyNodes.deleteTail();
+      this.#frequencyNodes.removeTail();
       this.#frequencyFrequencyNodeMap.delete(maxFrequency);
       delete this.#frequencyBucketMap[maxFrequency];
     }

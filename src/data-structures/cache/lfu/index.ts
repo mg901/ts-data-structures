@@ -153,7 +153,7 @@ class Storage<Key extends keyof any, Value> {
     const minFreq = this.#currentMinFrequency;
     const bucket = this.#frequencyBuckets[minFreq];
 
-    const leastFrequentNode = bucket.deleteHead()!;
+    const leastFrequentNode = bucket.removeHead()!;
 
     const { key } = leastFrequentNode.data;
     this.#keyNodeMap.delete(key);

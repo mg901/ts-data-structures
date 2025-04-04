@@ -81,45 +81,45 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
     return this;
   }
 
-  deleteByValue(value: T): Nullable<DoublyLinkedListNode>;
-  deleteByValue(predicate: Predicate<T>): Nullable<DoublyLinkedListNode>;
-  deleteByValue(arg: T | Predicate<T>) {
+  removeByValue(value: T): Nullable<DoublyLinkedListNode>;
+  removeByValue(predicate: Predicate<T>): Nullable<DoublyLinkedListNode>;
+  removeByValue(arg: T | Predicate<T>) {
     if (!this._head) return null;
 
-    let deletedNode: Nullable<DoublyLinkedListNode> = null;
+    let removedNode: Nullable<DoublyLinkedListNode> = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
-        deletedNode = currentNode;
+        removedNode = currentNode;
 
         break;
       }
     }
 
-    if (!deletedNode) return null;
+    if (!removedNode) return null;
 
     // In the middle.
-    if (deletedNode.prev) {
-      deletedNode.prev.next = deletedNode.next;
+    if (removedNode.prev) {
+      removedNode.prev.next = removedNode.next;
     } else {
       // At the beginning.
-      this._head = deletedNode.next as DoublyLinkedListNode;
+      this._head = removedNode.next as DoublyLinkedListNode;
     }
 
     // In the middle.
-    if (deletedNode.next) {
-      deletedNode.next.prev = deletedNode.prev;
+    if (removedNode.next) {
+      removedNode.next.prev = removedNode.prev;
     } else {
       // At the end.
-      this._tail = deletedNode.prev as DoublyLinkedListNode;
+      this._tail = removedNode.prev as DoublyLinkedListNode;
     }
 
-    deletedNode.next = null;
-    deletedNode.prev = null;
+    removedNode.next = null;
+    removedNode.prev = null;
 
     this._decreaseSize();
 
-    return deletedNode;
+    return removedNode;
   }
 
   deleteByRef(ref: DoublyLinkedListNode<T>) {
@@ -145,41 +145,41 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
     this._decreaseSize();
   }
 
-  deleteHead() {
+  removeHead() {
     if (!this._head) return null;
 
-    const deletedNode = this._head;
+    const removedNode = this._head;
 
-    if (deletedNode?.next) {
-      this._head = deletedNode.next as DoublyLinkedListNode;
+    if (removedNode?.next) {
+      this._head = removedNode.next as DoublyLinkedListNode;
       this._head.prev = null;
 
-      deletedNode.next = null;
+      removedNode.next = null;
       this._decreaseSize();
     } else {
       this.clear();
     }
 
-    return deletedNode;
+    return removedNode;
   }
 
-  deleteTail() {
+  removeTail() {
     if (!this._head) return null;
 
-    const deletedNode = this.tail!;
+    const removedNode = this.tail!;
 
     // If there is only one node.
-    if (deletedNode.prev) {
-      this._tail = deletedNode.prev! as DoublyLinkedListNode;
+    if (removedNode.prev) {
+      this._tail = removedNode.prev! as DoublyLinkedListNode;
       this._tail.next = null;
 
-      deletedNode.prev = null;
+      removedNode.prev = null;
       this._decreaseSize();
     } else {
       this.clear();
     }
 
-    return deletedNode;
+    return removedNode;
   }
 
   reverse() {
@@ -188,7 +188,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
     }
 
     let prev = null;
-    let current = this._head as Nullable<DoublyLinkedListNode>;
+    let current: Nullable<DoublyLinkedListNode> = this._head;
 
     while (current !== null) {
       const nextNode = current.next;

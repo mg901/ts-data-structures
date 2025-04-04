@@ -18,7 +18,7 @@ export interface IPriorityQueue<T> {
 }
 
 export class PriorityQueue<T> implements IPriorityQueue<T> {
-  #heap: Heap<T>;
+  #items: Heap<T>;
 
   static of<T>(value: T, compareFn?: (a: T, b: T) => number) {
     const pq = new PriorityQueue<T>(compareFn);
@@ -32,56 +32,56 @@ export class PriorityQueue<T> implements IPriorityQueue<T> {
   }
 
   constructor(compareFn?: (a: T, b: T) => number, values: T[] = []) {
-    this.#heap = new Heap(compareFn, values);
+    this.#items = new Heap(compareFn, values);
 
     if (values) {
-      this.#heap.heapify();
+      this.#items.heapify();
     }
   }
 
   get size() {
-    return this.#heap.size;
+    return this.#items.size;
   }
 
   get isEmpty() {
-    return this.#heap.isEmpty;
+    return this.#items.isEmpty;
   }
 
   enqueue(value: T) {
-    this.#heap.insert(value);
+    this.#items.insert(value);
 
     return this;
   }
 
   dequeue() {
-    return this.#heap.poll();
+    return this.#items.poll();
   }
 
   front() {
-    return this.#heap.peek();
+    return this.#items.peek();
   }
 
   back() {
-    return this.#heap.last();
+    return this.#items.last();
   }
 
   remove(predicate: (value: T, index: number, obj: T[]) => unknown) {
-    return this.#heap.remove(predicate);
+    return this.#items.remove(predicate);
   }
 
   has(predicate: (value: T, index: number, obj: T[]) => unknown) {
-    return this.#heap.has(predicate);
+    return this.#items.has(predicate);
   }
 
   clear() {
-    return this.#heap.clear();
+    return this.#items.clear();
   }
 
   toArray() {
-    return this.#heap.toArray();
+    return this.#items.toArray();
   }
 
   toString() {
-    return this.#heap.toString();
+    return this.#items.toString();
   }
 }

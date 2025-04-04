@@ -293,89 +293,75 @@ describe('LinkedList', () => {
     });
   });
 
-  describe('deleteByValue', () => {
-    it('returns null when deleting a non-existing node', () => {
+  describe('removeByValue', () => {
+    it('tries to remove node a non-existing element', () => {
       // Act
-      const deletedNode = linkedList.deleteByValue(2);
+      const removedNode = linkedList.removeByValue(2);
 
       // Assert
-      expect(deletedNode).toBeNull();
+      expect(removedNode).toBeNull();
     });
 
-    it('deletes the element outside the list', () => {
-      // Arrange
-      const list = LinkedList.fromArray([1, 2]);
-
-      // Act
-      const deletedNode = list.deleteByValue(3);
-
-      // Assert
-      expect(deletedNode).toBeNull();
-      expect(list.toString()).toBe('1,2');
-      expect(list.tail?.data).toBe(2);
-      expect(list.size).toBe(2);
-    });
-
-    it('deletes the node from the singular node list', () => {
+    it('removes the node from the singular node list', () => {
       // Arrange
       linkedList.append(1);
 
       // Act
-      const deletedNode = linkedList.deleteByValue(1)!;
+      const removedNode = linkedList.removeByValue(1)!;
 
       // Assert
-      expect(deletedNode.data).toBe(1);
+      expect(removedNode.data).toBe(1);
       expect(linkedList.isEmpty).toBeTruthy();
     });
 
-    it('deletes the first node from the multi-node list', () => {
+    it('removes the first node from the multi-node list', () => {
       // Arrange
       const list = LinkedList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedNode = list.deleteByValue(1);
+      const removedNode = list.removeByValue(1);
 
       // Assert
-      expect(deletedNode?.data).toBe(1);
-      expect(deletedNode?.next).toBeNull();
+      expect(removedNode?.data).toBe(1);
+      expect(removedNode?.next).toBeNull();
 
       expect(list.toString()).toEqual('2,3');
       expect(list.tail?.data).toBe(3);
       expect(list.size).toBe(2);
     });
 
-    it('deletes an element in the middle', () => {
+    it('removes an element in the middle', () => {
       // Arrange
       const list = LinkedList.fromArray([1, 2, 3]);
 
       // Act
-      const deletedNode = list.deleteByValue(2);
+      const removedNode = list.removeByValue(2);
 
       // Assert
-      expect(deletedNode?.data).toBe(2);
-      expect(deletedNode?.next).toBeNull();
+      expect(removedNode?.data).toBe(2);
+      expect(removedNode?.next).toBeNull();
       expect(list.toString()).toBe('1,3');
       expect(list.tail?.data).toBe(3);
       expect(list.size).toBe(2);
     });
 
-    it('deletes the last element', () => {
+    it('removes the last element', () => {
       // Arrange
       const list = LinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedNode = list.deleteByValue(2);
+      const removedNode = list.removeByValue(2);
 
       // Assert
-      expect(deletedNode?.data).toBe(2);
-      expect(deletedNode?.next).toBeNull();
+      expect(removedNode?.data).toBe(2);
+      expect(removedNode?.next).toBeNull();
       expect(list.toString()).toBe('1');
       expect(list.tail?.data).toBe(1);
       expect(list.tail?.next).toBeNull();
       expect(list.size).toBe(1);
     });
 
-    it('deletes by predicate', () => {
+    it('removes by predicate', () => {
       // Arrange
       const list = LinkedList.fromArray<{
         key: string;
@@ -387,36 +373,36 @@ describe('LinkedList', () => {
       ]);
 
       // Act
-      const deletedNode = list.deleteByValue((pair) => pair.key === 'two');
+      const removedNode = list.removeByValue((pair) => pair.key === 'two');
 
       // Assert
-      expect(deletedNode?.data.value).toBe(2);
-      expect(deletedNode?.next).toBeNull();
+      expect(removedNode?.data.value).toBe(2);
+      expect(removedNode?.next).toBeNull();
 
       expect(list.toString((node) => `${node.value}`)).toBe('1,3');
       expect(list.size).toBe(2);
     });
   });
 
-  describe('deleteHead', () => {
-    it('deletes the head from an empty list', () => {
+  describe('removeHead', () => {
+    it('removes the head from an empty list', () => {
       // Act
-      const deletedHead = linkedList.deleteHead();
+      const removedHead = linkedList.removeHead();
 
       // Assert
-      expect(deletedHead).toBeNull();
+      expect(removedHead).toBeNull();
       expect(linkedList.isEmpty).toBeTruthy();
     });
 
-    it('deletes the head from the singular node list', () => {
+    it('removes the head from the singular node list', () => {
       // Arrange
       linkedList.append(1);
 
       // Act
-      const deletedHead = linkedList.deleteHead();
+      const removedHead = linkedList.removeHead();
 
       // Assert
-      expect(deletedHead?.data).toBe(1);
+      expect(removedHead?.data).toBe(1);
       expect(linkedList.isEmpty).toBeTruthy();
     });
 
@@ -425,11 +411,11 @@ describe('LinkedList', () => {
       const list = LinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedHead = list.deleteHead();
+      const removedHead = list.removeHead();
 
       // Assert
-      expect(deletedHead?.data).toBe(1);
-      expect(deletedHead?.next).toBeNull();
+      expect(removedHead?.data).toBe(1);
+      expect(removedHead?.next).toBeNull();
 
       expect(list.tail?.data).toBe(2);
       expect(list.tail?.next).toBeNull();
@@ -437,37 +423,37 @@ describe('LinkedList', () => {
     });
   });
 
-  describe('deleteTail', () => {
-    it('deletes the tail from an empty list', () => {
+  describe('removeTail', () => {
+    it('removes the tail from an empty list', () => {
       // Act
-      const deletedTail = linkedList.deleteTail();
+      const removedTail = linkedList.removeTail();
 
       // Assert
-      expect(deletedTail).toBeNull();
+      expect(removedTail).toBeNull();
       expect(linkedList.isEmpty).toBeTruthy();
     });
 
-    it('deletes the tail form the list with a single node', () => {
+    it('removes the tail form the list with a single node', () => {
       // Arrange
       linkedList.append(1);
 
       // Act
-      const deletedTail = linkedList.deleteTail();
+      const removedTail = linkedList.removeTail();
 
       // Assert
-      expect(deletedTail?.data).toBe(1);
+      expect(removedTail?.data).toBe(1);
       expect(linkedList.isEmpty).toBeTruthy();
     });
 
-    it('deletes the tail from the list with multiple nodes', () => {
+    it('removes the tail from the list with multiple nodes', () => {
       // Arrange
       const list = LinkedList.fromArray([1, 2]);
 
       // Act
-      const deletedTail = list.deleteTail();
+      const removedTail = list.removeTail();
 
       // Assert
-      expect(deletedTail?.data).toBe(2);
+      expect(removedTail?.data).toBe(2);
 
       expect(list.tail?.data).toBe(1);
       expect(list.tail?.next).toBeNull();

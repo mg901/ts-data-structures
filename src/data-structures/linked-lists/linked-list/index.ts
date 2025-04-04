@@ -75,17 +75,17 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
     return this;
   }
 
-  deleteByValue(value: T): Nullable<ListNode>;
-  deleteByValue(predicate: Predicate<T>): Nullable<ListNode>;
-  deleteByValue(arg: T | Predicate<T>) {
+  removeByValue(value: T): Nullable<ListNode>;
+  removeByValue(predicate: Predicate<T>): Nullable<ListNode>;
+  removeByValue(arg: T | Predicate<T>) {
     if (!this._head) return null;
 
-    let deletedNode: Nullable<ListNode> = null;
+    let removedNode: Nullable<ListNode> = null;
     let prevNode: Nullable<ListNode> = null;
 
     for (const currentNode of this) {
       if (this._isMatch(currentNode.data, arg)) {
-        deletedNode = currentNode as ListNode;
+        removedNode = currentNode as ListNode;
 
         break;
       }
@@ -93,51 +93,51 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
       prevNode = currentNode as ListNode;
     }
 
-    if (!deletedNode) return null;
+    if (!removedNode) return null;
 
     if (prevNode === null) {
-      this._head = deletedNode.next;
+      this._head = removedNode.next;
     } else {
-      prevNode.next = deletedNode.next;
+      prevNode.next = removedNode.next;
     }
 
-    if (deletedNode.next === null) {
+    if (removedNode.next === null) {
       this._tail = prevNode;
     }
 
-    deletedNode.next = null;
+    removedNode.next = null;
     this._decreaseSize();
 
-    return deletedNode;
+    return removedNode;
   }
 
-  deleteHead() {
+  removeHead() {
     if (!this._head) return null;
 
-    const deletedNode = this._head;
+    const removedNode = this._head;
 
-    if (deletedNode?.next) {
-      this._head = deletedNode.next;
-      deletedNode.next = null;
+    if (removedNode?.next) {
+      this._head = removedNode.next;
+      removedNode.next = null;
 
       this._decreaseSize();
     } else {
       this.clear();
     }
 
-    return deletedNode;
+    return removedNode;
   }
 
-  deleteTail() {
+  removeTail() {
     if (!this._head) return null;
 
-    const deletedNode = this._tail;
+    const removedNode = this._tail;
 
     if (!this._head.next) {
       this.clear();
     } else {
       let prevNode: Nullable<ListNode> = null;
-      let current: Nullable<ListNode> = this._head;
+      let current = this._head;
 
       while (current.next) {
         prevNode = current;
@@ -149,7 +149,7 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
       this._decreaseSize();
     }
 
-    return deletedNode;
+    return removedNode;
   }
 
   reverse() {
@@ -157,7 +157,7 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
       return this;
     }
 
-    let current = this._head as Nullable<ListNode>;
+    let current: Nullable<ListNode> = this._head;
     let prev = null;
 
     while (current) {
