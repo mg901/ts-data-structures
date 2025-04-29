@@ -73,12 +73,18 @@ export class PriorityQueue<T> implements IPriorityQueue<T> {
     return this.#items.has(predicate);
   }
 
+  toArray() {
+    return this.#items.toArray();
+  }
+
   clear() {
     return this.#items.clear();
   }
 
-  toArray() {
-    return this.#items.toArray();
+  *[Symbol.iterator]() {
+    while (!this.#items.isEmpty) {
+      yield this.#items.poll();
+    }
   }
 
   toString() {

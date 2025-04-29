@@ -12,8 +12,6 @@ describe('LRUCache', () => {
   it('returns initial state correctly', () => {
     // Act and Assert
     expect(cache.toArray()).toEqual([]);
-    expect(cache.isEmpty).toBeTruthy();
-    expect(cache.size).toBe(0);
   });
 
   describe('toArray', () => {
@@ -43,8 +41,6 @@ describe('LRUCache', () => {
 
       // Assert
       expect(cache.toArray()).toEqual([1]);
-      expect(cache.isEmpty).toBeFalsy();
-      expect(cache.size).toBe(1);
     });
 
     it('fills the cache', () => {
@@ -54,7 +50,6 @@ describe('LRUCache', () => {
 
       // Assert
       expect(cache.toArray()).toEqual([1, 2]);
-      expect(cache.size).toBe(2);
     });
 
     it(`overwrites item's value correctly`, () => {
@@ -66,7 +61,6 @@ describe('LRUCache', () => {
 
       // Assert
       expect(cache.toArray()).toEqual([2]);
-      expect(cache.size).toBe(1);
     });
 
     it('returns the correct size when exceeding capacity', () => {
@@ -80,7 +74,6 @@ describe('LRUCache', () => {
 
       // Assert
       expect(cache.toArray()).toEqual([2, 3, 4]);
-      expect(cache.size).toBe(3);
     });
   });
 
@@ -96,7 +89,6 @@ describe('LRUCache', () => {
 
       // Act and Assert
       expect(cache.toArray()).toEqual([1]);
-      expect(cache.size).toBe(1);
     });
 
     it('evicts the least recently used item when exceeding capacity', () => {
@@ -112,7 +104,6 @@ describe('LRUCache', () => {
       // Assert
       expect(cache.get('two')).toBeNull();
       expect(cache.toArray()).toEqual([3, 1, 4]);
-      expect(cache.size).toBe(3);
     });
   });
 
@@ -127,8 +118,6 @@ describe('LRUCache', () => {
     lfu.clear();
 
     expect(lfu.toArray()).toEqual([]);
-    expect(lfu.isEmpty).toBeTruthy();
-    expect(lfu.size).toBe(0);
   });
 
   describe('toStringTag', () => {

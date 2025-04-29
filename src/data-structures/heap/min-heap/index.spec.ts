@@ -166,6 +166,14 @@ describe('MinHeap', () => {
     });
   });
 
+  describe('Symbol.Iterator', () => {
+    it('should yield elements in ascending order', () => {
+      const minHeap = MinHeap.fromArray([5, 2, 8, 1]);
+
+      expect(Array.from(minHeap)).toEqual([1, 2, 5, 8]);
+    });
+  });
+
   describe('clear', () => {
     it('clears the heap', () => {
       // Arrange
