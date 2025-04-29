@@ -171,4 +171,12 @@ describe('MaxHeap', () => {
       expect(maxHeap.isEmpty).toBeTruthy();
     });
   });
+
+  describe('Symbol.Iterator', () => {
+    it('should yield elements in descending order', () => {
+      const maxHeap = MaxHeap.fromArray([1, 2, 5, 8]);
+
+      expect(Array.from(maxHeap)).toEqual([8, 5, 2, 1]);
+    });
+  });
 });

@@ -174,6 +174,50 @@ describe('PriorityQueue', () => {
     });
   });
 
+  describe('front', () => {
+    it('tries to return the first element from the empty queue', () => {
+      // Arrange
+      const pq = new PriorityQueue();
+
+      // Act & Assert
+      expect(pq.front()).toBeNull();
+    });
+
+    it('returns the first element', () => {
+      // Arrange
+      const pq = PriorityQueue.fromArray([7, 1, 3]);
+
+      // Act & Assert
+      expect(pq.front()).toBe(1);
+    });
+  });
+
+  describe('back', () => {
+    it('tries to return the last element from the empty queue', () => {
+      // Arrange
+      const pq = new PriorityQueue();
+
+      // Act & Assert
+      expect(pq.back()).toBeNull();
+    });
+
+    it('returns the last element', () => {
+      // Arrange
+      const pq = PriorityQueue.fromArray([7, 1, 3]);
+
+      // Act & Assert
+      expect(pq.back()).toBe(3);
+    });
+  });
+
+  describe('Symbol.Iterator', () => {
+    it('should yield elements in ascending order', () => {
+      const pq = PriorityQueue.fromArray([5, 2, 8, 1]);
+
+      expect(Array.from(pq)).toEqual([1, 2, 5, 8]);
+    });
+  });
+
   describe('clear', () => {
     it('clears the heap', () => {
       // Arrange

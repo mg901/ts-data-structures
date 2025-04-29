@@ -80,10 +80,8 @@ export class Heap<T> implements IHeap<T> {
   }
 
   poll() {
-    const { length } = this.#items;
-
-    if (length === 0) return null;
-    if (length === 1) return this.#items.pop()!;
+    if (this.size === 0) return null;
+    if (this.size === 1) return this.#items.pop()!;
 
     const min = this.#items[0];
     this.#items[0] = this.#items.pop()!;
@@ -138,6 +136,7 @@ export class Heap<T> implements IHeap<T> {
     if (index === -1) return null;
 
     const lastIndex = this.size - 1;
+
     if (index === lastIndex) {
       return this.#items.pop()!;
     }
@@ -172,5 +171,10 @@ export class Heap<T> implements IHeap<T> {
 
   toString() {
     return this.toArray().toString();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return `${this.constructor.name}`;
   }
 }

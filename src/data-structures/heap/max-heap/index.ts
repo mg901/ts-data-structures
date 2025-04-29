@@ -10,7 +10,7 @@ export class MaxHeap<T> {
     return maxHeap.insert(value);
   }
 
-  static fromArray<T>(values: T[], selector: (item: T) => T) {
+  static fromArray<T>(values: T[], selector?: (item: T) => T) {
     return new MaxHeap(selector, values);
   }
 
@@ -65,7 +65,18 @@ export class MaxHeap<T> {
     return this.#items.toArray();
   }
 
+  *[Symbol.iterator]() {
+    while (!this.#items.isEmpty) {
+      yield this.#items.poll();
+    }
+  }
+
   toString() {
     return this.#items.toString();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() {
+    return `${this.constructor.name}`;
   }
 }

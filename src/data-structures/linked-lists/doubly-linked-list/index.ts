@@ -19,6 +19,7 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
 
   static fromArray<T>(array: T[]) {
     const list = new DoublyLinkedList<T>();
+
     array.forEach((value) => {
       list.append(value);
     });
