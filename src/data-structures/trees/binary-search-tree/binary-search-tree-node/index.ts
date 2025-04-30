@@ -1,4 +1,4 @@
-import { BinaryTreeNode } from '@/data-structures/tree/binary-tree-node';
+import { BinaryTreeNode } from '@/data-structures/trees/binary-tree-node';
 import { Comparator, type CompareFn } from '@/shared/comparator';
 import { Nullable } from '@/shared/types';
 
