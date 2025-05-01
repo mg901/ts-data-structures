@@ -55,7 +55,7 @@ export class SegmentTree {
   updateRange(
     start: number,
     end: number,
-    delta = 0,
+    delta: number,
     node = 0,
     left = 0,
     right = this.#n - 1,
