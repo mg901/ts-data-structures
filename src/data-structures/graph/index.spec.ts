@@ -18,6 +18,21 @@ describe('Graph', () => {
     });
   });
 
+  describe('deleteVertex', () => {
+    it('deletes vertex', () => {
+      // Arrange
+      graph.addEdge('A', 'B');
+      graph.addEdge('C', 'B');
+
+      // Act
+      graph.deleteVertex('B');
+
+      // Assert
+      expect(graph.hasEdge('A', 'B')).toBeFalsy();
+      expect(graph.hasEdge('C', 'B')).toBeFalsy();
+    });
+  });
+
   describe('addEdge', () => {
     it('adds an edge and vertices if missing', () => {
       // Act
@@ -27,6 +42,19 @@ describe('Graph', () => {
       expect(graph.hasVertex('A')).toBeTruthy();
       expect(graph.hasVertex('B')).toBeTruthy();
       expect(graph.hasEdge('A', 'B')).toBeTruthy();
+    });
+  });
+
+  describe('deleteEdge', () => {
+    it('deletes edge', () => {
+      // Arrange
+      graph.addEdge('A', 'B');
+
+      // Act
+      graph.deleteEdge('A', 'B');
+
+      // Assert
+      expect(graph.hasEdge('A', 'B'));
     });
   });
 });
