@@ -28,7 +28,9 @@ module.exports = {
     'import/prefer-default-export': 0,
     'import/no-extraneous-dependencies': 0,
 
+    '@typescript-eslint/no-throw-literal': 0,
     '@typescript-eslint/no-use-before-define': 0,
+    '@typescript-eslint/lines-between-class-members': 0,
     eqeqeq: [2, 'smart'],
     'newline-before-return': 2,
     'no-console': 2,
