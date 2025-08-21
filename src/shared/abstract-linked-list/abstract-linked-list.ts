@@ -86,8 +86,10 @@ export abstract class AbstractLinkedList<
 
   protected _isMatch(value: T, matcher: T | Predicate<T>) {
     return isFunction(matcher)
-      ? matcher(value)
-      : this._comparator.equal(matcher, value);
+      ? // @ts-ignore
+        matcher(value)
+      : // @ts-ignore
+        this._comparator.equal(matcher, value);
   }
 
   protected _findNodeByIndex(index: number) {
