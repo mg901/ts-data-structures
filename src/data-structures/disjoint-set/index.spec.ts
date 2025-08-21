@@ -1,82 +1,48 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { DisjointSet } from './index';
+import { describe, expect, test } from 'vitest';
+import { DisjointSet } from './index.js';
 
 describe('DisjointSet', () => {
-  let ds: DisjointSet;
-
-  beforeEach(() => {
-    ds = new DisjointSet(5);
+  test('initialize', () => {
+    const ds = new DisjointSet(5);
+    for (let i = 0; i < 5; i += 1) {
+      expect(ds.find(i)).toBe(i);
+    }
   });
 
-  describe('find', () => {
-    it('returns the element itself if no union performed', () => {
-      // Act & Assert
-      expect(ds.find(0)).toBe(0);
-      expect(ds.find(4)).toBe(4);
-    });
-
-    it('applies path compression', () => {
-      // Arrange
-      ds.union(0, 1);
-      ds.union(1, 2);
-
-      // Act
-      const rootBefore = ds.find(0);
-
-      // Assert
-      expect(ds.find(2)).toBe(rootBefore);
-    });
+  test('union', () => {
+    const ds = new DisjointSet(5);
+    expect(ds.union(0, 1)).toBe(true);
+    expect(ds.connected(0, 1)).toBe(true);
+    expect(ds.connected(1, 0)).toBe(true);
   });
 
-  describe('union', () => {
-    it('merges two sets', () => {
-      // Act
-      ds.union(0, 1);
-
-      // Assert
-      expect(ds.find(0)).toBe(ds.find(1));
-    });
-
-    it('does nothing if elements are already connected', () => {
-      // Arrange
-      ds.union(0, 1);
-      const rootBefore = ds.find(0);
-
-      // Act
-      ds.union(0, 1);
-
-      // Assert
-      expect(ds.find(1)).toBe(rootBefore);
-    });
-
-    it('correctly updates ranks and parents', () => {
-      // Arrange
-      ds.union(0, 1);
-      ds.union(2, 3);
-      ds.union(0, 2);
-
-      // Act
-      const root = ds.find(0);
-
-      // Assert
-      expect(ds.find(1)).toBe(root);
-      expect(ds.find(2)).toBe(root);
-      expect(ds.find(3)).toBe(root);
-    });
+  test('already connected elements', () => {
+    const ds = new DisjointSet(5);
+    ds.union(0, 1);
+    expect(ds.union(0, 1)).toBe(false);
   });
 
-  describe('connected', () => {
-    it('returns true for connected elements', () => {
-      // Arrange
-      ds.union(2, 3);
+  test('multiple unions', () => {
+    const ds = new DisjointSet(5);
+    ds.union(0, 1);
+    ds.union(1, 2);
+    ds.union(3, 4);
 
-      // Act & Assert
-      expect(ds.connected(2, 3)).toBe(true);
-    });
+    expect(ds.connected(0, 2)).toBe(true);
+    expect(ds.connected(0, 3)).toBe(false);
+    expect(ds.connected(3, 4)).toBe(true);
 
-    it('returns false for disconnected elements', () => {
-      // Act and Assert
-      expect(ds.connected(0, 4)).toBe(false);
-    });
+    ds.union(2, 4);
+    expect(ds.connected(0, 4)).toBe(true);
+  });
+
+  test('unrelated elements', () => {
+    const ds = new DisjointSet(5);
+    ds.union(0, 1);
+    ds.union(2, 3);
+
+    expect(ds.connected(0, 2)).toBe(false);
+    expect(ds.connected(1, 3)).toBe(false);
+    expect(ds.connected(4, 4)).toBe(true);
   });
 });
