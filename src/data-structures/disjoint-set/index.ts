@@ -1,3 +1,5 @@
+// Explanation:
+
 export class DisjointSet {
   #parent;
 
