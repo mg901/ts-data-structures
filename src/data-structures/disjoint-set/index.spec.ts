@@ -7,6 +7,7 @@ describe('DisjointSet', () => {
   beforeEach(() => {
     ds = new DisjointSet(5);
   });
+
   test('initialize', () => {
     for (let i = 0; i < 5; i += 1) {
       // Act & Assert

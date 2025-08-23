@@ -1,13 +1,14 @@
 // Explanation:
+// - Hello Byte: https://youtu.be/92UpvDXc8fs?si=rEbdXNPEIm_g97NK&t=237
 
 export class DisjointSet {
   #parent;
 
   #rank;
 
-  constructor(size: number) {
-    this.#parent = Array.from({ length: size }, (_, i) => i);
-    this.#rank = new Uint32Array(size);
+  constructor(n: number) {
+    this.#parent = Array.from({ length: n }, (_, i) => i);
+    this.#rank = new Uint32Array(n);
   }
 
   find(x: number) {
@@ -18,19 +19,19 @@ export class DisjointSet {
     return this.#parent[x];
   }
 
-  union(a: number, b: number) {
-    const rootA = this.find(a);
-    const rootB = this.find(b);
+  union(x: number, y: number) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
 
-    if (rootA === rootB) return false;
+    if (rootX === rootY) return false;
 
-    if (this.#rank[rootA] < this.#rank[rootB]) {
-      this.#parent[rootA] = rootB;
-    } else if (this.#rank[rootA] > this.#rank[rootB]) {
-      this.#parent[rootB] = rootA;
+    if (this.#rank[rootX] < this.#rank[rootY]) {
+      this.#parent[rootX] = rootY;
+    } else if (this.#rank[rootX] > this.#rank[rootY]) {
+      this.#parent[rootY] = rootX;
     } else {
-      this.#parent[rootB] = rootA;
-      this.#rank[rootA] += 1;
+      this.#parent[rootY] = rootX;
+      this.#rank[rootX] += 1;
     }
 
     return true;
