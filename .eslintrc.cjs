@@ -19,6 +19,7 @@ module.exports = {
     },
   },
   rules: {
+    'no-bitwise': 0,
     'prefer-const': 0,
     'no-param-reassign': 0,
     'no-restricted-syntax': 0,

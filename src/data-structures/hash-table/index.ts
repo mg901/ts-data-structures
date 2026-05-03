@@ -12,61 +12,24 @@ export class HashTable<Key extends PropertyKey, Value = any>
   implements IHashTable<Key, Value>
 {
   #INITIAL_CAPACITY = 5;
-
-  #RESIZE_THRESHOLD = 0.7;
+  #RESIZE_THRESHOLD = 0.75;
 
   #capacity = this.#INITIAL_CAPACITY;
 
-  #buckets = createBuckets<{
-    key: Key;
-    value: Value;
-  }>(this.#capacity);
-
+  #buckets = createBuckets<{ key: Key; value: Value }>(this.#capacity);
   #size = 0;
 
   get size() {
     return this.#size;
   }
 
-  #checkResize() {
-    const loadFactor = this.#size / this.#buckets.length;
-    if (loadFactor < this.#RESIZE_THRESHOLD) return;
-
-    this.#resize();
-  }
-
-  #resize() {
-    const newCapacity = this.#capacity * 2;
-    const newBuckets = createBuckets<{ key: Key; value: Value }>(newCapacity);
-
-    // Rehash existing key-value pairs into the new buckets
-    for (const bucket of this.#buckets) {
-      for (const node of bucket) {
-        const { data } = node;
-
-        const index = getHash(data.key as Key, newCapacity);
-
-        newBuckets[index].append(data);
-      }
-    }
-
-    this.#buckets = newBuckets;
-    this.#capacity = newCapacity;
-  }
-
-  #getBucket(key: Key) {
-    return this.#buckets[getHash(key, this.#capacity)];
-  }
-
   set(key: Key, value: Value): this {
     this.#checkResize();
 
-    const bucket = this.#getBucket(key);
-    const node = bucket.find((pair) => pair.key === key);
+    const { bucket, node } = this.#resolve(key);
 
     if (!node) {
       bucket.append({ key, value });
-
       this.#size += 1;
     } else {
       node.data.value = value;
@@ -75,29 +38,24 @@ export class HashTable<Key extends PropertyKey, Value = any>
     return this;
   }
 
-  #findNode(key: Key) {
-    return this.#getBucket(key).find((pair) => pair.key === key);
-  }
-
   get(key: Key): Value | undefined {
-    return this.#findNode(key)?.data.value as Value | undefined;
+    return this.#resolve(key).node?.data.value;
   }
 
   has(key: Key): boolean {
-    return Boolean(this.#findNode(key));
+    return Boolean(this.#resolve(key).node);
   }
 
   delete(key: Key): boolean {
     const bucket = this.#getBucket(key);
+
     const deletedNode = bucket.removeByValue((pair) => pair.key === key);
 
-    if (deletedNode) {
-      this.#size -= 1;
+    if (!deletedNode) return false;
 
-      return true;
-    }
+    this.#size -= 1;
 
-    return false;
+    return true;
   }
 
   clear(): void {
@@ -105,13 +63,62 @@ export class HashTable<Key extends PropertyKey, Value = any>
     this.#buckets = createBuckets<{ key: Key; value: Value }>(this.#capacity);
     this.#size = 0;
   }
+
+  get [Symbol.toStringTag]() {
+    return 'HashTable';
+  }
+
+  // ----------------- internals -----------------
+
+  #resolve(key: Key) {
+    const bucket = this.#getBucket(key);
+    const node = bucket.find((pair) => pair.key === key);
+
+    return { bucket, node };
+  }
+
+  #getBucket(key: Key) {
+    return this.#buckets[getHash(key, this.#capacity)];
+  }
+
+  #checkResize() {
+    const loadFactor = this.#size / this.#capacity;
+
+    if (loadFactor < this.#RESIZE_THRESHOLD) return;
+
+    this.#resize();
+  }
+
+  #resize() {
+    const oldBuckets = this.#buckets;
+
+    const newCapacity = this.#capacity * 2;
+    const newBuckets = createBuckets<{ key: Key; value: Value }>(newCapacity);
+
+    for (const bucket of oldBuckets) {
+      for (const node of bucket) {
+        const { key, value } = node.data;
+
+        const index = getHash(key, newCapacity);
+        newBuckets[index].append({ key, value });
+      }
+    }
+
+    this.#buckets = newBuckets;
+    this.#capacity = newCapacity;
+  }
 }
 
+// ----------------- helpers -----------------
+
 function getHash<T extends keyof any>(key: T, length: number): number {
-  const hash = Array.from(String(key)).reduce<number>(
-    (acc, char) => acc + char.charCodeAt(0),
-    0,
-  );
+  let hash = 0;
+
+  const str = String(key);
+
+  for (let i = 0; i < str.length; i += 1) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  }
 
   return hash % length;
 }
