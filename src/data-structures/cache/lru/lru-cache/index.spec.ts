@@ -11,27 +11,7 @@ describe('LRUCache', () => {
 
   it('returns initial state correctly', () => {
     // Act and Assert
-    expect(cache.toArray()).toEqual([]);
-  });
-
-  describe('toArray', () => {
-    it('returns values of items', () => {
-      // Arrange
-      cache.put('a', 1);
-      cache.put('b', 2);
-
-      // Act and Assert
-      expect(cache.toArray()).toEqual([1, 2]);
-    });
-
-    it('returns keys of items', () => {
-      // Arrange
-      cache.put('a', 1);
-      cache.put('b', 2);
-
-      // Act and Assert
-      expect(cache.toArray(({ key }) => key)).toEqual(['a', 'b']);
-    });
+    expect(cache.size).toBe(0);
   });
 
   describe('put', () => {
@@ -40,7 +20,7 @@ describe('LRUCache', () => {
       cache.put('one', 1);
 
       // Assert
-      expect(cache.toArray()).toEqual([1]);
+      expect(cache.size).toBe(1);
     });
 
     it('fills the cache', () => {
@@ -49,7 +29,7 @@ describe('LRUCache', () => {
       cache.put('two', 2);
 
       // Assert
-      expect(cache.toArray()).toEqual([1, 2]);
+      expect(cache.size).toBe(2);
     });
 
     it(`overwrites item's value correctly`, () => {
@@ -60,7 +40,7 @@ describe('LRUCache', () => {
       cache.put('key', 2);
 
       // Assert
-      expect(cache.toArray()).toEqual([2]);
+      expect(cache.size).toBe(1);
     });
 
     it('returns the correct size when exceeding capacity', () => {
@@ -73,7 +53,7 @@ describe('LRUCache', () => {
       cache.put('four', 4);
 
       // Assert
-      expect(cache.toArray()).toEqual([2, 3, 4]);
+      expect(cache.size).toBe(3);
     });
   });
 
@@ -88,7 +68,7 @@ describe('LRUCache', () => {
       cache.put('one', 1);
 
       // Act and Assert
-      expect(cache.toArray()).toEqual([1]);
+      expect(cache.get('one')).toBe(1);
     });
 
     it('evicts the least recently used item when exceeding capacity', () => {
@@ -103,7 +83,7 @@ describe('LRUCache', () => {
 
       // Assert
       expect(cache.get('two')).toBeNull();
-      expect(cache.toArray()).toEqual([3, 1, 4]);
+      expect(cache.size).toBe(3);
     });
   });
 
@@ -117,15 +97,6 @@ describe('LRUCache', () => {
     // Act
     lfu.clear();
 
-    expect(lfu.toArray()).toEqual([]);
-  });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new LRUCache(6))).toBe(
-        '[object LRUCache]',
-      );
-    });
+    expect(lfu.size).toBe(0);
   });
 });

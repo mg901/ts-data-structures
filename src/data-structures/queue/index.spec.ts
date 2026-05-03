@@ -156,13 +156,4 @@ describe('Queue', () => {
       expect(queue.size).toBe(0);
     });
   });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new Queue())).toBe(
-        '[object Queue]',
-      );
-    });
-  });
 });

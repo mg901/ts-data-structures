@@ -172,9 +172,4 @@ export class Heap<T> implements IHeap<T> {
   toString() {
     return this.toArray().toString();
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
-  }
 }

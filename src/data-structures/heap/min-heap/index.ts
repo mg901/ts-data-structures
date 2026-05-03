@@ -74,9 +74,4 @@ export class MinHeap<T> {
   toString() {
     return this.#items.toString();
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
-  }
 }

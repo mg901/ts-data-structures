@@ -557,13 +557,4 @@ describe('DoublyLinkedList', () => {
       expect(list.size).toBe(3);
     });
   });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new DoublyLinkedList())).toBe(
-        '[object DoublyLinkedList]',
-      );
-    });
-  });
 });

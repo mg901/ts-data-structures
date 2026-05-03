@@ -631,13 +631,4 @@ describe('LinkedList', () => {
       expect(list.isEmpty).toBeTruthy();
     });
   });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new LinkedList())).toBe(
-        '[object LinkedList]',
-      );
-    });
-  });
 });

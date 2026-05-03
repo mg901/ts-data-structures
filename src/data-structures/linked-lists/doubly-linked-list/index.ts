@@ -205,8 +205,4 @@ export class DoublyLinkedList<T = any> extends AbstractLinkedList<
 
     return this;
   }
-
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
-  }
 }

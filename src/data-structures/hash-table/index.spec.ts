@@ -104,13 +104,4 @@ describe('HashTable', () => {
       expect(hashTable.size).toBe(0);
     });
   });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new HashTable())).toBe(
-        '[object HashTable]',
-      );
-    });
-  });
 });

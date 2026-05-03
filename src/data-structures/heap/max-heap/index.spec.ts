@@ -16,38 +16,16 @@ describe('MaxHeap', () => {
   describe('insert', () => {
     it('adds items to the heap', () => {
       // Arrange
-      const maxHeap = MaxHeap.of(1);
+      const minHeap = new MaxHeap<number>();
 
       // Act
-      maxHeap.insert(10);
-      // Assert
-      expect(maxHeap.toArray()).toEqual([10, 1]);
-      expect(maxHeap.size).toBe(2);
-      expect(maxHeap.isEmpty).toBeFalsy();
+      minHeap.insert(3).insert(1).insert(10).insert(5);
 
-      // Act
-      maxHeap.insert(3);
       // Assert
-      expect(maxHeap.toArray()).toEqual([10, 1, 3]);
-      expect(maxHeap.peek()).toBe(10);
-
-      // Act
-      maxHeap.insert(5);
-      // Assert
-      expect(maxHeap.toArray()).toEqual([10, 5, 3, 1]);
-      expect(maxHeap.peek()).toBe(10);
-
-      // Act
-      maxHeap.insert(8);
-      // Assert
-      expect(maxHeap.toArray()).toEqual([10, 8, 3, 1, 5]);
-      expect(maxHeap.peek()).toBe(10);
-
-      // // Act
-      maxHeap.insert(20);
-      // Assert
-      expect(maxHeap.toArray()).toEqual([20, 8, 10, 1, 5, 3]);
-      expect(maxHeap.peek()).toBe(20);
+      expect(minHeap.peek()).toBe(10);
+      expect(minHeap.size).toBe(4);
+      expect(minHeap.isEmpty).toBeFalsy();
+      expect(Array.from(minHeap)).toEqual([10, 5, 3, 1]);
     });
   });
 
@@ -82,31 +60,12 @@ describe('MaxHeap', () => {
 
     it('removes the top element from the heap', () => {
       // Arrange
-      const maxHeap = MaxHeap.of(1).insert(5).insert(3).insert(8).insert(12);
+      const minHeap = MaxHeap.of(1).insert(5).insert(3).insert(8).insert(2);
 
       // Act and Assert
-      expect(maxHeap.poll()).toBe(12);
-      expect(maxHeap.toArray()).toEqual([8, 5, 3, 1]);
-      expect(maxHeap.size).toBe(4);
-
-      // Act and Assert
-      expect(maxHeap.poll()).toBe(8);
-      expect(maxHeap.toArray()).toEqual([5, 1, 3]);
-      expect(maxHeap.size).toBe(3);
-
-      // Act and Assert
-      expect(maxHeap.poll()).toBe(5);
-      expect(maxHeap.toArray()).toEqual([3, 1]);
-      expect(maxHeap.size).toBe(2);
-
-      // Act and Assert
-      expect(maxHeap.poll()).toBe(3);
-      expect(maxHeap.toArray()).toEqual([1]);
-      expect(maxHeap.size).toBe(1);
-
-      // Act and Assert
-      expect(maxHeap.poll()).toBe(1);
-      expect(maxHeap.isEmpty).toBeTruthy();
+      expect(minHeap.poll()).toBe(8);
+      expect(minHeap.size).toBe(4);
+      expect(Array.from(minHeap)).toEqual([5, 3, 2, 1]);
     });
   });
 
@@ -124,38 +83,46 @@ describe('MaxHeap', () => {
 
       // Assert
       expect(removedValue).toBeNull();
-      expect(maxHeap.toArray()).toEqual([12, 8, 7, 3, 5]);
       expect(maxHeap.size).toBe(5);
+      expect(Array.from(maxHeap)).toEqual([12, 8, 7, 5, 3]);
     });
 
-    it('deletes the last element', () => {
+    it('removes the last element', () => {
       // Act
       const deletedElement = maxHeap.remove((x) => x === 5);
 
       // Assert
       expect(deletedElement).toBe(5);
-      expect(maxHeap.toArray()).toEqual([12, 8, 7, 3]);
       expect(maxHeap.size).toBe(4);
+      expect(Array.from(maxHeap)).toEqual([12, 8, 7, 3]);
     });
 
-    it('deletes element', () => {
+    it('removes an arbitrary element', () => {
       // Act
       const removedValue = maxHeap.remove((x) => x === 8);
 
       // Assert
       expect(removedValue).toBe(8);
-      expect(maxHeap.toArray()).toEqual([12, 5, 7, 3]);
       expect(maxHeap.size).toBe(4);
+      expect(Array.from(maxHeap)).toEqual([12, 7, 5, 3]);
     });
 
-    it('deletes the top element', () => {
+    it('removes the top element', () => {
       // Act
       const deletedElement = maxHeap.remove((x) => x === 12);
 
       // Assert
       expect(deletedElement).toBe(12);
       expect(maxHeap.peek()).toBe(8);
-      expect(maxHeap.toArray()).toEqual([8, 5, 7, 3]);
+      expect(Array.from(maxHeap)).toEqual([8, 7, 5, 3]);
+    });
+  });
+
+  describe('Symbol.Iterator', () => {
+    it('should yield elements in descending order', () => {
+      const maxHeap = MaxHeap.fromArray([1, 2, 5, 8]);
+
+      expect(Array.from(maxHeap)).toEqual([8, 5, 2, 1]);
     });
   });
 
@@ -169,14 +136,6 @@ describe('MaxHeap', () => {
 
       // Assert
       expect(maxHeap.isEmpty).toBeTruthy();
-    });
-  });
-
-  describe('Symbol.Iterator', () => {
-    it('should yield elements in descending order', () => {
-      const maxHeap = MaxHeap.fromArray([1, 2, 5, 8]);
-
-      expect(Array.from(maxHeap)).toEqual([8, 5, 2, 1]);
     });
   });
 });

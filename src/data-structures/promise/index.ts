@@ -1,5 +1,6 @@
 // Promises/A+ spec
 // https://github.com/promises-aplus/promises-spec
+import isFunction from 'lodash.isfunction';
 import { ValueOf } from 'type-fest';
 
 /**
@@ -259,7 +260,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       );
     }
 
-    if (!isCallable(executor)) {
+    if (!isFunction(executor)) {
       throw new TypeError(
         `${this.constructor.name} resolver ${typeof executor} is not a function`,
       );
@@ -323,7 +324,7 @@ export class MyPromise<T = any> implements IMyPromise<T> {
       try {
         const thenAction = (resolution as PromiseLike<T>).then;
 
-        if (!isCallable(thenAction)) {
+        if (!isFunction(thenAction)) {
           fulfillPromise(resolution);
 
           return;
@@ -357,8 +358,8 @@ export class MyPromise<T = any> implements IMyPromise<T> {
     const promiseCapability = newPromiseCapability<TResult1 | TResult2>(
       MyPromise,
     );
-    const onFulfilledCallback = !isCallable(onfulfilled) ? null : onfulfilled;
-    const onRejectedCallback = !isCallable(onrejected) ? null : onrejected;
+    const onFulfilledCallback = !isFunction(onfulfilled) ? null : onfulfilled;
+    const onRejectedCallback = !isFunction(onrejected) ? null : onrejected;
 
     const fulfillReaction: FulfillPromiseReaction = {
       capability: promiseCapability,
@@ -397,14 +398,14 @@ export class MyPromise<T = any> implements IMyPromise<T> {
   finally(onfinally?: (() => void) | undefined | null) {
     return this.then(
       (value) => {
-        if (isCallable(onfinally)) {
+        if (isFunction(onfinally)) {
           onfinally();
         }
 
         return value;
       },
       (reason) => {
-        if (isCallable(onfinally)) {
+        if (isFunction(onfinally)) {
           onfinally();
         }
 
@@ -505,15 +506,11 @@ function newPromiseCapability<T>(C: typeof MyPromise) {
 }
 
 function isThenable(it: any): it is PromiseLike<unknown> {
-  return isObject(it) && isCallable(it.then);
+  return isObject(it) && isFunction(it.then);
 }
 
 function isObject(it: unknown) {
-  return type(it) === 'object' ? it !== null : isCallable(it);
-}
-
-function isCallable(it: unknown): it is (...args: any[]) => any {
-  return type(it) === 'function';
+  return type(it) === 'object' ? it !== null : isFunction(it);
 }
 
 function type(it: unknown) {

@@ -12,14 +12,24 @@ export class LRUCache<K, V> {
 
   #keyNodeMap = new Map();
 
-  #head = new DoublyLinkedListNode<Payload<K, V>>({ key: null, value: null });
+  #head = new DoublyLinkedListNode<Payload<K, V>>({
+    key: null,
+    value: null,
+  });
 
-  #tail = new DoublyLinkedListNode<Payload<K, V>>({ key: null, value: null });
+  #tail = new DoublyLinkedListNode<Payload<K, V>>({
+    key: null,
+    value: null,
+  });
 
   constructor(capacity: number) {
     this.#capacity = capacity;
     this.#head.next = this.#tail;
     this.#tail.prev = this.#head;
+  }
+
+  get size() {
+    return this.#keyNodeMap.size;
   }
 
   get(key: K) {
@@ -44,10 +54,10 @@ export class LRUCache<K, V> {
     }
 
     if (this.#keyNodeMap.size === this.#capacity) {
-      const lru = this.#tail.prev!;
+      const victim = this.#tail.prev!;
 
-      this.#delete(lru);
-      this.#keyNodeMap.delete(lru.data.key);
+      this.#delete(victim);
+      this.#keyNodeMap.delete(victim.data.key);
     }
 
     const node = new DoublyLinkedListNode({ key, value: val });
@@ -71,31 +81,9 @@ export class LRUCache<K, V> {
     this.#head.next = node;
   }
 
-  toArray<T>(
-    callback: (data: { key: K; value: V }) => T = (data) =>
-      data.value as unknown as T,
-  ): T[] {
-    let current = this.#tail.prev;
-    const array = [];
-
-    while (current && current !== this.#head) {
-      // @ts-ignore
-      array.push(callback(current.data));
-
-      current = current.prev;
-    }
-
-    return array;
-  }
-
   clear() {
     this.#head.next = this.#tail;
     this.#tail.prev = this.#head;
     this.#keyNodeMap.clear();
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
   }
 }

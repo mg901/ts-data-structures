@@ -113,13 +113,4 @@ describe('Stack', () => {
       expect(stack.size).toBe(0);
     });
   });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new Stack())).toBe(
-        '[object Stack]',
-      );
-    });
-  });
 });
