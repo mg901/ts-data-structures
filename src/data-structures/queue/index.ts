@@ -65,9 +65,4 @@ export class Queue<T = any> implements IQueue<T> {
   toString(callback?: Callback<T>) {
     return this.#list.toString(callback);
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
-  }
 }

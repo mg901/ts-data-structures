@@ -105,11 +105,6 @@ export class HashTable<Key extends PropertyKey, Value = any>
     this.#buckets = createBuckets<{ key: Key; value: Value }>(this.#capacity);
     this.#size = 0;
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return 'HashTable';
-  }
 }
 
 function getHash<T extends keyof any>(key: T, length: number): number {

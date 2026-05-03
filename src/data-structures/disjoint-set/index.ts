@@ -1,4 +1,3 @@
-// Explanation:
 // - Hello Byte: https://youtu.be/92UpvDXc8fs?si=rEbdXNPEIm_g97NK&t=237
 
 export class DisjointSet {
@@ -7,7 +6,7 @@ export class DisjointSet {
   #rank;
 
   constructor(n: number) {
-    this.#parent = Array.from({ length: n }, (_, i) => i);
+    this.#parent = Array.from({ length: n }, (_, index) => index);
     this.#rank = new Uint32Array(n);
   }
 
@@ -37,7 +36,7 @@ export class DisjointSet {
     return true;
   }
 
-  connected(a: number, b: number) {
-    return this.find(a) === this.find(b);
+  connected(x: number, y: number) {
+    return this.find(x) === this.find(y);
   }
 }

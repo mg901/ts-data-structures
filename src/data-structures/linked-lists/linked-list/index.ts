@@ -173,8 +173,4 @@ export class LinkedList<T = any> extends AbstractLinkedList<T> {
 
     return this;
   }
-
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
-  }
 }

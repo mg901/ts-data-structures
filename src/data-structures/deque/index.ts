@@ -67,9 +67,4 @@ export class Deque<T = any> implements IDeque<T> {
   toString(callback?: Callback<T>) {
     return this.#list.toString(callback);
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
-  }
 }

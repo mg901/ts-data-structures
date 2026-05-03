@@ -10,28 +10,6 @@ describe('LFUCache', () => {
   });
   it('returns initial state correctly', () => {
     expect(cache.size).toBe(0);
-    expect(cache.toArray()).toEqual([]);
-    expect(cache.isEmpty).toBeTruthy();
-  });
-
-  describe('toArray', () => {
-    it('returns values of items', () => {
-      // Arrange
-      cache.put('a', 1);
-      cache.put('b', 2);
-
-      // Act and Assert
-      expect(cache.toArray()).toEqual([1, 2]);
-    });
-
-    it('returns keys of items', () => {
-      // Arrange
-      cache.put('a', 1);
-      cache.put('b', 2);
-
-      // Act and Assert
-      expect(cache.toArray(({ key }) => key)).toEqual(['a', 'b']);
-    });
   });
 
   describe('put', () => {
@@ -40,7 +18,6 @@ describe('LFUCache', () => {
       cache.put('a', 1);
 
       // Assert
-      expect(cache.toArray()).toEqual([1]);
       expect(cache.size).toBe(1);
     });
 
@@ -49,7 +26,6 @@ describe('LFUCache', () => {
       cache.put('a', 1);
 
       // Assert
-      expect(cache.toArray()).toEqual([1]);
       expect(cache.size).toBe(1);
     });
 
@@ -61,7 +37,6 @@ describe('LFUCache', () => {
       cache.put('a', 2);
 
       // Assert
-      expect(cache.toArray()).toEqual([2]);
       expect(cache.size).toBe(1);
     });
 
@@ -85,7 +60,6 @@ describe('LFUCache', () => {
       // [2] -> 1, 2
 
       // Assert
-      expect(lfu.toArray()).toEqual([4, 1, 2]);
       expect(lfu.size).toBe(3);
     });
   });
@@ -106,7 +80,6 @@ describe('LFUCache', () => {
 
       // Act and Assert
       expect(cache.get('a')).toBe(1);
-      expect(cache.toArray()).toEqual([1]);
       expect(cache.size).toBe(1);
     });
 
@@ -129,7 +102,6 @@ describe('LFUCache', () => {
       // [2] -> 1, 2
 
       // Assert
-      expect(lfu.toArray()).toEqual([4, 1, 2]);
       expect(lfu.get('c')).toBeNull();
       expect(lfu.get('d')).toBe(4);
       expect(lfu.get('a')).toBe(1);
@@ -145,24 +117,10 @@ describe('LFUCache', () => {
     lfu.put('b', 2);
     lfu.put('c', 3);
 
-    expect(lfu.toArray()).toEqual([1, 2, 3]);
-    expect(lfu.isEmpty).toBeFalsy();
-
     // Act
     lfu.clear();
 
     // Assert
-    expect(lfu.toArray()).toEqual([]);
-    expect(lfu.isEmpty).toBeTruthy();
     expect(lfu.size).toBe(0);
-  });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new LFUCache(6))).toBe(
-        '[object LFUCache]',
-      );
-    });
   });
 });

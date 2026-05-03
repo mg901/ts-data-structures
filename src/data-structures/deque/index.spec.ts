@@ -136,13 +136,4 @@ describe('Deque', () => {
       expect(deque.peekRear()).toBe(2);
     });
   });
-
-  describe('toStringTag', () => {
-    it('returns correct string representation', () => {
-      // Assert
-      expect(Object.prototype.toString.call(new Deque())).toBe(
-        '[object Deque]',
-      );
-    });
-  });
 });

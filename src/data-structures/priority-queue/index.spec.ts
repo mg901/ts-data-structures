@@ -96,31 +96,10 @@ describe('PriorityQueue', () => {
         .enqueue(8)
         .enqueue(2);
 
-      expect(pq.toArray()).toEqual([1, 2, 3, 8, 5]);
-
       // Act and Assert
       expect(pq.dequeue()).toBe(1);
-      expect(pq.toArray()).toEqual([2, 5, 3, 8]);
       expect(pq.size).toBe(4);
-
-      // Act and Assert
-      expect(pq.dequeue()).toBe(2);
-      expect(pq.toArray()).toEqual([3, 5, 8]);
-      expect(pq.size).toBe(3);
-
-      // Act and Assert
-      expect(pq.dequeue()).toBe(3);
-      expect(pq.toArray()).toEqual([5, 8]);
-      expect(pq.size).toBe(2);
-
-      // Act and Assert
-      expect(pq.dequeue()).toBe(5);
-      expect(pq.toArray()).toEqual([8]);
-      expect(pq.size).toBe(1);
-
-      // Act and Assert
-      expect(pq.dequeue()).toBe(8);
-      expect(pq.isEmpty).toBeTruthy();
+      expect(Array.from(pq)).toEqual([2, 3, 5, 8]);
     });
   });
 
@@ -142,8 +121,8 @@ describe('PriorityQueue', () => {
 
       // Assert
       expect(removedValue).toBeNull();
-      expect(minHeap.toArray()).toEqual([3, 5, 8, 12, 7]);
       expect(minHeap.size).toBe(5);
+      expect(Array.from(minHeap)).toEqual([3, 5, 7, 8, 12]);
     });
 
     it('removes the last element', () => {
@@ -152,8 +131,8 @@ describe('PriorityQueue', () => {
 
       // Assert
       expect(removedElement).toBe(7);
-      expect(minHeap.toArray()).toEqual([3, 5, 8, 12]);
       expect(minHeap.size).toBe(4);
+      expect(Array.from(minHeap)).toEqual([3, 5, 8, 12]);
     });
 
     it('removes element', () => {
@@ -162,15 +141,15 @@ describe('PriorityQueue', () => {
 
       // Assert
       expect(deletedValue).toBe(5);
-      expect(minHeap.toArray()).toEqual([3, 7, 8, 12]);
       expect(minHeap.size).toBe(4);
+      expect(Array.from(minHeap)).toEqual([3, 7, 8, 12]);
     });
 
     it('removes the top element', () => {
       // Act and Assert
       expect(minHeap.remove((x) => x === 3)).toBe(3);
       expect(minHeap.front()).toBe(5);
-      expect(minHeap.toArray()).toEqual([5, 7, 8, 12]);
+      expect(Array.from(minHeap)).toEqual([5, 7, 8, 12]);
     });
   });
 

@@ -1,4 +1,4 @@
-import type { ICache, Payload } from '@/data-structures/cache/types';
+import type { ICache } from '@/data-structures/cache/types';
 
 export class LRUCache<Key extends keyof any, Value = any>
   implements ICache<Key, Value>
@@ -15,38 +15,19 @@ export class LRUCache<Key extends keyof any, Value = any>
     return this.#storage.size;
   }
 
-  get isEmpty() {
-    return this.toArray().length === 0;
-  }
-
-  toArray<T>(
-    callbackfn: (item: Payload<Key, Value>) => T = (item) =>
-      item.value as unknown as T,
-  ) {
-    const iterable = this.#storage;
-
-    return Array.from(iterable, ([key, value]) => ({ key, value })).map(
-      callbackfn,
-    );
-  }
-
   put(key: Key, value: Value) {
     if (this.#storage.has(key)) {
       this.#storage.delete(key);
     }
 
     if (this.#capacity === this.#storage.size) {
-      this.#evictLeastRecentItem();
+      const victim = this.#storage.keys().next().value;
+      this.#storage.delete(victim!);
     }
 
     this.#storage.set(key, value);
 
     return this;
-  }
-
-  #evictLeastRecentItem() {
-    const lruKey = this.#storage.keys().next().value;
-    this.#storage.delete(lruKey!);
   }
 
   get(key: Key): Value | null {
@@ -66,10 +47,5 @@ export class LRUCache<Key extends keyof any, Value = any>
 
   clear() {
     this.#storage.clear();
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get [Symbol.toStringTag]() {
-    return `${this.constructor.name}`;
   }
 }
